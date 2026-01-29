@@ -14,7 +14,7 @@ Interactive birthday metrics app. Shows live-updating stats about time alive, he
 
 ## URL Parameters
 - `?name=Alice` — display name (default: "Birthday Star")
-- `?dob=2017-02-19` — date of birth, YYYY-MM-DD (default: 2017-02-20)
+- `?dob=2017-02-19` — date of birth, YYYY-MM-DD (default: 16 years ago from today)
 - `?theme=minimalist` — override default cyberpunk theme
 
 ## Project Structure
