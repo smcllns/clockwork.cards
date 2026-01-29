@@ -4,3 +4,5 @@ dist
 *.pem
 .env*
 *.tsbuildinfo
+.claude
+.playwright-mcp
