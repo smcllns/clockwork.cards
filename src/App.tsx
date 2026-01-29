@@ -100,9 +100,18 @@ export function App(props: AppProps): JSX.Element {
               color: "var(--muted-foreground)",
               "line-height": "1.6",
               "max-width": "500px",
-              margin: "0 auto 32px",
+              margin: "0 auto 12px",
             }}>
-              <Editable id="hero-subtitle" default={`You are ${ageWord()}, born ${formatDate(birthDate)}`} />
+              <Editable id="hero-subtitle" default={`You are ${ageWord()}`} />
+            </p>
+
+            <p class="glow font-mono" style={{
+              "font-size": "clamp(1rem, 3vw, 1.25rem)",
+              color: "var(--primary)",
+              "font-weight": "600",
+              "margin-bottom": "32px",
+            }}>
+              {formatDate(birthDate)}
             </p>
 
             <p style={{
