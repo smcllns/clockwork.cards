@@ -61,6 +61,4 @@ Bun's built-in bundler can compile SolidJS JSX but doesn't have a dev server wit
 - `bun run build` - production build to dist/
 
 ## Remaining Items
-- Playwright browser tests couldn't run due to Chrome session conflict
 - Need manual visual testing of: 3D card flips, glow effects, mobile scroll, confetti
-- The ThemeToggle `sm-show` class needs CSS or can be removed (currently hidden always)

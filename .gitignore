@@ -6,3 +6,5 @@ dist
 *.tsbuildinfo
 .claude
 .playwright-mcp
+.llm/sessions.jsonl
+.llm/plans
