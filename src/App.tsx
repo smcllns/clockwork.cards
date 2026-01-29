@@ -1,13 +1,13 @@
-import { createSignal, onMount, onCleanup, Show, JSX } from "solid-js"
+import { createSignal, onMount, onCleanup, Show, For, JSX } from "solid-js"
 import { Confetti } from "./components/Confetti"
 import { ThemeToggle, type Theme } from "./components/ThemeToggle"
-import { Hero } from "./sections/Hero"
-import { TimeAlive } from "./sections/TimeAlive"
-import { Sleep } from "./sections/Sleep"
-import { Heartbeats } from "./sections/Heartbeats"
-import { Steps } from "./sections/Steps"
-import { Space } from "./sections/Space"
-import { FunFacts } from "./sections/FunFacts"
+import { Section } from "./components/Section"
+import { Editable } from "./components/Editable"
+import { ALL_SECTIONS } from "./metrics"
+import { createPageState, PageProvider } from "./store"
+import { getAge } from "./utils/metrics"
+import { numberToWord } from "./utils/words"
+import { formatDate } from "./utils/format"
 
 interface AppProps {
   name: string
@@ -19,7 +19,8 @@ export function App(props: AppProps): JSX.Element {
   const [showConfetti, setShowConfetti] = createSignal(true)
   const [theme, setTheme] = createSignal<Theme>(props.initialTheme)
 
-  const birthDate = new Date(props.dateOfBirth)
+  const birthDate = new Date(props.dateOfBirth + 'T00:00:00')
+  const pageState = createPageState(birthDate, props.name)
 
   onMount(() => {
     applyTheme(props.initialTheme)
@@ -48,45 +49,111 @@ export function App(props: AppProps): JSX.Element {
     applyTheme(next)
   }
 
+  const ctx = () => pageState.ctx()
+  const age = () => getAge(birthDate, ctx().now)
+  const ageWord = () => numberToWord(age())
+
   return (
-    <main style={{
-      "min-height": "100vh",
-      background: "var(--background)",
-      transition: "color 0.3s, background 0.3s",
-      "overflow-x": "hidden",
-    }}>
-      <Show when={showConfetti()}>
-        <Confetti />
-      </Show>
-      <ThemeToggle theme={theme()} onToggle={toggleTheme} />
-
-      <div style={{
-        "max-width": "1024px",
-        margin: "0 auto",
-        padding: "0 16px 80px",
+    <PageProvider value={pageState}>
+      <main style={{
+        "min-height": "100vh",
+        background: "var(--background)",
+        transition: "color 0.3s, background 0.3s",
+        "overflow-x": "hidden",
       }}>
-        <Hero name={props.name} birthDate={birthDate} />
+        <Show when={showConfetti()}>
+          <Confetti />
+        </Show>
+        <ThemeToggle theme={theme()} onToggle={toggleTheme} />
 
-        <div style={{ display: "flex", "flex-direction": "column", gap: "40px" }}>
-          <TimeAlive birthDate={birthDate} />
-          <Sleep birthDate={birthDate} />
-          <Heartbeats birthDate={birthDate} />
-          <Steps birthDate={birthDate} />
-          <Space birthDate={birthDate} />
-          <FunFacts birthDate={birthDate} name={props.name} />
-        </div>
-
-        <footer style={{
-          "margin-top": "64px",
-          "padding-top": "24px",
-          "border-top": "1px solid var(--border)",
-          "text-align": "center",
+        <div style={{
+          "max-width": "1024px",
+          margin: "0 auto",
+          padding: "0 16px 80px",
         }}>
-          <p style={{ "font-size": "13px", color: "var(--muted-foreground)" }}>
-            Made with curiosity and math
-          </p>
-        </footer>
-      </div>
-    </main>
+          {/* Hero */}
+          <header class="display-hero" style={{
+            "text-align": "center",
+            padding: "40px 16px 64px",
+          }}>
+            <div class="hero-age glow font-mono" style={{
+              "font-size": "clamp(6rem, 25vw, 12rem)",
+              "font-weight": "700",
+              "line-height": "1",
+              color: "var(--primary)",
+              "margin-bottom": "8px",
+            }}>
+              {age()}
+            </div>
+
+            <h1 style={{
+              "font-size": "clamp(1.5rem, 5vw, 2.5rem)",
+              "font-weight": "600",
+              color: "var(--foreground)",
+              "margin-bottom": "16px",
+            }}>
+              <Editable id="hero-title" default={`Happy Birthday ${props.name}`} />
+            </h1>
+
+            <p style={{
+              "font-size": "clamp(1rem, 3vw, 1.25rem)",
+              color: "var(--muted-foreground)",
+              "line-height": "1.6",
+              "max-width": "500px",
+              margin: "0 auto 32px",
+            }}>
+              <Editable id="hero-subtitle" default={`You are ${ageWord()}, born ${formatDate(birthDate)}`} />
+            </p>
+
+            <p style={{
+              "font-size": "13px",
+              color: "var(--muted-foreground)",
+              opacity: "0.7",
+            }}>
+              Tap any card to see the math. Tap the gear to adjust variables.
+            </p>
+          </header>
+
+          {/* Sections */}
+          <div style={{ display: "flex", "flex-direction": "column", gap: "40px" }}>
+            <For each={ALL_SECTIONS}>
+              {(section) => (
+                <Section config={section} ctx={ctx()} />
+              )}
+            </For>
+          </div>
+
+          {/* Footer */}
+          <footer style={{
+            "margin-top": "64px",
+            "padding-top": "24px",
+            "border-top": "1px solid var(--border)",
+            "text-align": "center",
+            display: "flex",
+            "flex-direction": "column",
+            "align-items": "center",
+            gap: "12px",
+          }}>
+            <button
+              onClick={() => pageState.resetAll()}
+              style={{
+                padding: "8px 16px",
+                background: "transparent",
+                border: "1px solid var(--border)",
+                "border-radius": "var(--radius)",
+                color: "var(--muted-foreground)",
+                "font-size": "13px",
+                cursor: "pointer",
+              }}
+            >
+              Reset all customizations
+            </button>
+            <p style={{ "font-size": "13px", color: "var(--muted-foreground)" }}>
+              Made with curiosity and math
+            </p>
+          </footer>
+        </div>
+      </main>
+    </PageProvider>
   )
 }
