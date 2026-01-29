@@ -1,6 +1,6 @@
 # Happy Metrics
 
-Interactive birthday metrics app. Shows live-updating stats about time alive, heartbeats, steps, sleep, and space travel with 3D flip cards that reveal the math.
+Interactive birthday metrics app. Shows live-updating stats about time alive, heartbeats, steps, sleep, and space travel with 3D flip cards that reveal the math. Prose sentences below each section. Content-editable static text with localStorage persistence.
 
 ## Stack
 - **SolidJS** — UI (signals, no virtual DOM)
@@ -21,32 +21,57 @@ Interactive birthday metrics app. Shows live-updating stats about time alive, he
 ```
 src/
 ├── index.tsx              # Entry point, URL param parsing
-├── App.tsx                # Root component, theme state
+├── App.tsx                # Root component, hero, theme, section loop
+├── types.ts               # MetricConfig, SectionConfig, MetricContext, MathStep
+├── store.ts               # Single timer, settings signals, localStorage, context
 ├── components/
-│   ├── StatCard.tsx        # 3D flip card (front/math/settings)
+│   ├── WidgetCard.tsx      # 3D flip card consuming MetricConfig
+│   ├── Prose.tsx           # Sentence rendering with tap-for-math
+│   ├── Section.tsx         # Renders SectionConfig (header + cards + prose)
+│   ├── Editable.tsx        # contentEditable wrapper with localStorage
 │   ├── Slider.tsx          # Custom range input
 │   ├── ThemeToggle.tsx     # Cyberpunk ↔ Minimalist toggle
 │   └── Confetti.tsx        # Celebration particles
-├── sections/              # Each section = a group of StatCards
-│   ├── Hero.tsx            # Name, age, birthday countdown
-│   ├── TimeAlive.tsx       # Years/months/weeks/days/hours/min/sec
-│   ├── Sleep.tsx           # Adjustable hours/night
-│   ├── Heartbeats.tsx      # Adjustable BPM
-│   ├── Steps.tsx           # Adjustable stride/steps/walking age
-│   ├── Space.tsx           # Orbits, rotation, galaxy travel
-│   └── FunFacts.tsx        # Sentence-form stats, tap for math
+├── metrics/               # Config-driven metric definitions
+│   ├── index.ts            # ALL_SECTIONS master list
+│   ├── time-alive.ts       # 7 MetricConfigs
+│   ├── sleep.ts            # 3 MetricConfigs + sleepHours slider
+│   ├── heartbeats.ts       # 3 MetricConfigs + bpm slider
+│   ├── steps.ts            # 4 MetricConfigs + 3 sliders
+│   ├── space.ts            # 5 MetricConfigs
+│   └── fun-facts.ts        # 5 prose-only MetricConfigs
 ├── utils/
 │   ├── metrics.ts          # All birthday math
-│   └── format.ts           # Number formatting
+│   ├── format.ts           # Number formatting
+│   └── words.ts            # numberToWord() for hero
 └── styles/
     └── themes.css          # 2 themes (cyberpunk default, minimalist), animations
 ```
 
 ## Key Patterns
-- **Theming**: CSS custom properties on `:root` (cyberpunk) and `.theme-minimalist`. Toggle applies/removes the class and updates URL via `history.replaceState`.
-- **Live updates**: `setInterval` in `onMount` with `onCleanup` for teardown. Seconds tick every 1s, sleep/steps every 60s.
-- **StatCard**: 3D CSS transforms (`rotateY(180deg)`, `rotateX(180deg)`) with `backface-visibility: hidden`. Three faces: front (metric), math (calculation), settings (sliders).
-- **Calculations**: Centralized in `utils/metrics.ts`. Sections call these functions with signals.
+
+### Config-Driven Metrics
+Metrics are defined as data in `src/metrics/*.ts`, not as bespoke components. Each `MetricConfig` declares its value function, math steps, prose text, accent color, and format. `SectionConfig` groups metrics and declares shared slider settings. Adding/removing metrics = editing arrays.
+
+### Single Timer
+One `setInterval` in `store.ts` updates `now` every 1s. All sections read from the same context — no per-section intervals.
+
+### Math as Data
+`MathStep[]` array instead of per-card JSX. One renderer (`WidgetCard`) for all math faces.
+
+### Section Modes
+- `cards` — grid of WidgetCards only
+- `prose` — sentence list only (fun-facts)
+- `mixed` — cards + prose below (default)
+
+### Theming
+CSS custom properties on `:root` (cyberpunk) and `.theme-minimalist`. Toggle applies/removes the class and updates URL via `history.replaceState`.
+
+### Content-Editable
+`Editable` component wraps static text (hero title, section titles). On blur, saves to localStorage. "Reset all customizations" button in footer clears localStorage.
+
+### localStorage
+Single key `happy-metrics` stores `{ settings, textOverrides }`. Settings persist slider values. Text overrides persist edited labels.
 
 ## Notes
 See `.llm/notes/` for architecture decisions and context.
