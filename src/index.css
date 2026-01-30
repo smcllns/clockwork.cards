@@ -1,39 +1,3 @@
-/* Cyberpunk (default) - Dark with neon accents */
-:root {
-  --background: oklch(0.13 0.02 280);
-  --foreground: oklch(0.92 0.02 280);
-  --card: oklch(0.16 0.025 280);
-  --card-foreground: oklch(0.92 0.02 280);
-  --primary: oklch(0.75 0.25 330);
-  --primary-foreground: oklch(0.13 0.02 280);
-  --muted: oklch(0.2 0.025 280);
-  --muted-foreground: oklch(0.6 0.08 280);
-  --accent: oklch(0.7 0.22 200);
-  --border: oklch(0.28 0.06 300);
-  --chart-1: oklch(0.75 0.25 330);
-  --chart-2: oklch(0.7 0.22 200);
-  --chart-3: oklch(0.65 0.2 280);
-  --radius: 0.125rem;
-}
-
-/* Minimalist - Clean, light, professional */
-.theme-minimalist {
-  --background: oklch(0.985 0.005 90);
-  --foreground: oklch(0.2 0.02 60);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.02 60);
-  --primary: oklch(0.45 0.12 45);
-  --primary-foreground: oklch(0.98 0.005 90);
-  --muted: oklch(0.96 0.005 90);
-  --muted-foreground: oklch(0.5 0.015 60);
-  --accent: oklch(0.55 0.08 160);
-  --border: oklch(0.9 0.01 90);
-  --chart-1: oklch(0.45 0.12 45);
-  --chart-2: oklch(0.55 0.08 160);
-  --chart-3: oklch(0.5 0.1 220);
-  --radius: 0.5rem;
-}
-
 /* 3D Flip Card */
 .perspective-1000 { perspective: 1000px; }
 .transform-style-preserve-3d { transform-style: preserve-3d; }
@@ -49,8 +13,6 @@
   box-shadow: 0 0 20px color-mix(in oklch, var(--primary) 25%, transparent),
               0 0 40px color-mix(in oklch, var(--accent) 15%, transparent);
 }
-.theme-minimalist .glow { text-shadow: none; }
-.theme-minimalist .card-glow { box-shadow: none; }
 
 /* Neon border pulse */
 @keyframes neon-pulse {
@@ -58,7 +20,6 @@
   50% { box-shadow: 0 0 10px var(--primary), 0 0 20px color-mix(in oklch, var(--primary) 50%, transparent), 0 0 30px color-mix(in oklch, var(--accent) 30%, transparent); }
 }
 .neon-border { animation: neon-pulse 3s ease-in-out infinite; }
-.theme-minimalist .neon-border { animation: none; }
 
 /* Counting animation */
 @keyframes count-glow {

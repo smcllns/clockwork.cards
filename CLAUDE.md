@@ -5,73 +5,88 @@ Interactive birthday metrics app. Shows live-updating stats about time alive, he
 ## Stack
 - **SolidJS** — UI (signals, no virtual DOM)
 - **Vite** — dev server + build
-- **Bun** — package manager
+- **Bun** — package manager + native test runner (`bun test`)
 - **Vanilla CSS** — custom properties for theming
 
 ## Commands
 - `bun run dev` — dev server on :3000
 - `bun run build` — production build to `dist/`
+- `bun test` — run all tests (lib + models)
 
 ## URL Parameters
 - `?name=Alice` — display name (default: "Birthday Star")
 - `?dob=2017-02-19` — date of birth, YYYY-MM-DD (default: 16 years ago from today)
+- `?gender=boy` — gender for pronouns: boy, girl, neutral (default: neutral)
 - `?theme=minimalist` — override default cyberpunk theme
+
+## Routes
+- `/` — Demo canvas (canonical birthday card)
+- `/dev` — Dev canvas (sandbox for experimentation)
 
 ## Project Structure
 ```
 src/
-├── index.tsx              # Entry point, URL param parsing
-├── App.tsx                # Root component, hero, theme, section loop
-├── types.ts               # MetricConfig, SectionConfig, MetricContext, MathStep
-├── store.ts               # Single timer, settings signals, localStorage, context
-├── components/
-│   ├── WidgetCard.tsx      # 3D flip card consuming MetricConfig
-│   ├── Prose.tsx           # Sentence rendering with tap-for-math
-│   ├── Section.tsx         # Renders SectionConfig (header + cards + prose)
-│   ├── Editable.tsx        # contentEditable wrapper with localStorage
-│   ├── Slider.tsx          # Custom range input
-│   ├── ThemeToggle.tsx     # Cyberpunk ↔ Minimalist toggle
-│   └── Confetti.tsx        # Celebration particles
-├── metrics/               # Config-driven metric definitions
-│   ├── index.ts            # ALL_SECTIONS master list
-│   ├── time-alive.ts       # 7 MetricConfigs
-│   ├── sleep.ts            # 3 MetricConfigs + sleepHours slider
-│   ├── heartbeats.ts       # 3 MetricConfigs + bpm slider
-│   ├── steps.ts            # 4 MetricConfigs + 3 sliders
-│   ├── space.ts            # 5 MetricConfigs
-│   └── fun-facts.ts        # 5 prose-only MetricConfigs
-├── utils/
-│   ├── metrics.ts          # All birthday math
-│   ├── format.ts           # Number formatting
-│   └── words.ts            # numberToWord() for hero
-└── styles/
-    └── themes.css          # 2 themes (cyberpunk default, minimalist), animations
+├── canvas/           # Page layouts
+│   ├── Demo.tsx       # Canonical birthday card (served at /)
+│   ├── Dev.tsx        # Sandbox for experimentation (served at /dev)
+│   ├── Section.tsx    # Renders fact cards, manages local param state
+│   ├── Prose.tsx      # Renders fact prose sentences
+│   └── store.ts       # Timer (now), dob, name, gender, textOverrides
+│
+├── widgets/          # UI renderers
+│   ├── FlipCard.tsx   # 3D flip card: value, math, settings faces
+│   ├── Editable.tsx   # contentEditable + localStorage
+│   ├── Slider.tsx     # Range input
+│   ├── ThemeToggle.tsx
+│   └── Confetti.tsx
+│
+├── models/           # Fact functions + params
+│   ├── time-alive.ts  # Years, Months, Weeks, Days, Hours, Minutes, Seconds
+│   ├── sleep.ts       # TotalHoursSlept, DaysSpentSleeping, YearsAsleep + params
+│   ├── heartbeats.ts  # TotalBeats, BeatsPerDay, MillionsOfBeats + params
+│   ├── steps.ts       # TotalSteps, TotalFeet, MilesWalked, DistanceComparison + params
+│   ├── space.ts       # TripsAroundSun, MilesFromRotation, MilesAroundSun, MoonTrips, ThroughTheGalaxy
+│   └── fun-facts.ts   # Blinks, Breaths, Meals, Poops, HairGrowth
+│
+├── themes/           # CSS (not yet refined)
+│   ├── cyberpunk.css
+│   └── minimalist.css
+│
+├── lib/              # Standard library for fact authors
+│   ├── types.ts       # FactFn, FactData, FactContext, ParamDef, MathStep
+│   ├── time.ts        # getTimeAlive, getAge, birthday helpers, diff helpers
+│   ├── format.ts      # formatNumber, formatCompact, numberToWord, formatDate
+│   └── constants.ts   # Space speeds, distance comparisons
+│
+├── index.tsx          # Entry point, URL param parsing, pathname routing
+└── index.css          # Animations, utility classes, layout helpers
 ```
 
 ## Key Patterns
 
-### Config-Driven Metrics
-Metrics are defined as data in `src/metrics/*.ts`, not as bespoke components. Each `MetricConfig` declares its value function, math steps, prose text, accent color, and format. `SectionConfig` groups metrics and declares shared slider settings. Adding/removing metrics = editing arrays.
+### Facts as Pure Functions
+Each fact is a `FactFn = (ctx: FactContext) => FactData`. No DOM, no SolidJS, no side effects. Receives context (including param values), returns data. Simple facts are 3-4 lines. Complex facts destructure params from context.
+
+### Canvas as JSX
+Each canvas is a JSX component that composes helper components (`<Section>`, `<Prose>`, etc.) — not a config array. The JSX IS the layout.
+
+### Section-Local Params
+Each `<Section>` manages its own param signals. No global param store. Params initialized from defaults or localStorage (`happy-metrics.params.{SectionName}`). Param values merged into FactContext alongside `now`, `dob`, `name`, `gender`.
+
+### Minimal Store
+Just runtime context: `now` (1s timer), `dob`, `name`, `gender`, `textOverrides`. No settings/params in the global store.
 
 ### Single Timer
-One `setInterval` in `store.ts` updates `now` every 1s. All sections read from the same context — no per-section intervals.
+One `setInterval` in `store.ts` updates `now` every 1s. All sections read from the same signal.
 
 ### Math as Data
-`MathStep[]` array instead of per-card JSX. One renderer (`WidgetCard`) for all math faces.
-
-### Section Modes
-- `cards` — grid of WidgetCards only
-- `prose` — sentence list only (fun-facts)
-- `mixed` — cards + prose below (default)
+`MathStep[]` array rendered by FlipCard. One renderer for all math faces.
 
 ### Theming
-CSS custom properties on `:root` (cyberpunk) and `.theme-minimalist`. Toggle applies/removes the class and updates URL via `history.replaceState`.
+CSS custom properties on `:root` (cyberpunk) and `.theme-minimalist`. Toggle applies/removes the class and updates URL via `history.replaceState`. Theming not yet refined.
 
 ### Content-Editable
-`Editable` component wraps static text (hero title, section titles). On blur, saves to localStorage. "Reset all customizations" button in footer clears localStorage.
-
-### localStorage
-Single key `happy-metrics` stores `{ settings, textOverrides }`. Settings persist slider values. Text overrides persist edited labels.
+`Editable` widget wraps static text (hero title, section titles). On blur, saves to localStorage. "Reset all customizations" button in footer clears localStorage.
 
 ## Notes
 See `.llm/notes/` for architecture decisions and context.

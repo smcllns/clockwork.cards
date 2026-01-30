@@ -1,8 +1,7 @@
 import { createSignal, Show, For, JSX } from 'solid-js'
 import { Slider } from './Slider'
-import type { MetricConfig, MetricContext, MathStep, SliderConfig } from '../types'
-import { formatNumber, formatCompact } from '../utils/format'
-import { usePageState } from '../store'
+import type { FactData, MathStep, ParamDef } from '../lib/types'
+import { formatNumber, formatCompact } from '../lib/format'
 
 type WidgetFace = 'front' | 'math' | 'settings'
 
@@ -25,15 +24,15 @@ function formatValue(value: number | string, format?: string): string {
   }
 }
 
-interface WidgetCardProps {
-  metric: MetricConfig
-  ctx: MetricContext
-  settings?: SliderConfig[]
+interface FlipCardProps {
+  fact: FactData
+  params?: Record<string, ParamDef>
+  paramValues?: Record<string, number>
+  onParamChange?: (key: string, value: number) => void
 }
 
-export function WidgetCard(props: WidgetCardProps): JSX.Element {
+export function FlipCard(props: FlipCardProps): JSX.Element {
   const [face, setFace] = createSignal<WidgetFace>('front')
-  const pageState = usePageState()
 
   const handleCardClick = () => {
     if (face() === 'front') setFace('math')
@@ -45,7 +44,7 @@ export function WidgetCard(props: WidgetCardProps): JSX.Element {
     setFace(face() === 'settings' ? 'front' : 'settings')
   }
 
-  const accent = () => accentColors[props.metric.accent ?? 'neutral']
+  const accent = () => accentColors[props.fact.accent ?? 'neutral']
 
   const cardTransform = (): string => {
     if (face() === 'math') return 'rotateY(180deg)'
@@ -53,18 +52,9 @@ export function WidgetCard(props: WidgetCardProps): JSX.Element {
     return ''
   }
 
-  const displayValue = () => {
-    const raw = props.metric.value(props.ctx)
-    return formatValue(raw, props.metric.format)
-  }
-
-  const subtitle = () => {
-    const s = props.metric.subtitle
-    if (!s) return undefined
-    return typeof s === 'function' ? s(props.ctx) : s
-  }
-
-  const isStringValue = () => typeof props.metric.value(props.ctx) === 'string'
+  const displayValue = () => formatValue(props.fact.value, props.fact.format)
+  const isStringValue = () => typeof props.fact.value === 'string'
+  const hasParams = () => props.params && Object.keys(props.params).length > 0
 
   return (
     <div class="perspective-1000" style={{ height: '100%' }}>
@@ -82,7 +72,7 @@ export function WidgetCard(props: WidgetCardProps): JSX.Element {
         {/* Front Face */}
         <div
           onClick={handleCardClick}
-          class={`backface-hidden stat-card ${props.metric.live ? 'neon-border' : 'card-glow'}`}
+          class={`backface-hidden stat-card ${props.fact.live ? 'neon-border' : 'card-glow'}`}
           style={{
             position: 'absolute',
             inset: '0',
@@ -97,7 +87,7 @@ export function WidgetCard(props: WidgetCardProps): JSX.Element {
             transition: 'all 0.2s',
           }}
         >
-          <Show when={props.settings?.length}>
+          <Show when={hasParams()}>
             <button
               onClick={handleSettingsClick}
               style={{
@@ -126,13 +116,13 @@ export function WidgetCard(props: WidgetCardProps): JSX.Element {
             'letter-spacing': '0.05em',
             color: 'var(--muted-foreground)',
             'margin-bottom': '8px',
-          }}>{props.metric.title}</p>
+          }}>{props.fact.title}</p>
 
           <p
-            class={`font-mono tabular-nums ${props.metric.live ? 'glow counting' : ''}`}
+            class={`font-mono tabular-nums ${props.fact.live ? 'glow counting' : ''}`}
             style={{
               'font-weight': '600',
-              color: props.metric.live ? 'var(--primary)' : 'var(--foreground)',
+              color: props.fact.live ? 'var(--primary)' : 'var(--foreground)',
               'font-size': isStringValue() ? '16px' : '24px',
               'line-height': '1.2',
             }}
@@ -140,49 +130,53 @@ export function WidgetCard(props: WidgetCardProps): JSX.Element {
             {displayValue()}
           </p>
 
-          <Show when={subtitle()}>
+          <Show when={props.fact.subtitle}>
             <p style={{ 'font-size': '14px', color: 'var(--muted-foreground)', 'margin-top': '4px' }}>
-              {subtitle()}
+              {props.fact.subtitle}
             </p>
           </Show>
 
           <div style={{ flex: '1' }} />
-          <p style={{ 'font-size': '10px', color: 'var(--muted-foreground)', opacity: '0.5', 'text-align': 'right', 'margin-top': '8px' }}>
-            tap for math
-          </p>
+          <Show when={props.fact.math}>
+            <p style={{ 'font-size': '10px', color: 'var(--muted-foreground)', opacity: '0.5', 'text-align': 'right', 'margin-top': '8px' }}>
+              tap for math
+            </p>
+          </Show>
         </div>
 
         {/* Math Face */}
-        <div
-          onClick={handleCardClick}
-          class="backface-hidden rotate-y-180"
-          style={{
-            position: 'absolute',
-            inset: '0',
-            cursor: 'pointer',
-            background: 'color-mix(in oklch, var(--muted) 50%, transparent)',
-            border: '1px solid var(--border)',
-            'border-radius': 'var(--radius)',
-            padding: '16px',
-            'border-left': `4px solid ${accent()}`,
-          }}
-        >
-          <div style={{ display: 'flex', 'align-items': 'center', 'justify-content': 'space-between', 'margin-bottom': '12px' }}>
-            <p style={{ 'font-size': '11px', 'font-weight': '500', 'text-transform': 'uppercase', 'letter-spacing': '0.05em', color: 'var(--muted-foreground)' }}>
-              The Math
-            </p>
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--muted-foreground)" stroke-width="2">
-              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
-              <path d="M3 3v5h5" />
-            </svg>
+        <Show when={props.fact.math}>
+          <div
+            onClick={handleCardClick}
+            class="backface-hidden rotate-y-180"
+            style={{
+              position: 'absolute',
+              inset: '0',
+              cursor: 'pointer',
+              background: 'color-mix(in oklch, var(--muted) 50%, transparent)',
+              border: '1px solid var(--border)',
+              'border-radius': 'var(--radius)',
+              padding: '16px',
+              'border-left': `4px solid ${accent()}`,
+            }}
+          >
+            <div style={{ display: 'flex', 'align-items': 'center', 'justify-content': 'space-between', 'margin-bottom': '12px' }}>
+              <p style={{ 'font-size': '11px', 'font-weight': '500', 'text-transform': 'uppercase', 'letter-spacing': '0.05em', color: 'var(--muted-foreground)' }}>
+                The Math
+              </p>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--muted-foreground)" stroke-width="2">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                <path d="M3 3v5h5" />
+              </svg>
+            </div>
+            <div class="font-mono" style={{ 'font-size': '14px', color: 'var(--foreground)', opacity: '0.9', overflow: 'auto', 'max-height': '180px' }}>
+              <MathSteps steps={props.fact.math!} />
+            </div>
           </div>
-          <div class="font-mono" style={{ 'font-size': '14px', color: 'var(--foreground)', opacity: '0.9', overflow: 'auto', 'max-height': '180px' }}>
-            <MathSteps steps={props.metric.math(props.ctx)} />
-          </div>
-        </div>
+        </Show>
 
         {/* Settings Face */}
-        <Show when={props.settings?.length}>
+        <Show when={hasParams()}>
           <div
             class="backface-hidden rotate-x-180"
             style={{
@@ -210,29 +204,22 @@ export function WidgetCard(props: WidgetCardProps): JSX.Element {
               </button>
             </div>
             <div style={{ display: 'flex', 'flex-direction': 'column', gap: '16px' }}>
-              <For each={props.settings}>
-                {(slider) => (
+              <For each={Object.entries(props.params ?? {})}>
+                {([key, def]) => (
                   <div>
                     <div style={{ display: 'flex', 'justify-content': 'space-between', 'font-size': '12px', color: 'var(--muted-foreground)', 'margin-bottom': '8px' }}>
-                      <span>{slider.label}</span>
+                      <span>{def.label}</span>
                       <span class="font-mono" style={{ 'font-weight': '600', color: 'var(--foreground)' }}>
-                        {formatNumber(props.ctx.settings[slider.key])}{slider.unit ?? ''}
+                        {formatNumber(props.paramValues?.[key] ?? def.default)}{def.unit ?? ''}
                       </span>
                     </div>
                     <Slider
-                      value={props.ctx.settings[slider.key]}
-                      onChange={(v) => pageState.setSetting(slider.key, v)}
-                      min={slider.min}
-                      max={slider.max}
-                      step={slider.step}
+                      value={props.paramValues?.[key] ?? def.default}
+                      onChange={(v) => props.onParamChange?.(key, v)}
+                      min={def.min}
+                      max={def.max}
+                      step={def.step}
                     />
-                    <Show when={slider.marks}>
-                      <div style={{ display: 'flex', 'justify-content': 'space-between', 'font-size': '10px', color: 'var(--muted-foreground)', 'margin-top': '4px' }}>
-                        <For each={slider.marks}>
-                          {(mark) => <span>{mark}</span>}
-                        </For>
-                      </div>
-                    </Show>
                   </div>
                 )}
               </For>
