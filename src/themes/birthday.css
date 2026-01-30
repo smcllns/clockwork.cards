@@ -1,0 +1,115 @@
+.theme-birthday {
+  --background: oklch(0.97 0.01 80);
+  --foreground: oklch(0.22 0.02 50);
+  --card: oklch(1 0 0 / 0.85);
+  --card-foreground: oklch(0.22 0.02 50);
+  --primary: oklch(0.65 0.22 25);
+  --primary-foreground: oklch(0.98 0.005 90);
+  --muted: oklch(0.93 0.015 80);
+  --muted-foreground: oklch(0.5 0.03 50);
+  --accent: oklch(0.6 0.15 195);
+  --border: oklch(0.88 0.03 80);
+  --chart-1: oklch(0.65 0.22 25);
+  --chart-2: oklch(0.6 0.15 195);
+  --chart-3: oklch(0.6 0.18 300);
+  --radius: 1rem;
+
+  --birthday-gradient: linear-gradient(
+    150deg,
+    oklch(0.95 0.06 40) 0%,
+    oklch(0.96 0.04 65) 25%,
+    oklch(0.95 0.03 120) 50%,
+    oklch(0.94 0.05 210) 75%,
+    oklch(0.95 0.06 280) 100%
+  );
+
+  --pop-coral: oklch(0.7 0.2 25);
+  --pop-teal: oklch(0.55 0.13 195);
+  --pop-purple: oklch(0.55 0.18 300);
+  --pop-gold: oklch(0.72 0.15 85);
+  --pop-pink: oklch(0.65 0.17 350);
+}
+
+.theme-birthday .glow { text-shadow: none; }
+.theme-birthday .card-glow {
+  box-shadow: 0 2px 12px oklch(0 0 0 / 0.06), 0 1px 3px oklch(0 0 0 / 0.04);
+}
+.theme-birthday .neon-border {
+  animation: none;
+  box-shadow: 0 2px 16px oklch(0.65 0.22 25 / 0.15);
+}
+
+/* ── Proposal layout ── */
+
+.proposal-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0 16px;
+}
+
+.proposal-content {
+  max-width: 780px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 0 20px;
+}
+
+/* iPad+ (≥700px): 2-col grid, no scroll */
+@media (min-width: 700px) {
+  .proposal-canvas {
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  .proposal-body {
+    display: flex;
+    align-items: stretch;
+    padding: 0 20px;
+  }
+
+  .proposal-content {
+    justify-content: space-evenly;
+    gap: 10px;
+    padding: 4px 0;
+  }
+
+  .proposal-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .proposal-facts {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 8px;
+  }
+}
+
+/* Mobile (<700px): single col, scrollable */
+@media (max-width: 699px) {
+  .proposal-canvas {
+    min-height: 100dvh;
+  }
+
+  .proposal-pair {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .proposal-facts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .proposal-facts > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}

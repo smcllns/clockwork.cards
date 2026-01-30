@@ -93,6 +93,45 @@
   }
 }
 
+/* Number breathing for live counters */
+@keyframes number-breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.75; }
+}
+
+/* Birthday slider thumb */
+.birthday-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  background: white;
+  border: 3px solid var(--pop-coral, var(--primary));
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 6px oklch(0 0 0 / 0.15);
+  transition: transform 0.15s;
+}
+.birthday-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+.birthday-slider::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  background: white;
+  border: 3px solid var(--pop-coral, var(--primary));
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 6px oklch(0 0 0 / 0.15);
+}
+
+/* Proposal prose text */
+.prose-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(0.85rem, 2.3vw, 1rem);
+  line-height: 1.6;
+  color: var(--foreground);
+}
+
 /* Utility classes */
 .font-mono { font-family: 'JetBrains Mono', monospace; }
 .tabular-nums { font-variant-numeric: tabular-nums; }
