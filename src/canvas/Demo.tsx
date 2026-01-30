@@ -2,7 +2,6 @@ import { createSignal, onMount, onCleanup, Show, JSX } from 'solid-js'
 import { useStore } from './store'
 import { Section } from './Section'
 import { Prose } from './Prose'
-import { Editable } from '../widgets/Editable'
 import { Confetti } from '../widgets/Confetti'
 import { ThemeToggle, type Theme } from '../widgets/ThemeToggle'
 import { getAge } from '../lib/time'
@@ -87,13 +86,7 @@ export function Demo(props: DemoProps): JSX.Element {
             color: "var(--foreground)",
             "margin-bottom": "16px",
           }}>
-            <Editable
-              id="hero-title"
-              default={`Happy Birthday ${store.name}`}
-              textOverrides={store.textOverrides()}
-              onOverride={store.setTextOverride}
-              onClear={store.clearTextOverride}
-            />
+            Happy Birthday {store.name}
           </h1>
 
           <p style={{
@@ -103,13 +96,7 @@ export function Demo(props: DemoProps): JSX.Element {
             "max-width": "500px",
             margin: "0 auto 12px",
           }}>
-            <Editable
-              id="hero-subtitle"
-              default={`You are ${ageWord()}`}
-              textOverrides={store.textOverrides()}
-              onOverride={store.setTextOverride}
-              onClear={store.clearTextOverride}
-            />
+            You are {ageWord()}
           </p>
 
           <p class="glow font-mono" style={{
@@ -140,15 +127,7 @@ export function Demo(props: DemoProps): JSX.Element {
 
           <div>
             <div class="section-header" style={{ 'margin-bottom': '16px' }}>
-              <h2 style={{ 'font-size': '20px', 'font-weight': '600', color: 'var(--foreground)' }}>
-                <Editable
-                  id="section-title-fun-facts"
-                  default="Fun Facts"
-                  textOverrides={store.textOverrides()}
-                  onOverride={store.setTextOverride}
-                  onClear={store.clearTextOverride}
-                />
-              </h2>
+              <h2 style={{ 'font-size': '20px', 'font-weight': '600', color: 'var(--foreground)' }}>Fun Facts</h2>
               <p style={{ 'font-size': '13px', color: 'var(--muted-foreground)', 'margin-top': '2px' }}>
                 tap to see the math
               </p>
@@ -163,25 +142,7 @@ export function Demo(props: DemoProps): JSX.Element {
           "padding-top": "24px",
           "border-top": "1px solid var(--border)",
           "text-align": "center",
-          display: "flex",
-          "flex-direction": "column",
-          "align-items": "center",
-          gap: "12px",
         }}>
-          <button
-            onClick={() => store.resetAll()}
-            style={{
-              padding: "8px 16px",
-              background: "transparent",
-              border: "1px solid var(--border)",
-              "border-radius": "var(--radius)",
-              color: "var(--muted-foreground)",
-              "font-size": "13px",
-              cursor: "pointer",
-            }}
-          >
-            Reset all customizations
-          </button>
           <p style={{ "font-size": "13px", color: "var(--muted-foreground)" }}>
             Made with curiosity and math
           </p>

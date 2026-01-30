@@ -1,6 +1,6 @@
 # Happy Metrics
 
-Interactive birthday metrics app. Shows live-updating stats about time alive, heartbeats, steps, sleep, and space travel with 3D flip cards that reveal the math. Prose sentences below each section. Content-editable static text with localStorage persistence.
+Interactive birthday metrics app. Shows live-updating stats about time alive, heartbeats, steps, sleep, and space travel with 3D flip cards that reveal the math.
 
 ## Stack
 - **SolidJS** — UI (signals, no virtual DOM)
@@ -29,13 +29,12 @@ src/
 ├── canvas/           # Page layouts
 │   ├── Demo.tsx       # Canonical birthday card (served at /)
 │   ├── Dev.tsx        # Sandbox for experimentation (served at /dev)
-│   ├── Section.tsx    # Renders fact cards, manages local param state
+│   ├── Section.tsx    # Renders fact cards + section-level param sliders
 │   ├── Prose.tsx      # Renders fact prose sentences
-│   └── store.ts       # Timer (now), dob, name, gender, textOverrides
+│   └── store.ts       # Timer (now), dob, name, gender
 │
 ├── widgets/          # UI renderers
-│   ├── FlipCard.tsx   # 3D flip card: value, math, settings faces
-│   ├── Editable.tsx   # contentEditable + localStorage
+│   ├── FlipCard.tsx   # 3D flip card: value + math faces
 │   ├── Slider.tsx     # Range input
 │   ├── ThemeToggle.tsx
 │   └── Confetti.tsx
@@ -65,28 +64,25 @@ src/
 ## Key Patterns
 
 ### Facts as Pure Functions
-Each fact is a `FactFn = (ctx: FactContext) => FactData`. No DOM, no SolidJS, no side effects. Receives context (including param values), returns data. Simple facts are 3-4 lines. Complex facts destructure params from context.
+Each fact is a `FactFn = (ctx: FactContext) => FactData`. No DOM, no SolidJS, no side effects. Receives context (including param values), returns data.
 
 ### Canvas as JSX
-Each canvas is a JSX component that composes helper components (`<Section>`, `<Prose>`, etc.) — not a config array. The JSX IS the layout.
+Each canvas is a JSX component that composes `<Section>`, `<Prose>`, etc. The JSX IS the layout.
 
 ### Section-Local Params
-Each `<Section>` manages its own param signals. No global param store. Params initialized from defaults or localStorage (`happy-metrics.params.{SectionName}`). Param values merged into FactContext alongside `now`, `dob`, `name`, `gender`.
+Each `<Section>` manages its own param signals. Params displayed as inline values with a gear icon to toggle edit mode (sliders). Persisted to localStorage (`happy-metrics.params.{SectionName}`).
 
 ### Minimal Store
-Just runtime context: `now` (1s timer), `dob`, `name`, `gender`, `textOverrides`. No settings/params in the global store.
+Just runtime context: `now` (1s timer), `dob`, `name`, `gender`.
 
-### Single Timer
-One `setInterval` in `store.ts` updates `now` every 1s. All sections read from the same signal.
+### SolidJS: `<Index>` for Reactive Lists
+Section and Prose use `<Index>` (not `<For>`) because fact data recomputes every tick. `<Index>` keys by position (stable DOM), `<For>` keys by reference (new objects = DOM recreation = animation resets).
 
 ### Math as Data
 `MathStep[]` array rendered by FlipCard. One renderer for all math faces.
 
 ### Theming
-CSS custom properties on `:root` (cyberpunk) and `.theme-minimalist`. Toggle applies/removes the class and updates URL via `history.replaceState`. Theming not yet refined.
-
-### Content-Editable
-`Editable` widget wraps static text (hero title, section titles). On blur, saves to localStorage. "Reset all customizations" button in footer clears localStorage.
+CSS custom properties on `:root` (cyberpunk) and `.theme-minimalist`. Toggle applies/removes the class and updates URL via `history.replaceState`.
 
 ## Notes
 See `.llm/notes/` for architecture decisions and context.
