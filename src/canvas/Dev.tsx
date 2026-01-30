@@ -2,9 +2,7 @@ import { JSX } from 'solid-js'
 import { useStore } from './store'
 import { Section } from './Section'
 import { Prose } from './Prose'
-import { Editable } from '../widgets/Editable'
 import { getAge } from '../lib/time'
-import { numberToWord } from '../lib/format'
 
 import { Years, Days, Seconds } from '../models/time-alive'
 import { TotalBeats, BeatsPerDay, params as heartbeatParams } from '../models/heartbeats'
@@ -35,13 +33,7 @@ export function Dev(): JSX.Element {
             {age()}
           </div>
           <h1 style={{ "font-size": "1.5rem", "font-weight": "600", color: "var(--foreground)", "margin-top": "8px" }}>
-            <Editable
-              id="dev-title"
-              default={`${store.name}'s Stats`}
-              textOverrides={store.textOverrides()}
-              onOverride={store.setTextOverride}
-              onClear={store.clearTextOverride}
-            />
+            {store.name}'s Stats
           </h1>
           <p style={{ "font-size": "13px", color: "var(--muted-foreground)", "margin-top": "8px" }}>
             Dev sandbox — edit this canvas freely

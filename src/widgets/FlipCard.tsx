@@ -47,8 +47,7 @@ export function FlipCard(props: FlipCardProps): JSX.Element {
   const accent = () => accentColors[props.fact.accent ?? 'neutral']
 
   const cardTransform = (): string => {
-    if (face() === 'math') return 'rotateY(180deg)'
-    if (face() === 'settings') return 'rotateX(180deg)'
+    if (face() === 'math' || face() === 'settings') return 'rotateY(180deg)'
     return ''
   }
 
@@ -158,9 +157,12 @@ export function FlipCard(props: FlipCardProps): JSX.Element {
               'border-radius': 'var(--radius)',
               padding: '16px',
               'border-left': `4px solid ${accent()}`,
+              display: face() === 'settings' ? 'none' : 'flex',
+              'flex-direction': 'column',
+              overflow: 'hidden',
             }}
           >
-            <div style={{ display: 'flex', 'align-items': 'center', 'justify-content': 'space-between', 'margin-bottom': '12px' }}>
+            <div style={{ display: 'flex', 'align-items': 'center', 'justify-content': 'space-between', 'margin-bottom': '12px', 'flex-shrink': '0' }}>
               <p style={{ 'font-size': '11px', 'font-weight': '500', 'text-transform': 'uppercase', 'letter-spacing': '0.05em', color: 'var(--muted-foreground)' }}>
                 The Math
               </p>
@@ -169,7 +171,7 @@ export function FlipCard(props: FlipCardProps): JSX.Element {
                 <path d="M3 3v5h5" />
               </svg>
             </div>
-            <div class="font-mono" style={{ 'font-size': '14px', color: 'var(--foreground)', opacity: '0.9', overflow: 'auto', 'max-height': '180px' }}>
+            <div class="font-mono" style={{ 'font-size': '14px', color: 'var(--foreground)', opacity: '0.9', overflow: 'auto', flex: '1', 'min-height': '0' }}>
               <MathSteps steps={props.fact.math!} />
             </div>
           </div>
@@ -178,7 +180,7 @@ export function FlipCard(props: FlipCardProps): JSX.Element {
         {/* Settings Face */}
         <Show when={hasParams()}>
           <div
-            class="backface-hidden rotate-x-180"
+            class="backface-hidden rotate-y-180"
             style={{
               position: 'absolute',
               inset: '0',
@@ -187,6 +189,7 @@ export function FlipCard(props: FlipCardProps): JSX.Element {
               'border-radius': 'var(--radius)',
               padding: '16px',
               'border-left': `4px solid ${accent()}`,
+              display: face() === 'math' ? 'none' : undefined,
             }}
           >
             <div style={{ display: 'flex', 'align-items': 'center', 'justify-content': 'space-between', 'margin-bottom': '12px' }}>

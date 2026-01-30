@@ -3,47 +3,32 @@
 ## Architecture Decisions
 
 ### Why Vite instead of pure Bun
-Bun's built-in bundler can compile SolidJS JSX but doesn't have a dev server with HMR for SolidJS. Vite + `vite-plugin-solid` gives us:
-- Proper SolidJS JSX compilation (different from React JSX)
-- Hot module replacement
-- Optimized production builds
-- Standard tooling
+Bun's built-in bundler can compile SolidJS JSX but doesn't have a dev server with HMR for SolidJS. Vite + `vite-plugin-solid` gives us proper JSX compilation, HMR, optimized builds, standard tooling.
 
 ### Why vanilla CSS instead of Tailwind
-- ~3KB CSS total vs Tailwind overhead
-- CSS custom properties for theming (the same approach the original used under the hood)
-- Inline styles on components for layout since SolidJS recommends them
+~3KB CSS total vs Tailwind overhead. CSS custom properties for theming. Inline styles on components for layout (SolidJS convention).
 
 ### Facts as Pure Functions (v3 architecture)
-Previous v2 used config-driven `MetricConfig` objects with value/math/prose as functions. v3 simplifies to pure functions:
-- `FactFn = (ctx: FactContext) => FactData` — each fact is a standalone arrow function
-- No config wrappers, no Section/Metric types, no master arrays
-- Facts import from `lib/` (time, format, constants) but never touch DOM/SolidJS
-- Params exported separately as `Record<string, ParamDef>` — canvas wires them to sections
-- Canvas composes facts using JSX `<Section facts={[TotalBeats, BeatsPerDay]} params={heartbeatParams} />`
+`FactFn = (ctx: FactContext) => FactData` — each fact is a standalone arrow function. No config wrappers. Facts import from `lib/` but never touch DOM/SolidJS. Params exported separately as `Record<string, ParamDef>`. Canvas wires params to sections.
 
-Key insight: facts should be dead simple. Module-scope computation was rejected because it evaluates once at import time, breaking `live: true` facts that need to update every second.
+Module-scope computation was rejected because it evaluates once at import time, breaking `live: true` facts that need to update every second.
 
 ### Canvas as JSX (not config array)
-Canvas is a JSX component, not a config array → renderer indirection. The JSX IS the layout. Two canvases:
-- `/` → `Demo.tsx` — canonical birthday card with all 6 sections
-- `/dev` → `Dev.tsx` — sandbox with subset of facts for experimentation
-- Pathname routing in `index.tsx` — no router library
+Canvas is a JSX component, not a config array. The JSX IS the layout. Two canvases: `/` → Demo.tsx, `/dev` → Dev.tsx. Pathname routing in `index.tsx`, no router library.
 
 ### Section-Local Params
-Params (like BPM, sleep hours) are local to each `<Section>` — not in the global store. This eliminates: global param store, registration, conflict resolution, cross-section naming collisions. Each Section creates its own signals, persists to `localStorage` under `happy-metrics.params.{SectionName}`.
+Params (BPM, sleep hours) are local to each `<Section>`. Each Section creates its own signals, persists to `localStorage` under `happy-metrics.params.{SectionName}`. Params displayed as inline values below the section title with a gear icon to toggle sliders for editing.
 
 ### Minimal Store
-Store shrank from managing all settings/params to just: `now`, `dob`, `name`, `gender`, `textOverrides`. All slider state moved to Section-local signals.
-
-### Content-Editable
-Static text (hero title, section titles) wrapped in `Editable` widget. On blur, saves override to localStorage. On reset, reverts to computed default. Live numbers are NOT editable.
+Store is just: `now` (1s timer signal), `dob`, `name`, `gender`. That's it. No settings, no params, no text overrides.
 
 ### DOB Parsing
-`new Date("2017-02-19")` parses as UTC midnight, showing Feb 18 in US timezones. Fixed by appending `T00:00:00` to parse as local time: `new Date(dob + 'T00:00:00')`.
+`new Date("2017-02-19")` parses as UTC midnight, showing Feb 18 in US timezones. Fixed by appending `T00:00:00` to parse as local time.
 
-### SolidJS Gotcha: Dynamic Tags
-SolidJS compiles JSX at build time. `const Tag = 'span'; <Tag>` doesn't work — it tries to call `Tag` as a component function. Must use `<Dynamic component={Tag}>` from `solid-js/web` or just use the concrete tag directly.
+### SolidJS Gotchas
+- **Dynamic Tags**: `const Tag = 'span'; <Tag>` doesn't work — SolidJS compiles JSX at build time. Must use `<Dynamic component={Tag}>` or the concrete tag.
+- **`<For>` vs `<Index>`**: `<For>` keys by reference identity. If the array contains new objects every tick (e.g. from a 1s timer signal), `<For>` destroys/recreates DOM, resetting CSS animations. Use `<Index>` for position-stable lists where items recompute but position is fixed.
+- **3D card faces**: Both math and settings faces use `rotateY(180deg)`. Using `rotateX` for settings caused upside-down content. When two back-faces share the same rotation, use `display: none` to hide the inactive one.
 
 ## File Map
 
@@ -52,17 +37,16 @@ SolidJS compiles JSX at build time. `const Tag = 'span'; <Tag>` doesn't work —
 | `src/index.tsx` | Entry point, URL param parsing, pathname routing |
 | `src/canvas/Demo.tsx` | Canonical birthday card canvas (served at /) |
 | `src/canvas/Dev.tsx` | Sandbox canvas (served at /dev) |
-| `src/canvas/Section.tsx` | Renders fact cards, manages local param state |
+| `src/canvas/Section.tsx` | Renders fact cards + section-level param sliders |
 | `src/canvas/Prose.tsx` | Renders fact prose sentences with tap-for-math |
-| `src/canvas/store.ts` | Timer (now), dob, name, gender, textOverrides |
+| `src/canvas/store.ts` | Timer (now), dob, name, gender |
 | `src/models/time-alive.ts` | 7 fact functions (Years → Seconds) |
 | `src/models/sleep.ts` | 3 fact functions + sleepHours param |
 | `src/models/heartbeats.ts` | 3 fact functions + bpm param |
 | `src/models/steps.ts` | 4 fact functions + 3 params |
 | `src/models/space.ts` | 5 fact functions |
 | `src/models/fun-facts.ts` | 5 fact functions (blinks, breaths, meals, poops, hair) |
-| `src/widgets/FlipCard.tsx` | 3D flip card: value, math, settings faces |
-| `src/widgets/Editable.tsx` | contentEditable wrapper |
+| `src/widgets/FlipCard.tsx` | 3D flip card: value + math faces (⚠️ has dead settings face code) |
 | `src/widgets/Slider.tsx` | Range input |
 | `src/widgets/ThemeToggle.tsx` | Cyberpunk ↔ Minimalist toggle |
 | `src/widgets/Confetti.tsx` | Celebration particles |
@@ -74,23 +58,20 @@ SolidJS compiles JSX at build time. `const Tag = 'span'; <Tag>` doesn't work —
 | `src/themes/minimalist.css` | Clean light theme |
 | `src/index.css` | Animations, utility classes, layout |
 
-## URL Parameters
-- `?name=Alice` — display name
-- `?dob=2017-02-19` — date of birth (YYYY-MM-DD)
-- `?gender=boy` — boy, girl, neutral (default: neutral)
-- `?theme=minimalist` — override default cyberpunk theme
-
 ## Running
 - `bun run dev` — dev server on :3000
 - `bun run build` — production build to dist/
 - `bun test` — 57 tests (lib + models)
 
 ## Bundle Size
-- JS: ~45.2KB (gzip: ~15.2KB)
+- JS: ~45.3KB (gzip: ~15.0KB)
 - CSS: ~3.0KB (gzip: ~1.1KB)
 
-## Deferred
-- **CSS/theming** — not yet refined, will iterate
-- **Cross-section param sharing** — params are local to Section; can promote to store later if needed
-- **Hero widget** — hero is inline in Demo.tsx, could be extracted to a widget
-- **Divider widget** — not yet implemented
+## Cleanup Needed
+- **FlipCard dead code** — settings face, gear icon, params/paramValues/onParamChange props are unused. Strip them.
+- **Extract Hero widget** — hero section is inline in Demo.tsx, should be its own widget for customization.
+
+## Product Decisions
+- **Cross-section param sharing** — WON'T SUPPORT. Wait for real need to arise.
+- **CSS/theming** — deferred until product features are settled. When implementing: support custom Google Fonts as a first-class feature.
+- **ContentEditable** — removed. Titles are plain text driven by models/canvas.

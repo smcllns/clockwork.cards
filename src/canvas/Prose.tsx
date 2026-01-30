@@ -1,4 +1,4 @@
-import { createSignal, Show, For, JSX } from 'solid-js'
+import { createSignal, Show, Index, For, JSX } from 'solid-js'
 import type { FactFn, FactData, MathStep } from '../lib/types'
 import { useStore } from './store'
 
@@ -21,24 +21,24 @@ export function Prose(props: ProseProps): JSX.Element {
 
   return (
     <div style={{ display: 'flex', 'flex-direction': 'column', gap: '8px' }}>
-      <For each={facts()}>
+      <Index each={facts()}>
         {(fact, i) => (
           <div
-            onClick={() => setExpanded(expanded() === i() ? null : i())}
+            onClick={() => setExpanded(expanded() === i ? null : i)}
             style={{
               background: 'var(--card)',
               border: '1px solid var(--border)',
               'border-radius': 'var(--radius)',
               padding: '16px',
-              cursor: fact.math ? 'pointer' : 'default',
+              cursor: fact().math ? 'pointer' : 'default',
               transition: 'all 0.2s',
             }}
             class="card-glow"
           >
             <p style={{ 'font-size': '16px', color: 'var(--foreground)', 'line-height': '1.5' }}>
-              {fact.prose}
+              {fact().prose}
             </p>
-            <Show when={expanded() === i() && fact.math}>
+            <Show when={expanded() === i && fact().math}>
               <div class="font-mono" style={{
                 'font-size': '13px',
                 color: 'var(--muted-foreground)',
@@ -49,12 +49,12 @@ export function Prose(props: ProseProps): JSX.Element {
                 'flex-direction': 'column',
                 gap: '4px',
               }}>
-                <ProseSteps steps={fact.math!} />
+                <ProseSteps steps={fact().math!} />
               </div>
             </Show>
           </div>
         )}
-      </For>
+      </Index>
     </div>
   )
 }
