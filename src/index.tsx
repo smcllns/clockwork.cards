@@ -2,6 +2,7 @@ import { render } from "solid-js/web"
 import { createStore, StoreProvider } from "./canvas/store"
 import { Demo } from "./canvas/Demo"
 import { Dev } from "./canvas/Dev"
+import { Proposal } from "./canvas/Proposal"
 import type { Theme } from "./widgets/ThemeToggle"
 
 const params = new URLSearchParams(window.location.search)
@@ -19,7 +20,7 @@ const gender = (params.get("gender") as 'boy' | 'girl' | 'neutral') || 'neutral'
 const themeParam = params.get("theme")
 const initialTheme: Theme = themeParam === "minimalist" ? "minimalist" : "cyberpunk"
 
-const isDev = window.location.pathname === '/dev'
+const pathname = window.location.pathname
 
 const root = document.getElementById("app")
 if (!root) throw new Error("No #app element found")
@@ -28,7 +29,7 @@ render(() => {
   const store = createStore(dob, name, gender)
   return (
     <StoreProvider value={store}>
-      {isDev ? <Dev /> : <Demo initialTheme={initialTheme} />}
+      {pathname === '/proposal' ? <Proposal /> : pathname === '/dev' ? <Dev /> : <Demo initialTheme={initialTheme} />}
     </StoreProvider>
   )
 }, root)
