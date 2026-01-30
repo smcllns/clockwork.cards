@@ -1,0 +1,47 @@
+/* widgets/Prose.css
+ *
+ * Styles for the Prose widget. Theme authors can override
+ * using same class names + theme variables or plain CSS.
+ */
+
+.prose-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.prose-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.prose-text {
+  font-size: 16px;
+  color: var(--foreground);
+  line-height: 1.5;
+}
+
+.prose-math {
+  font-size: 13px;
+  color: var(--muted-foreground);
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Shared math step classes (used by both FlipCard and Prose) */
+.math-step-bold {
+  font-weight: 600;
+}
+
+.math-step-label {
+  font-size: 11px;
+  color: var(--muted-foreground);
+}

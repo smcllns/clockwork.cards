@@ -7,4 +7,3 @@ dist
 .claude
 .playwright-mcp
 .llm/sessions.jsonl
-.llm/plans
