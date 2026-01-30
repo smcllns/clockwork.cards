@@ -125,20 +125,20 @@ Facts are safe by design: pure functions that receive data and return data. No D
 
 ## Implementation Steps
 
-1. [ ] **Rollback** — `git reset --hard b57b9bf`
-2. [ ] **Create `lib/types.ts`** — FactFn, FactData, FactContext, ParamDef, MathStep
-3. [ ] **Create `lib/time.ts`** — move time helpers from `utils/metrics.ts`
-4. [ ] **Create `lib/format.ts`** — move from `utils/format.ts`
-5. [ ] **Create `lib/constants.ts`** — space constants + time constants
-6. [ ] **Write lib tests** — `bun test` (bun's native test runner, no vitest)
-7. [ ] **Convert models** — transform each `metrics/*.ts` into fact functions + params exports
-8. [ ] **Write model tests** — given fixed dob/now/name/params, verify fact output
-9. [ ] **Move themes** — `styles/themes.css` → `themes/cyberpunk.css` + `themes/minimalist.css` (CSS/theming not yet refined, will revisit)
-10. [ ] **Refactor widgets** — `components/` → `widgets/`, FlipCard accepts FactData
-11. [ ] **Create canvas** — `canvas/Demo.tsx` (canonical birthday card), `canvas/Dev.tsx` (sandbox), `canvas/Section.tsx` (local params), `canvas/store.ts`
-12. [ ] **Wire entry point** — `index.tsx` routes `/` → Demo, `/dev` → Dev. URL params for name, dob, gender, theme.
-13. [ ] **Delete old dirs** — remove `components/`, `metrics/`, `utils/`, `styles/`
-14. [ ] **Smoke test** — `bun run dev`, verify both canvases render correctly
+1. [x] **Rollback** — removed ThreeJS deps + HeroNumber3D.tsx (kept plan commit on top)
+2. [x] **Create `lib/types.ts`** — FactFn, FactData, FactContext, ParamDef, MathStep
+3. [x] **Create `lib/time.ts`** — move time helpers from `utils/metrics.ts`
+4. [x] **Create `lib/format.ts`** — move from `utils/format.ts` + `utils/words.ts`
+5. [x] **Create `lib/constants.ts`** — space constants + distance comparison
+6. [x] **Write lib tests** — 29 tests passing (`bun test`)
+7. [x] **Convert models** — 6 model files, all facts as pure functions
+8. [x] **Write model tests** — 28 tests passing (`bun test`)
+9. [x] **Move themes** — `themes/cyberpunk.css` + `themes/minimalist.css`
+10. [x] **Refactor widgets** — FlipCard, Slider, Editable, ThemeToggle, Confetti
+11. [x] **Create canvas** — Demo.tsx, Dev.tsx, Section.tsx, Prose.tsx, store.ts
+12. [x] **Wire entry point** — pathname routing, URL params (name, dob, gender, theme)
+13. [x] **Delete old dirs** — removed components/, metrics/, utils/, styles/, App.tsx, store.ts, types.ts
+14. [x] **Smoke test** — dev server, build, 57 tests all passing
 
 ## Verification
 - `bun run dev` — app loads, sections display, cards flip, sliders work, theme toggles

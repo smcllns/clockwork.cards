@@ -1,21 +1,19 @@
 import { JSX, createEffect, createSignal } from 'solid-js'
-import { usePageState } from '../store'
 
 interface EditableProps {
   id: string
   default: string
   style?: JSX.CSSProperties
   class?: string
+  textOverrides: Record<string, string>
+  onOverride: (key: string, value: string) => void
+  onClear: (key: string) => void
 }
 
 export function Editable(props: EditableProps): JSX.Element {
-  const pageState = usePageState()
   let el: HTMLSpanElement | undefined
 
-  const text = () => {
-    const overrides = pageState.textOverrides()
-    return overrides[props.id] ?? props.default
-  }
+  const text = () => props.textOverrides[props.id] ?? props.default
 
   const [editing, setEditing] = createSignal(false)
 
@@ -30,10 +28,10 @@ export function Editable(props: EditableProps): JSX.Element {
     if (!el) return
     const newText = (el.textContent ?? '').trim()
     if (newText === '' || newText === props.default) {
-      pageState.clearTextOverride(props.id)
+      props.onClear(props.id)
       el.textContent = props.default
     } else {
-      pageState.setTextOverride(props.id, newText)
+      props.onOverride(props.id, newText)
     }
   }
 

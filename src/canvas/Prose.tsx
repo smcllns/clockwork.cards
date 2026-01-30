@@ -1,34 +1,44 @@
 import { createSignal, Show, For, JSX } from 'solid-js'
-import type { MetricConfig, MetricContext, MathStep } from '../types'
+import type { FactFn, FactData, MathStep } from '../lib/types'
+import { useStore } from './store'
 
 interface ProseProps {
-  metrics: MetricConfig[]
-  ctx: MetricContext
+  facts: FactFn[]
 }
 
 export function Prose(props: ProseProps): JSX.Element {
-  const [expanded, setExpanded] = createSignal<string | null>(null)
+  const store = useStore()
+  const [expanded, setExpanded] = createSignal<number | null>(null)
+
+  const ctx = () => ({
+    now: store.now(),
+    dob: store.dob,
+    name: store.name,
+    gender: store.gender,
+  })
+
+  const facts = (): FactData[] => props.facts.map(fn => fn(ctx()))
 
   return (
     <div style={{ display: 'flex', 'flex-direction': 'column', gap: '8px' }}>
-      <For each={props.metrics}>
-        {(metric) => (
+      <For each={facts()}>
+        {(fact, i) => (
           <div
-            onClick={() => setExpanded(expanded() === metric.id ? null : metric.id)}
+            onClick={() => setExpanded(expanded() === i() ? null : i())}
             style={{
               background: 'var(--card)',
               border: '1px solid var(--border)',
               'border-radius': 'var(--radius)',
               padding: '16px',
-              cursor: 'pointer',
+              cursor: fact.math ? 'pointer' : 'default',
               transition: 'all 0.2s',
             }}
             class="card-glow"
           >
             <p style={{ 'font-size': '16px', color: 'var(--foreground)', 'line-height': '1.5' }}>
-              {metric.prose(props.ctx)}
+              {fact.prose}
             </p>
-            <Show when={expanded() === metric.id}>
+            <Show when={expanded() === i() && fact.math}>
               <div class="font-mono" style={{
                 'font-size': '13px',
                 color: 'var(--muted-foreground)',
@@ -39,7 +49,7 @@ export function Prose(props: ProseProps): JSX.Element {
                 'flex-direction': 'column',
                 gap: '4px',
               }}>
-                <ProseSteps steps={metric.math(props.ctx)} />
+                <ProseSteps steps={fact.math!} />
               </div>
             </Show>
           </div>
