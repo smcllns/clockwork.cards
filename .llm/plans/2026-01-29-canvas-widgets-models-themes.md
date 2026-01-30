@@ -25,20 +25,21 @@
 
 None currently known.
 
-## Next: Cleanup & Real Card
+## Cleanup Pass (Complete)
 
-Priority is a cleanup pass to prepare for implementing the real kids birthday card. A fresh Claude should handle this.
+17. [x] **Remove dead code in FlipCard** — stripped settings face, gear icon, params props, Slider import. Simplified face to boolean.
+18. [x] **Extract Hero widget** — `src/widgets/Hero.tsx` as canvas building block with props (age, name, dob, subtitle, hint).
+19. [x] **Fix stale hint text** — removed "Tap the gear to adjust variables" (gear now in Section headers).
+20. [x] **Delete example/ directory** — 11 unused design reference files.
+21. [x] **Update docs** — CLAUDE.md, notes, plan file updated.
 
-### Cleanup tasks
-- **Remove dead code in FlipCard** — settings face, gear icon, params/paramValues/onParamChange props are no longer used by any caller. Strip them.
-- **Extract Hero widget** — hero is inline in Demo.tsx, should be a widget for customization
-- **Update all docs** — CLAUDE.md, notes, file map to reflect current state after cleanup
-- **Minimize abstractions** — look for anything unnecessary and simplify
+Bundle: ~42.5KB JS (down from 45.3KB).
 
-### After cleanup
-- **Build the real kids card** — implement Sam's actual birthday card. This will surface real needs and drive further feature decisions.
+## Next: Build the Real Card
+
+Implement Sam's actual birthday card. This will surface real needs and drive further feature decisions.
 
 ### Deferred (wait for real need)
-- **CSS/theming** — wait until product features are more settled. When doing themes: support custom Google Fonts as a first-class feature so users can specify a font when creating a custom style.
-- **Cross-section param sharing** — WON'T SUPPORT unless a real need arises. Don't add to any backlog.
+- **CSS/theming** — wait until product features are more settled. When doing themes: support custom Google Fonts as a first-class feature.
+- **Cross-section param sharing** — WON'T SUPPORT unless a real need arises.
 - **Divider widget** — not yet needed
