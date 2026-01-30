@@ -147,6 +147,9 @@ Facts are safe by design: pure functions that receive data and return data. No D
 - URL params (?name=X&dob=Y&theme=Z&gender=boy) work
 - localStorage persistence + reset
 
+## Known Bugs
+- **Card flip animations reset mid-animation** — `<For>` in Section.tsx recreates DOM elements every 1s tick because `facts()` returns new objects. Fix: use `<Index>` instead of `<For>` (position-stable), or restructure so the array reference is stable and only individual FactData properties update reactively.
+
 ## Deferred
 - **CSS/theming** — not yet refined, will iterate once further along
 - **Cross-section param sharing** — params local to Section for now; can promote to store later if needed
