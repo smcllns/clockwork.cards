@@ -46,7 +46,8 @@ Store is just: `now` (1s timer signal), `dob`, `name`, `gender`. That's it. No s
 | `src/models/steps.ts` | 4 fact functions + 3 params |
 | `src/models/space.ts` | 5 fact functions |
 | `src/models/fun-facts.ts` | 5 fact functions (blinks, breaths, meals, poops, hair) |
-| `src/widgets/FlipCard.tsx` | 3D flip card: value + math faces (⚠️ has dead settings face code) |
+| `src/widgets/Hero.tsx` | Birthday hero banner (age, name, dob, subtitle, hint) |
+| `src/widgets/FlipCard.tsx` | 3D flip card: value + math faces |
 | `src/widgets/Slider.tsx` | Range input |
 | `src/widgets/ThemeToggle.tsx` | Cyberpunk ↔ Minimalist toggle |
 | `src/widgets/Confetti.tsx` | Celebration particles |
@@ -67,9 +68,8 @@ Store is just: `now` (1s timer signal), `dob`, `name`, `gender`. That's it. No s
 - JS: ~45.3KB (gzip: ~15.0KB)
 - CSS: ~3.0KB (gzip: ~1.1KB)
 
-## Cleanup Needed
-- **FlipCard dead code** — settings face, gear icon, params/paramValues/onParamChange props are unused. Strip them.
-- **Extract Hero widget** — hero section is inline in Demo.tsx, should be its own widget for customization.
+## Cleanup Status
+FlipCard dead code (settings face, params props) removed. Hero extracted as canvas building block. `example/` directory deleted (unused design reference files).
 
 ## Product Decisions
 - **Cross-section param sharing** — WON'T SUPPORT. Wait for real need to arise.

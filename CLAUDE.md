@@ -34,6 +34,7 @@ src/
 │   └── store.ts       # Timer (now), dob, name, gender
 │
 ├── widgets/          # UI renderers
+│   ├── Hero.tsx       # Birthday hero banner (age, name, dob)
 │   ├── FlipCard.tsx   # 3D flip card: value + math faces
 │   ├── Slider.tsx     # Range input
 │   ├── ThemeToggle.tsx
@@ -67,7 +68,7 @@ src/
 Each fact is a `FactFn = (ctx: FactContext) => FactData`. No DOM, no SolidJS, no side effects. Receives context (including param values), returns data.
 
 ### Canvas as JSX
-Each canvas is a JSX component that composes `<Section>`, `<Prose>`, etc. The JSX IS the layout.
+Each canvas is a JSX component that composes `<Hero>`, `<Section>`, `<Prose>`, etc. The JSX IS the layout.
 
 ### Section-Local Params
 Each `<Section>` manages its own param signals. Params displayed as inline values with a gear icon to toggle edit mode (sliders). Persisted to localStorage (`happy-metrics.params.{SectionName}`).

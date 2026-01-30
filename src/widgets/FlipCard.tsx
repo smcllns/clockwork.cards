@@ -1,9 +1,6 @@
 import { createSignal, Show, For, JSX } from 'solid-js'
-import { Slider } from './Slider'
-import type { FactData, MathStep, ParamDef } from '../lib/types'
+import type { FactData, MathStep } from '../lib/types'
 import { formatNumber, formatCompact } from '../lib/format'
-
-type WidgetFace = 'front' | 'math' | 'settings'
 
 const accentColors = {
   warm: 'var(--chart-1)',
@@ -26,34 +23,16 @@ function formatValue(value: number | string, format?: string): string {
 
 interface FlipCardProps {
   fact: FactData
-  params?: Record<string, ParamDef>
-  paramValues?: Record<string, number>
-  onParamChange?: (key: string, value: number) => void
 }
 
 export function FlipCard(props: FlipCardProps): JSX.Element {
-  const [face, setFace] = createSignal<WidgetFace>('front')
+  const [flipped, setFlipped] = createSignal(false)
 
-  const handleCardClick = () => {
-    if (face() === 'front') setFace('math')
-    else if (face() === 'math') setFace('front')
-  }
-
-  const handleSettingsClick = (e: MouseEvent) => {
-    e.stopPropagation()
-    setFace(face() === 'settings' ? 'front' : 'settings')
-  }
+  const toggle = () => setFlipped(!flipped())
 
   const accent = () => accentColors[props.fact.accent ?? 'neutral']
-
-  const cardTransform = (): string => {
-    if (face() === 'math' || face() === 'settings') return 'rotateY(180deg)'
-    return ''
-  }
-
   const displayValue = () => formatValue(props.fact.value, props.fact.format)
   const isStringValue = () => typeof props.fact.value === 'string'
-  const hasParams = () => props.params && Object.keys(props.params).length > 0
 
   return (
     <div class="perspective-1000" style={{ height: '100%' }}>
@@ -65,12 +44,12 @@ export function FlipCard(props: FlipCardProps): JSX.Element {
           height: '100%',
           'min-height': '160px',
           transition: 'transform 0.5s',
-          transform: cardTransform(),
+          transform: flipped() ? 'rotateY(180deg)' : '',
         }}
       >
         {/* Front Face */}
         <div
-          onClick={handleCardClick}
+          onClick={toggle}
           class={`backface-hidden stat-card ${props.fact.live ? 'neon-border' : 'card-glow'}`}
           style={{
             position: 'absolute',
@@ -86,28 +65,6 @@ export function FlipCard(props: FlipCardProps): JSX.Element {
             transition: 'all 0.2s',
           }}
         >
-          <Show when={hasParams()}>
-            <button
-              onClick={handleSettingsClick}
-              style={{
-                position: 'absolute',
-                top: '12px',
-                right: '12px',
-                padding: '6px',
-                background: 'transparent',
-                border: 'none',
-                'border-radius': '6px',
-                cursor: 'pointer',
-                color: 'var(--muted-foreground)',
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
-            </button>
-          </Show>
-
           <p style={{
             'font-size': '11px',
             'font-weight': '500',
@@ -146,7 +103,7 @@ export function FlipCard(props: FlipCardProps): JSX.Element {
         {/* Math Face */}
         <Show when={props.fact.math}>
           <div
-            onClick={handleCardClick}
+            onClick={toggle}
             class="backface-hidden rotate-y-180"
             style={{
               position: 'absolute',
@@ -157,7 +114,7 @@ export function FlipCard(props: FlipCardProps): JSX.Element {
               'border-radius': 'var(--radius)',
               padding: '16px',
               'border-left': `4px solid ${accent()}`,
-              display: face() === 'settings' ? 'none' : 'flex',
+              display: 'flex',
               'flex-direction': 'column',
               overflow: 'hidden',
             }}
@@ -173,59 +130,6 @@ export function FlipCard(props: FlipCardProps): JSX.Element {
             </div>
             <div class="font-mono" style={{ 'font-size': '14px', color: 'var(--foreground)', opacity: '0.9', overflow: 'auto', flex: '1', 'min-height': '0' }}>
               <MathSteps steps={props.fact.math!} />
-            </div>
-          </div>
-        </Show>
-
-        {/* Settings Face */}
-        <Show when={hasParams()}>
-          <div
-            class="backface-hidden rotate-y-180"
-            style={{
-              position: 'absolute',
-              inset: '0',
-              background: 'var(--card)',
-              border: '1px solid var(--border)',
-              'border-radius': 'var(--radius)',
-              padding: '16px',
-              'border-left': `4px solid ${accent()}`,
-              display: face() === 'math' ? 'none' : undefined,
-            }}
-          >
-            <div style={{ display: 'flex', 'align-items': 'center', 'justify-content': 'space-between', 'margin-bottom': '12px' }}>
-              <p style={{ 'font-size': '11px', 'font-weight': '500', 'text-transform': 'uppercase', 'letter-spacing': '0.05em', color: 'var(--muted-foreground)' }}>
-                Adjust Variables
-              </p>
-              <button
-                onClick={handleSettingsClick}
-                style={{ padding: '4px', background: 'transparent', border: 'none', cursor: 'pointer', 'border-radius': '4px' }}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--muted-foreground)" stroke-width="2">
-                  <path d="M18 6 6 18" />
-                  <path d="m6 6 12 12" />
-                </svg>
-              </button>
-            </div>
-            <div style={{ display: 'flex', 'flex-direction': 'column', gap: '16px' }}>
-              <For each={Object.entries(props.params ?? {})}>
-                {([key, def]) => (
-                  <div>
-                    <div style={{ display: 'flex', 'justify-content': 'space-between', 'font-size': '12px', color: 'var(--muted-foreground)', 'margin-bottom': '8px' }}>
-                      <span>{def.label}</span>
-                      <span class="font-mono" style={{ 'font-weight': '600', color: 'var(--foreground)' }}>
-                        {formatNumber(props.paramValues?.[key] ?? def.default)}{def.unit ?? ''}
-                      </span>
-                    </div>
-                    <Slider
-                      value={props.paramValues?.[key] ?? def.default}
-                      onChange={(v) => props.onParamChange?.(key, v)}
-                      min={def.min}
-                      max={def.max}
-                      step={def.step}
-                    />
-                  </div>
-                )}
-              </For>
             </div>
           </div>
         </Show>

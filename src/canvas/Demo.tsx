@@ -2,6 +2,7 @@ import { createSignal, onMount, onCleanup, Show, JSX } from 'solid-js'
 import { useStore } from './store'
 import { Section } from './Section'
 import { Prose } from './Prose'
+import { Hero } from '../widgets/Hero'
 import { Confetti } from '../widgets/Confetti'
 import { ThemeToggle, type Theme } from '../widgets/ThemeToggle'
 import { getAge } from '../lib/time'
@@ -65,57 +66,13 @@ export function Demo(props: DemoProps): JSX.Element {
         margin: "0 auto",
         padding: "0 16px 80px",
       }}>
-        {/* Hero */}
-        <header class="display-hero" style={{
-          "text-align": "center",
-          padding: "40px 16px 64px",
-        }}>
-          <div class="hero-age glow font-mono" style={{
-            "font-size": "clamp(6rem, 25vw, 12rem)",
-            "font-weight": "700",
-            "line-height": "1",
-            color: "var(--primary)",
-            "margin-bottom": "8px",
-          }}>
-            {age()}
-          </div>
-
-          <h1 style={{
-            "font-size": "clamp(1.5rem, 5vw, 2.5rem)",
-            "font-weight": "600",
-            color: "var(--foreground)",
-            "margin-bottom": "16px",
-          }}>
-            Happy Birthday {store.name}
-          </h1>
-
-          <p style={{
-            "font-size": "clamp(1rem, 3vw, 1.25rem)",
-            color: "var(--muted-foreground)",
-            "line-height": "1.6",
-            "max-width": "500px",
-            margin: "0 auto 12px",
-          }}>
-            You are {ageWord()}
-          </p>
-
-          <p class="glow font-mono" style={{
-            "font-size": "clamp(1rem, 3vw, 1.25rem)",
-            color: "var(--primary)",
-            "font-weight": "600",
-            "margin-bottom": "32px",
-          }}>
-            {formatDate(store.dob)}
-          </p>
-
-          <p style={{
-            "font-size": "13px",
-            color: "var(--muted-foreground)",
-            opacity: "0.7",
-          }}>
-            Tap any card to see the math. Tap the gear to adjust variables.
-          </p>
-        </header>
+        <Hero
+          age={age()}
+          name={store.name}
+          dob={formatDate(store.dob)}
+          subtitle={`You are ${ageWord()}`}
+          hint="Tap any card to see the math"
+        />
 
         {/* Sections */}
         <div style={{ display: "flex", "flex-direction": "column", gap: "40px" }}>
