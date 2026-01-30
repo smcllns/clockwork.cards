@@ -1,0 +1,19 @@
+/* themes/minimalist.css */
+
+.theme-minimalist {
+  --background: #fafafa;
+  --foreground: #1a1a1a;
+  --card: #ffffff;
+  --border: #e5e5e5;
+  --primary: #2563eb;
+  --muted: #f5f5f5;
+  --muted-foreground: #737373;
+  --radius: 8px;
+
+  --chart-1: #e11d48;  /* warm */
+  --chart-2: #2563eb;  /* cool */
+  --chart-3: #ca8a04;  /* earth */
+
+  --glow-color: transparent;
+  --neon-border-color: transparent;
+}
