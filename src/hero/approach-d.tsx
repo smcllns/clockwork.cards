@@ -362,7 +362,6 @@ const MONTHS = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", 
 
 export default function ApproachD({ name, age, dob }: { name: string; age: number; dob: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
   const stateRef = useRef<SceneState | null>(null);
   const [chaos, setChaos] = useState(false);
   const shiny = useTheme(s => s.shiny);
@@ -431,19 +430,6 @@ export default function ApproachD({ name, age, dob }: { name: string; age: numbe
       const vRad = (VFOV * Math.PI) / 180;
       const visH = 2 * camDist * Math.tan(vRad / 2);
       const visW = visH * aspect;
-
-      // button obstacle — positioned at bottom center of viewport
-      const btnWorldY = -visH * 0.35;
-      const btnHalfW = visW * 0.08;
-      const btnHalfH = visH * 0.02;
-      const btnBody = world.createRigidBody(
-        RAPIER.RigidBodyDesc.fixed().setTranslation(0, btnWorldY, 0)
-      );
-      world.createCollider(
-        RAPIER.ColliderDesc.cuboid(btnHalfW, btnHalfH, 3)
-          .setRestitution(0.5).setFriction(0.3),
-        btnBody,
-      );
 
       function animate(): void {
         const st = stateRef.current!;
@@ -609,18 +595,37 @@ export default function ApproachD({ name, age, dob }: { name: string; age: numbe
           </button>
         </div>
       </nav>
-      <button
-        ref={buttonRef}
-        onClick={!chaos ? unleashChaos : undefined}
-        className={`absolute left-1/2 -translate-x-1/2 z-10 px-6 py-2.5 rounded text-xs font-bold uppercase tracking-wider border-2 transition-all duration-300 ${
-          chaos
-            ? "border-zinc-300 text-zinc-400 line-through cursor-default opacity-60 rotate-2 scale-95"
-            : "border-red-500 text-red-600 bg-red-50 hover:bg-red-100 cursor-pointer shadow-md hover:shadow-lg"
-        }`}
-        style={{ bottom: "15%" }}
-      >
-        {chaos ? "⚠ BROKEN" : "⚠ DO NOT PRESS"}
-      </button>
+      <div className="absolute bottom-6 right-6 z-10 flex flex-col items-center gap-1.5">
+        <button
+          onClick={!chaos ? unleashChaos : undefined}
+          className={`relative w-10 h-10 rounded-full transition-all duration-300 ${
+            chaos
+              ? "cursor-default scale-90"
+              : "cursor-pointer hover:scale-105 active:scale-95"
+          }`}
+          style={{
+            background: chaos
+              ? "radial-gradient(circle at 40% 35%, #666, #333)"
+              : "radial-gradient(circle at 40% 35%, #ff4444, #cc0000)",
+            boxShadow: chaos
+              ? "0 2px 8px rgba(0,0,0,0.2), inset 0 -2px 4px rgba(0,0,0,0.3)"
+              : "0 0 12px rgba(255,0,0,0.4), 0 0 24px rgba(255,0,0,0.2), 0 4px 8px rgba(0,0,0,0.3), inset 0 -3px 6px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,100,100,0.3)",
+            border: chaos ? "3px solid #555" : "3px solid #990000",
+          }}
+        />
+        <span
+          className="text-center leading-tight max-w-24"
+          style={{
+            fontFamily: "'Caveat', 'Segoe Script', cursive",
+            color: chaos ? "var(--text-secondary)" : "var(--text-primary)",
+            opacity: chaos ? 0.4 : 0.7,
+            textDecoration: "none",
+            fontSize: "0.95rem",
+          }}
+        >
+          Do not press this button
+        </span>
+      </div>
     </section>
   );
 }
