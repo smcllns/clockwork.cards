@@ -2,16 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import RAPIER from "@dimforge/rapier3d-compat";
 import { FONT, CHAR_W, CHAR_H, CHAR_GAP, LINE_GAP, SPACE_W, birthdayLines } from "./font";
-
-const COLORS = [
-  0xff6b6b, 0x4ecdc4, 0x45b7d1, 0x96ceb4, 0xffeaa7,
-  0xdda0dd, 0x98d8c8, 0xf7dc6f, 0xbb8fce, 0x85c1e9,
-];
+import { LIGHT, SHINY } from "./colors";
+import { useTheme } from "../store/theme";
 
 const DEPTH = 0.6;
 const VFOV = 50;
 
-type Letter = { color: number; offsets: { x: number; y: number }[]; cx: number; cy: number };
+type Letter = { colorIndex: number; offsets: { x: number; y: number }[]; cx: number; cy: number };
 
 type SceneState = {
   world: RAPIER.World;
@@ -23,6 +20,7 @@ type SceneState = {
   frame: number;
   origins: { x: number; y: number; z: number }[];
   anchored: boolean;
+  colorIndices: number[];
 };
 
 function layoutLetters(lines: string[]): { letters: Letter[]; maxW: number; totalH: number } {
@@ -60,7 +58,7 @@ function layoutLetters(lines: string[]): { letters: Letter[]; maxW: number; tota
       const comX = abs.reduce((s, p) => s + p.x, 0) / abs.length;
       const comY = abs.reduce((s, p) => s + p.y, 0) / abs.length;
       letters.push({
-        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        colorIndex: Math.floor(Math.random() * LIGHT.hex.length),
         offsets: abs.map(p => ({ x: p.x - comX, y: -(p.y - comY) })),
         cx: comX - maxW / 2,
         cy: -(comY - totalH / 2),
@@ -101,7 +99,7 @@ function createLetterBodies(
   const meshes: THREE.Group[] = [];
 
   for (const letter of letters) {
-    const mat = new THREE.MeshStandardMaterial({ color: letter.color });
+    const mat = new THREE.MeshStandardMaterial({ color: LIGHT.hex[letter.colorIndex] });
     const group = new THREE.Group();
     for (const off of letter.offsets) {
       const mesh = new THREE.Mesh(boxGeo, mat);
@@ -236,6 +234,7 @@ export default function ApproachD({ name, age }: { name: string; age: number }) 
   const containerRef = useRef<HTMLDivElement>(null);
   const stateRef = useRef<SceneState | null>(null);
   const [chaos, setChaos] = useState(false);
+  const shiny = useTheme(s => s.shiny);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -259,7 +258,8 @@ export default function ApproachD({ name, age }: { name: string; age: number }) 
         const t = b.translation();
         return { x: t.x, y: t.y, z: t.z };
       });
-      stateRef.current = { world, bodies, meshes, renderer, camera, scene, frame: 0, origins, anchored: true };
+      const colorIndices = letters.map(l => l.colorIndex);
+      stateRef.current = { world, bodies, meshes, renderer, camera, scene, frame: 0, origins, anchored: true, colorIndices };
 
       function animate(): void {
         for (const body of grabbed) {
@@ -302,6 +302,32 @@ export default function ApproachD({ name, age }: { name: string; age: number }) 
     };
   }, []);
 
+  useEffect(() => {
+    const s = stateRef.current;
+    if (!s) return;
+
+    const palette = shiny ? SHINY : LIGHT;
+    s.renderer.setClearColor(shiny ? 0x0a0a0f : 0xfffbeb);
+
+    for (let i = 0; i < s.meshes.length; i++) {
+      const group = s.meshes[i];
+      const colorIndex = s.colorIndices[i];
+      const hexColor = palette.hex[colorIndex];
+
+      for (const mesh of group.children) {
+        const material = mesh.material as THREE.MeshStandardMaterial;
+        material.color.setHex(hexColor);
+        if (shiny) {
+          material.emissive.setHex(hexColor);
+          material.emissiveIntensity = 0.4;
+        } else {
+          material.emissive.setHex(0x000000);
+          material.emissiveIntensity = 0;
+        }
+      }
+    }
+  }, [shiny]);
+
   function unleashChaos(): void {
     const s = stateRef.current;
     if (!s) return;
@@ -316,9 +342,9 @@ export default function ApproachD({ name, age }: { name: string; age: number }) 
   }
 
   return (
-    <section ref={containerRef} className="h-dvh relative overflow-hidden bg-amber-50">
+    <section ref={containerRef} className="h-dvh relative overflow-hidden" style={{ background: 'var(--bg-hero)' }}>
       <nav className="relative z-10 flex items-center px-6 py-4">
-        <span className="text-sm font-medium text-zinc-400">clockwork.cards/{name.toLowerCase()}</span>
+        <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>clockwork.cards/{name.toLowerCase()}</span>
         <div className="ml-auto flex gap-2">
           {["d", "c"].map(v => (
             <a key={v} href={`?hero=${v}`} className={`text-xs px-2 py-1 rounded ${v === "d" ? "bg-zinc-800 text-white" : "bg-zinc-200 text-zinc-600"}`}>{v.toUpperCase()}</a>
