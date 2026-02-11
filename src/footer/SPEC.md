@@ -21,19 +21,21 @@ The toggle switches between two themes. It's discovered last — the fun reward 
 - Neon glows: cyan, magenta, electric purple. CSS `box-shadow` and `text-shadow`.
 - Same shapes, spacing, border-radii as light mode — only colors/shadows/lighting change.
 - Hardware-accelerated where possible (`transform`, `will-change`, `filter`).
-- All effects in pure CSS — no JS animation libraries.
+- CSS effects (box-shadow, text-shadow) for HTML elements; JS-driven color/glow updates for physics renderers.
 
 ## Theme Implementation
-- Toggle adds/removes a class on `document.documentElement` (e.g. `.shiny`).
-- CSS custom properties define the theme palette.
-- Both themes defined in CSS files within `src/footer/`.
-- Shiny mode styles use the `.shiny` parent selector.
+- Zustand store (`src/store/theme.ts`) owns the `shiny` boolean and toggles `.shiny` class on `<html>`.
+- CSS custom properties define the theme palette (`src/footer/theme.css`).
+- Both themes defined in `:root` / `:root.shiny` blocks.
+- Hero physics renderers subscribe to the store and imperatively update colors:
+  - Three.js (approach D): swaps material colors + emissive glow
+  - Matter.js (approach C): swaps fillStyle + canvas shadowBlur glow
+- Shared color palettes in `src/hero/colors.ts` (LIGHT + SHINY, hex numbers + CSS strings).
 
 ## Props
-Component receives: no props needed (toggle manages its own state).
+Component receives: no props needed (reads from Zustand store).
 
 ## Constraints
-- All code in `src/footer/`.
+- Footer code in `src/footer/`. Theme store in `src/store/theme.ts`.
 - Export default component from `src/footer/index.tsx`.
 - Theme CSS exported/imported so it applies globally.
-- The toggle state can be simple React state (no Zustand needed yet).
