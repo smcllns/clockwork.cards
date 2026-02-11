@@ -20,3 +20,7 @@ function App() {
 }
 
 createRoot(document.getElementById("root")!).render(<App />);
+
+if (import.meta.hot) {
+  import.meta.hot.accept();
+}
