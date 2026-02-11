@@ -2,11 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import Matter from "matter-js";
 import { getTextPixels, birthdayLines } from "./font";
 import { setupMultiGrab } from "./multi-grab";
-
-const COLORS = [
-  "#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7",
-  "#DDA0DD", "#98D8C8", "#F7DC6F", "#BB8FCE", "#85C1E9",
-];
+import { LIGHT, SHINY } from "./colors";
+import { useTheme } from "../store/theme";
 
 export default function ApproachC({ name, age }: { name: string; age: number }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -15,7 +12,11 @@ export default function ApproachC({ name, age }: { name: string; age: number }) 
   const bodiesRef = useRef<Matter.Body[]>([]);
   const constraintsRef = useRef<Matter.Constraint[]>([]);
   const anchorsRef = useRef<Matter.Constraint[]>([]);
+  const colorIndicesRef = useRef<number[]>([]);
+  const shinyRef = useRef<boolean>(false);
+  const bgColorRef = useRef<string>("#fffbeb");
   const [chaos, setChaos] = useState(false);
+  const shiny = useTheme(s => s.shiny);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -43,9 +44,11 @@ export default function ApproachC({ name, age }: { name: string; age: number }) 
     // Create dynamic circles (no gravity, held by constraints)
     const bodies: Matter.Body[] = [];
     const bodyMap = new Map<string, { body: Matter.Body; pixel: typeof pixels[0] }>();
+    const colorIndices: number[] = [];
 
     for (const p of pixels) {
-      const color = COLORS[Math.floor(Math.random() * COLORS.length)];
+      const colorIdx = Math.floor(Math.random() * LIGHT.css.length);
+      const color = LIGHT.css[colorIdx];
       const r = p.radius * (0.7 + Math.random() * 0.6);
       const body = Matter.Bodies.circle(p.x, p.y, r, {
         frictionAir: 0.01,
@@ -54,9 +57,11 @@ export default function ApproachC({ name, age }: { name: string; age: number }) 
         render: { fillStyle: color },
       });
       bodies.push(body);
+      colorIndices.push(colorIdx);
       bodyMap.set(`${p.letter}-${p.gridRow}-${p.gridCol}`, { body, pixel: p });
     }
     bodiesRef.current = bodies;
+    colorIndicesRef.current = colorIndices;
     Matter.Composite.add(engine.world, bodies);
 
     const anchors: Matter.Constraint[] = [];
@@ -100,20 +105,38 @@ export default function ApproachC({ name, age }: { name: string; age: number }) 
     let frame: number;
     function draw() {
       Matter.Engine.update(engine, 1000 / 60);
-      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = bgColorRef.current;
+      ctx.fillRect(0, 0, w, h);
       for (const body of bodies) {
         ctx.fillStyle = (body.render as any).fillStyle;
         ctx.globalAlpha = 0.85;
+        if (shinyRef.current) {
+          ctx.shadowBlur = 12;
+          ctx.shadowColor = (body.render as any).fillStyle;
+        }
         ctx.beginPath();
         ctx.arc(body.position.x, body.position.y, body.circleRadius!, 0, Math.PI * 2);
         ctx.fill();
       }
+      ctx.shadowBlur = 0;
       frame = requestAnimationFrame(draw);
     }
     draw();
 
     return () => { cancelAnimationFrame(frame); Matter.Engine.clear(engine); };
   }, []);
+
+  useEffect(() => {
+    const palette = shiny ? SHINY : LIGHT;
+    shinyRef.current = shiny;
+    bgColorRef.current = shiny ? "#0a0a0f" : "#fffbeb";
+
+    const bodies = bodiesRef.current;
+    const indices = colorIndicesRef.current;
+    for (let i = 0; i < bodies.length; i++) {
+      (bodies[i].render as any).fillStyle = palette.css[indices[i]];
+    }
+  }, [shiny]);
 
   function unleashChaos() {
     const engine = engineRef.current;
@@ -133,9 +156,9 @@ export default function ApproachC({ name, age }: { name: string; age: number }) 
   }
 
   return (
-    <section ref={containerRef} className="h-dvh relative overflow-hidden bg-amber-50">
+    <section ref={containerRef} className="h-dvh relative overflow-hidden" style={{ background: 'var(--bg-hero)' }}>
       <nav className="relative z-10 flex items-center px-6 py-4">
-        <span className="text-sm font-medium text-zinc-400">clockwork.cards/{name.toLowerCase()}</span>
+        <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>clockwork.cards/{name.toLowerCase()}</span>
         <div className="ml-auto flex gap-2">
           {["d", "c"].map(v => (
             <a key={v} href={`?hero=${v}`} className={`text-xs px-2 py-1 rounded ${v === "c" ? "bg-zinc-800 text-white" : "bg-zinc-200 text-zinc-600"}`}>{v.toUpperCase()}</a>

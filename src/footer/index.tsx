@@ -1,14 +1,8 @@
-import { useState } from "react";
+import { useTheme } from "../store/theme";
 import "./theme.css";
 
 export default function Footer() {
-  const [shiny, setShiny] = useState(false);
-
-  function toggle() {
-    const next = !shiny;
-    setShiny(next);
-    document.documentElement.classList.toggle("shiny", next);
-  }
+  const { shiny, toggle } = useTheme();
 
   return (
     <footer className="px-6 py-4 flex items-center justify-between text-sm"
