@@ -16,6 +16,7 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<Matter.Engine | null>(null);
+  const bodiesRef = useRef<Matter.Body[]>([]);
   const [chaos, setChaos] = useState(false);
 
   useEffect(() => {
@@ -61,6 +62,7 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
           });
       bodies.push(body);
     }
+    bodiesRef.current = bodies;
     Matter.Composite.add(engine.world, bodies);
 
     const ctx = canvas.getContext("2d")!;
@@ -102,8 +104,7 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
     if (!engine) return;
     setChaos(true);
     engine.gravity.y = 1;
-    for (const body of engine.world.bodies) {
-      if (!body.isStatic || body.position.y < 0 || body.position.x < 0) continue;
+    for (const body of bodiesRef.current) {
       Matter.Body.setStatic(body, false);
       Matter.Body.setVelocity(body, {
         x: (Math.random() - 0.5) * 8,
