@@ -1,9 +1,29 @@
+import { useState } from "react";
+import "./theme.css";
+
 export default function Footer() {
+  const [shiny, setShiny] = useState(false);
+
+  function toggle() {
+    const next = !shiny;
+    setShiny(next);
+    document.documentElement.classList.toggle("shiny", next);
+  }
+
   return (
-    <footer className="bg-zinc-100 px-6 py-4 flex items-center justify-between text-sm text-zinc-400">
+    <footer className="px-6 py-4 flex items-center justify-between text-sm"
+      style={{ background: "var(--bg-secondary)", color: "var(--text-secondary)" }}>
       <span>&copy; 2025 clockwork.cards</span>
-      <button className="text-zinc-500 border border-zinc-300 rounded-full px-3 py-1">
-        ✨ Shiny
+      <button
+        onClick={toggle}
+        className="border rounded-full px-3 py-1 cursor-pointer transition-all"
+        style={{
+          borderColor: shiny ? "var(--accent-1)" : "var(--border-color)",
+          color: shiny ? "var(--accent-1)" : "var(--text-secondary)",
+          boxShadow: shiny ? "0 0 12px rgba(0,255,255,0.3)" : "none",
+        }}
+      >
+        {shiny ? "🌙 Shiny" : "✨ Shiny"}
       </button>
     </footer>
   );
