@@ -3,6 +3,7 @@ import Card from "./Card";
 import Gauge from "./Gauge";
 import LEDs from "./LEDs";
 import Toggle from "./Toggle";
+import StatusText from "./StatusText";
 
 const EARTH_ORBITAL_MPH = 66_616;
 const EARTH_ORBITAL_KPH = 107_218;
@@ -167,14 +168,17 @@ function HeartCard({ dob }: { dob: string }) {
 
 export default function Main({ name, dob }: { name: string; dob: string }) {
   return (
-    <section className="flex-1 flex flex-col items-center justify-center p-6 gap-4" style={{ background: "var(--bg-primary)" }}>
+    <section className="flex-1 flex flex-col items-center justify-center p-6 gap-4 relative" data-dot-grid style={{ background: "var(--bg-primary)" }}>
       <LEDs />
       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
         <AgeCard dob={dob} />
         <SunCard dob={dob} />
         <HeartCard dob={dob} />
       </div>
-      <Gauge bpm={AVG_CHILD_BPM} />
+      <div className="flex items-center gap-6">
+        <Gauge bpm={AVG_CHILD_BPM} />
+        <StatusText />
+      </div>
       <LEDs />
     </section>
   );
