@@ -362,6 +362,7 @@ const MONTHS = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", 
 
 export default function ApproachD({ name, age, dob }: { name: string; age: number; dob: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   const stateRef = useRef<SceneState | null>(null);
   const [chaos, setChaos] = useState(false);
   const shiny = useTheme(s => s.shiny);
@@ -430,6 +431,19 @@ export default function ApproachD({ name, age, dob }: { name: string; age: numbe
       const vRad = (VFOV * Math.PI) / 180;
       const visH = 2 * camDist * Math.tan(vRad / 2);
       const visW = visH * aspect;
+
+      // button obstacle — positioned at bottom center of viewport
+      const btnWorldY = -visH * 0.35;
+      const btnHalfW = visW * 0.08;
+      const btnHalfH = visH * 0.02;
+      const btnBody = world.createRigidBody(
+        RAPIER.RigidBodyDesc.fixed().setTranslation(0, btnWorldY, 0)
+      );
+      world.createCollider(
+        RAPIER.ColliderDesc.cuboid(btnHalfW, btnHalfH, 3)
+          .setRestitution(0.5).setFriction(0.3),
+        btnBody,
+      );
 
       function animate(): void {
         const st = stateRef.current!;
@@ -595,11 +609,18 @@ export default function ApproachD({ name, age, dob }: { name: string; age: numbe
           </button>
         </div>
       </nav>
-      {!chaos && (
-        <button onClick={unleashChaos} className="absolute bottom-6 right-6 z-10 bg-red-400 hover:bg-red-500 text-white text-xs px-4 py-2 rounded-full shadow-lg transition-colors cursor-pointer">
-          do not press this button
-        </button>
-      )}
+      <button
+        ref={buttonRef}
+        onClick={!chaos ? unleashChaos : undefined}
+        className={`absolute left-1/2 -translate-x-1/2 z-10 px-6 py-2.5 rounded text-xs font-bold uppercase tracking-wider border-2 transition-all duration-300 ${
+          chaos
+            ? "border-zinc-300 text-zinc-400 line-through cursor-default opacity-60 rotate-2 scale-95"
+            : "border-red-500 text-red-600 bg-red-50 hover:bg-red-100 cursor-pointer shadow-md hover:shadow-lg"
+        }`}
+        style={{ bottom: "15%" }}
+      >
+        {chaos ? "⚠ BROKEN" : "⚠ DO NOT PRESS"}
+      </button>
     </section>
   );
 }
