@@ -1,1 +1,7 @@
-/* Custom styles go here. Tailwind loaded via <link href="tailwindcss"> in index.html */
+/* Tailwind loaded via <link href="tailwindcss"> in index.html */
+
+body {
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

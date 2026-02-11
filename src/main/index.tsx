@@ -33,7 +33,7 @@ function AgeCard({ dob }: { dob: string }) {
     <Card
       front={
         <div className="text-center">
-          <p className="text-3xl font-bold mb-1">{values[unit].toLocaleString()}</p>
+          <p className="text-4xl font-bold mb-1" style={{ fontFamily: "var(--font-stat)" }} data-stat>{values[unit].toLocaleString()}</p>
           <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>
             {labels[unit]} old today
           </p>
@@ -87,7 +87,7 @@ function SunCard({ dob }: { dob: string }) {
     <Card
       front={
         <div className="text-center">
-          <p className="text-3xl font-bold mb-1">{display}</p>
+          <p className="text-4xl font-bold mb-1" style={{ fontFamily: "var(--font-stat)" }} data-stat>{display}</p>
           <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>
             {unit} around the sun
           </p>
@@ -142,7 +142,7 @@ function HeartCard({ dob }: { dob: string }) {
     <Card
       front={
         <div className="text-center">
-          <p className="text-3xl font-bold mb-1">{values[unit].value}</p>
+          <p className="text-4xl font-bold mb-1" style={{ fontFamily: "var(--font-stat)" }} data-stat>{values[unit].value}</p>
           <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>
             {values[unit].label}
           </p>
