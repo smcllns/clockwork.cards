@@ -103,62 +103,19 @@ export default function ApproachC({ name, age }: { name: string; age: number }) 
 
     const ctx = canvas.getContext("2d")!;
     let frame: number;
-    const startTime = performance.now();
 
     function draw() {
-      const elapsed = (performance.now() - startTime) / 1000;
       Matter.Engine.update(engine, 1000 / 60);
       ctx.fillStyle = bgColorRef.current;
       ctx.fillRect(0, 0, w, h);
 
-      if (shinyRef.current) {
-        // heavy glow pass
-        ctx.globalAlpha = 1;
-        for (const body of bodies) {
-          const fillColor = (body.render as any).fillStyle;
-          const r = body.circleRadius!;
-          ctx.shadowBlur = 24;
-          ctx.shadowColor = fillColor;
-          ctx.fillStyle = fillColor;
-          ctx.beginPath();
-          ctx.arc(body.position.x, body.position.y, r, 0, Math.PI * 2);
-          ctx.fill();
-          // second glow pass
-          ctx.beginPath();
-          ctx.arc(body.position.x, body.position.y, r, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        ctx.shadowBlur = 0;
-      } else {
-        // light mode — radial gradient fills with drop shadow
-        ctx.shadowColor = "rgba(0,0,0,0.12)";
-        ctx.shadowBlur = 6;
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 2;
-        for (const body of bodies) {
-          const fillColor = (body.render as any).fillStyle;
-          const r = body.circleRadius!;
-          const x = body.position.x;
-          const y = body.position.y;
-          const grad = ctx.createRadialGradient(x - r * 0.25, y - r * 0.25, r * 0.1, x, y, r);
-          grad.addColorStop(0, "#ffffff");
-          grad.addColorStop(0.4, fillColor);
-          grad.addColorStop(1, fillColor);
-          ctx.globalAlpha = 0.9;
-          ctx.fillStyle = grad;
-          ctx.beginPath();
-          ctx.arc(x, y, r, 0, Math.PI * 2);
-          ctx.fill();
-          // subtle outline
-          ctx.globalAlpha = 0.25;
-          ctx.strokeStyle = fillColor;
-          ctx.lineWidth = 1;
-          ctx.stroke();
-        }
-        ctx.shadowBlur = 0;
-        ctx.shadowOffsetY = 0;
+      ctx.globalAlpha = 0.85;
+      for (const body of bodies) {
+        ctx.fillStyle = (body.render as any).fillStyle;
+        ctx.beginPath();
+        ctx.arc(body.position.x, body.position.y, body.circleRadius!, 0, Math.PI * 2);
+        ctx.fill();
       }
-
       ctx.globalAlpha = 1;
       frame = requestAnimationFrame(draw);
     }
@@ -197,13 +154,23 @@ export default function ApproachC({ name, age }: { name: string; age: number }) 
   }
 
   return (
-    <section ref={containerRef} className="h-dvh relative overflow-hidden" data-dot-grid data-shiny-overlay style={{ background: 'var(--bg-hero)' }}>
+    <section ref={containerRef} className="h-[90dvh] relative overflow-hidden" style={{ background: 'var(--bg-hero)' }}>
       <nav className="relative z-10 flex items-center px-6 py-4">
         <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>clockwork.cards/{name.toLowerCase()}</span>
-        <div className="ml-auto flex gap-2">
+        <div className="ml-auto flex gap-2 items-center">
           {["d", "c"].map(v => (
             <a key={v} href={`?hero=${v}`} className={`text-xs px-2 py-1 rounded ${v === "c" ? "bg-zinc-800 text-white" : "bg-zinc-200 text-zinc-600"}`}>{v.toUpperCase()}</a>
           ))}
+          <button
+            onClick={() => useTheme.getState().toggle()}
+            className="text-xs px-2 py-1 rounded cursor-pointer"
+            style={{
+              background: shiny ? "var(--accent-1)" : "var(--border-color)",
+              color: shiny ? "#000" : "var(--text-secondary)",
+            }}
+          >
+            {shiny ? "✨" : "✨"}
+          </button>
         </div>
       </nav>
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />

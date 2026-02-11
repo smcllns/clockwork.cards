@@ -9,9 +9,12 @@ import { FONT, CHAR_W, CHAR_H, CHAR_GAP, LINE_GAP, SPACE_W, birthdayLines } from
 import { LIGHT, SHINY } from "./colors";
 import { useTheme } from "../store/theme";
 
-const DEPTH = 0.6;
+const DEPTH = 0.92;
 const VFOV = 50;
 const PARTICLE_COUNT = 60;
+const _yAxis = new THREE.Vector3(0, 1, 0);
+const _spinQuat = new THREE.Quaternion();
+const _vec3 = new THREE.Vector3();
 
 type Letter = { colorIndex: number; offsets: { x: number; y: number }[]; cx: number; cy: number };
 
@@ -33,6 +36,8 @@ type SceneState = {
   shiny: boolean;
   startTime: number;
   phases: Float32Array;
+  camDist: number;
+  spinAngle: number;
 };
 
 function layoutLetters(lines: string[]): { letters: Letter[]; maxW: number; totalH: number } {
@@ -239,13 +244,15 @@ function createParticles(scene: THREE.Scene, camera: THREE.PerspectiveCamera): {
 }
 
 // 5% horizontal padding, 12% vertical padding
-function fitCamera(camera: THREE.PerspectiveCamera, maxW: number, totalH: number, aspect: number): void {
+function fitCamera(camera: THREE.PerspectiveCamera, maxW: number, totalH: number, aspect: number): number {
   const vRad = (VFOV * Math.PI) / 180;
   const distH = ((totalH / 0.76) / 2) / Math.tan(vRad / 2);
   const hRad = 2 * Math.atan(aspect * Math.tan(vRad / 2));
   const distW = ((maxW / 0.9) / 2) / Math.tan(hRad / 2);
-  camera.position.set(0, 0, Math.max(distH, distW));
+  const dist = Math.max(distH, distW);
+  camera.position.set(0, 0, dist);
   camera.lookAt(0, 0, 0);
+  return dist;
 }
 
 function addWalls(world: RAPIER.World, camera: THREE.PerspectiveCamera, aspect: number): void {
@@ -253,17 +260,18 @@ function addWalls(world: RAPIER.World, camera: THREE.PerspectiveCamera, aspect: 
   const vRad = (VFOV * Math.PI) / 180;
   const visH = 2 * camDist * Math.tan(vRad / 2);
   const visW = visH * aspect;
+  const half = Math.max(visW, visH) / 2 + 2;
 
   function wall(x: number, y: number, z: number, hx: number, hy: number, hz: number): void {
     const b = world.createRigidBody(RAPIER.RigidBodyDesc.fixed().setTranslation(x, y, z));
     world.createCollider(RAPIER.ColliderDesc.cuboid(hx, hy, hz).setRestitution(0.2).setFriction(0.5), b);
   }
-  wall(0, -visH / 2 - 1, 0, visW / 2 + 1, 1, 5);   // bottom
-  wall(0, visH / 2 + 1, 0, visW / 2 + 1, 1, 5);     // top
-  wall(-visW / 2 - 1, 0, 0, 1, visH / 2 + 1, 5);    // left
-  wall(visW / 2 + 1, 0, 0, 1, visH / 2 + 1, 5);     // right
-  wall(0, 0, -3, visW / 2 + 1, visH / 2 + 1, 1);    // back
-  wall(0, 0, 3, visW / 2 + 1, visH / 2 + 1, 1);     // front
+  wall(0, -visH / 2 + 8, 0, half, 1, half);    // bottom
+  wall(0, visH / 2 + 1, 0, half, 1, half);     // top
+  wall(-half, 0, 0, 1, visH / 2 + 1, half);    // left
+  wall(half, 0, 0, 1, visH / 2 + 1, half);     // right
+  wall(0, 0, -half, half, visH / 2 + 1, 1);    // back
+  wall(0, 0, half, half, visH / 2 + 1, 1);     // front
 }
 
 function setupGrabHandlers(
@@ -347,6 +355,23 @@ export default function ApproachD({ name, age }: { name: string; age: number }) 
     if (!container) return;
     let disposed = false;
 
+    let dragging = false;
+    let lastX = 0;
+    function onPointerDown(e: PointerEvent) {
+      dragging = true;
+      lastX = e.clientX;
+    }
+    function onPointerMove(e: PointerEvent) {
+      if (!dragging || !stateRef.current) return;
+      const dx = e.clientX - lastX;
+      lastX = e.clientX;
+      stateRef.current.spinAngle += dx * 0.01;
+    }
+    function onPointerUp() { dragging = false; }
+    container.addEventListener("pointerdown", onPointerDown);
+    container.addEventListener("pointermove", onPointerMove);
+    container.addEventListener("pointerup", onPointerUp);
+
     RAPIER.init().then(() => {
       if (disposed) return;
 
@@ -356,7 +381,7 @@ export default function ApproachD({ name, age }: { name: string; age: number }) 
       const { bodies, meshes } = createLetterBodies(letters, world, scene);
       const aspect = w / h;
 
-      fitCamera(camera, maxW, totalH, aspect);
+      const camDist = fitCamera(camera, maxW, totalH, aspect);
       addWalls(world, camera, aspect);
       const { grabbed, target } = setupGrabHandlers(renderer.domElement, camera, bodies, w, h);
 
@@ -374,10 +399,9 @@ export default function ApproachD({ name, age }: { name: string; age: number }) 
         world, bodies, meshes, renderer, camera, scene, composer, bloomPass,
         particles, particleVelocities,
         frame: 0, origins, anchored: true, colorIndices, shiny: false,
-        startTime: performance.now(), phases,
+        startTime: performance.now(), phases, camDist, spinAngle: 0,
       };
 
-      const camDist = camera.position.z;
       const vRad = (VFOV * Math.PI) / 180;
       const visH = 2 * camDist * Math.tan(vRad / 2);
       const visW = visH * aspect;
@@ -386,27 +410,31 @@ export default function ApproachD({ name, age }: { name: string; age: number }) 
         const st = stateRef.current!;
         const elapsed = (performance.now() - st.startTime) / 1000;
 
-        for (const body of grabbed) {
-          const pos = body.translation();
-          body.setLinvel({ x: (target.x - pos.x) * 12, y: (target.y - pos.y) * 12, z: 0 }, true);
-          body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+        if (!st.anchored) {
+          for (const body of grabbed) {
+            const pos = body.translation();
+            body.setLinvel({ x: (target.x - pos.x) * 12, y: (target.y - pos.y) * 12, z: 0 }, true);
+            body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+          }
         }
         if (st.anchored) {
           for (let i = 0; i < bodies.length; i++) {
             if (grabbed.includes(bodies[i])) continue;
             const pos = bodies[i].translation();
             const orig = origins[i];
-            bodies[i].setLinvel({ x: (orig.x - pos.x) * 8, y: (orig.y - pos.y) * 8, z: -pos.z * 8 }, true);
+            bodies[i].setLinvel({ x: (orig.x - pos.x) * 20, y: (orig.y - pos.y) * 20, z: -pos.z * 20 }, true);
             const rot = bodies[i].rotation();
             bodies[i].setAngvel({ x: -rot.x * 8, y: -rot.y * 8, z: -rot.z * 8 }, true);
           }
         }
         world.step();
+        _spinQuat.setFromAxisAngle(_yAxis, st.spinAngle);
         for (let i = 0; i < bodies.length; i++) {
           const pos = bodies[i].translation();
           const rot = bodies[i].rotation();
-          meshes[i].position.set(pos.x, pos.y, pos.z);
-          meshes[i].quaternion.set(rot.x, rot.y, rot.z, rot.w);
+          _vec3.set(pos.x, pos.y, pos.z).applyQuaternion(_spinQuat);
+          meshes[i].position.copy(_vec3);
+          meshes[i].quaternion.set(rot.x, rot.y, rot.z, rot.w).premultiply(_spinQuat);
         }
 
         // emissive pulse in shiny mode
@@ -441,6 +469,9 @@ export default function ApproachD({ name, age }: { name: string; age: number }) 
 
     return () => {
       disposed = true;
+      container.removeEventListener("pointerdown", onPointerDown);
+      container.removeEventListener("pointermove", onPointerMove);
+      container.removeEventListener("pointerup", onPointerUp);
       const s = stateRef.current;
       if (s) {
         cancelAnimationFrame(s.frame);
@@ -512,13 +543,23 @@ export default function ApproachD({ name, age }: { name: string; age: number }) 
   }
 
   return (
-    <section ref={containerRef} className="h-dvh relative overflow-hidden" data-dot-grid data-shiny-overlay style={{ background: 'var(--bg-hero)' }}>
+    <section ref={containerRef} className="h-[90dvh] relative overflow-hidden" data-dot-grid data-shiny-overlay style={{ background: 'var(--bg-hero)' }}>
       <nav className="relative z-10 flex items-center px-6 py-4">
         <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-display)' }}>clockwork.cards/{name.toLowerCase()}</span>
-        <div className="ml-auto flex gap-2">
+        <div className="ml-auto flex gap-2 items-center">
           {["d", "c"].map(v => (
             <a key={v} href={`?hero=${v}`} className={`text-xs px-2 py-1 rounded ${v === "d" ? "bg-zinc-800 text-white" : "bg-zinc-200 text-zinc-600"}`}>{v.toUpperCase()}</a>
           ))}
+          <button
+            onClick={() => useTheme.getState().toggle()}
+            className="text-xs px-2 py-1 rounded cursor-pointer"
+            style={{
+              background: shiny ? "var(--accent-1)" : "var(--border-color)",
+              color: shiny ? "#000" : "var(--text-secondary)",
+            }}
+          >
+            {shiny ? "✨" : "✨"}
+          </button>
         </div>
       </nav>
       {!chaos && (
