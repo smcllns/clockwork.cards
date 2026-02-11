@@ -1,32 +1,37 @@
-# Session Checkpoint — 2026-02-11
+# Session Checkpoint — 2026-02-11 (updated session 2)
 
-## What happened
-- Reset repo to clean slate: Bun HTML entry point, React 19, Tailwind v4, Zustand
-- `bun run dev` = `bun ./index.html` (Bun serves HTML directly with HMR, Tailwind via bun-plugin-tailwind)
-- `.env` has DEFAULT_NAME=Oscar, DEFAULT_DOB=2017-02-20, DEFAULT_SEX=m (inlined via bunfig.toml `env = "DEFAULT_*"`)
-- Built layout: Hero (100dvh) → Main+Footer (100dvh flex column)
-- Created `SPEC.md` (root) and per-component `src/{hero,main,footer}/SPEC.md`
-- Built all three components: Hero (matter.js), Main (3 flip cards), Footer (shiny toggle + themes)
-- Worktrees used for parallel dev, merged back to `creatable` branch
+## What happened (session 2)
+- Merged `creatable` → `main`, now working on main directly
+- Built hero text-as-physics-shapes: pixel font (5x7 bitmap) spells "HAPPY 8TH BIRTHDAY OSCAR"
+- Explored 4 approaches (A-D), settled on C and D
+- Added Three.js + Rapier for 3D approach (D)
+- Shared `font.ts` with bitmap font A-Z + 0-9, layout engine, ordinal suffix
+- Multi-grab with touch/scroll coexistence
 
-## Current state on `creatable` branch
-- **Hero:** matter.js shapes render, "do not press" button shows. Physics chaos bug JUST FIXED (walls were falling too). Design needs work — Sam said "not quite the right design I had in mind." Need to revisit the visual concept.
-- **Main:** 3 flip cards (Age, Sun Distance, Heartbeats) with toggle units and flip-to-math. Good start, parked.
-- **Footer:** Shiny toggle + light/cyberpunk CSS themes. Good start, needs checking — some gaps in cyberpunk styles.
+## Current state on `main`
+- **D (Three.js + Rapier):** Default. 3D block letters, spring-anchored, fall on chaos, draggable. Walls match viewport frustum.
+- **C (Matter.js):** 2D constraint clusters with anchors. Circles scatter on chaos.
+- **Switcher:** `?hero=d` (default) or `?hero=c`. Dev nav links in both.
+- **Main:** 3 flip cards — parked.
+- **Footer:** Shiny toggle + themes — parked.
+- **⚠️ Uncommitted:** All hero work needs a commit.
 
-## Next steps (from Sam)
-1. **Hero: go deep, get this right first.** Current random scatter of shapes isn't the design Sam wanted. Need to discuss what he envisions.
-2. Main: parked for now.
-3. Footer: check cyberpunk styles when applied, some gaps.
+## Key decisions
+- Pixel font over SVG/vertex letter shapes — simpler, no poly-decomp
+- Velocity-based grab (setLinvel) over force-based — stable, no accumulation
+- canSleep(false) on Rapier bodies to prevent wall sticking
+- Walls from camera frustum, not text bounds
 
-## Key learnings this session
-- Bun dev server has HMR. Don't pkill/restart it between edits.
-- Subagents can't get tool permissions (Read, Bash) — dispatch failed 3 times. Build directly instead.
-- Use `dvh` not `vh` for mobile browser chrome handling.
-- `bun-plugin-tailwind` in bunfig.toml handles Tailwind v4 with zero config.
+## Files added/modified this session
+- `src/hero/font.ts` — bitmap font, layout, ordinal suffix
+- `src/hero/approach-c.tsx` — Matter.js constraint clusters
+- `src/hero/approach-d.tsx` — Three.js + Rapier 3D letters
+- `src/hero/multi-grab.ts` — shared multi-grab for Matter.js
+- `src/hero/index.tsx` — switcher for C/D
+- `src/index.tsx` — parses `?hero=` URL param
+- `package.json` — added three, @dimforge/rapier3d-compat, @types/three
 
-## Worktrees
-Three worktrees exist at `clockwork.cards-{hero,main,footer}` — can be cleaned up with `git worktree remove`.
-
-## Dev server
-`bun run dev` on port 3000 (user runs it). Claude can start on other ports if needed.
+## Next steps
+1. Hero D: tweak colors, geometry, materials/style
+2. Hero C: may evolve or get dropped
+3. Main/Footer: parked
