@@ -1,35 +1,13 @@
-import { render } from "solid-js/web"
-import { createStore, StoreProvider } from "./canvas/store"
-import { Demo } from "./canvas/Demo"
-import { Dev } from "./canvas/Dev"
-import { Proposal } from "./canvas/Proposal"
-import type { Theme } from "./widgets/ThemeToggle"
+import React from "react"
+import ReactDOM from "react-dom/client"
+import { App } from "./simple-card/App"
+import "./index.css"
 
-const params = new URLSearchParams(window.location.search)
-const name = params.get("name") || "Birthday Star"
-const defaultDob = (() => {
-  const d = new Date()
-  d.setFullYear(d.getFullYear() - 16)
-  const y = d.getFullYear()
-  const m = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
-  return `${y}-${m}-${day}`
-})()
-const dob = new Date((params.get("dob") || defaultDob) + 'T00:00:00')
-const gender = (params.get("gender") as 'boy' | 'girl' | 'neutral') || 'neutral'
-const themeParam = params.get("theme")
-const initialTheme: Theme = themeParam === "minimalist" ? "minimalist" : "cyberpunk"
+const rootElement = document.getElementById("app")
+if (!rootElement) throw new Error("No #app element found")
 
-const pathname = window.location.pathname
-
-const root = document.getElementById("app")
-if (!root) throw new Error("No #app element found")
-
-render(() => {
-  const store = createStore(dob, name, gender)
-  return (
-    <StoreProvider value={store}>
-      {pathname === '/proposal' ? <Proposal /> : pathname === '/dev' ? <Dev /> : <Demo initialTheme={initialTheme} />}
-    </StoreProvider>
-  )
-}, root)
+ReactDOM.createRoot(rootElement).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+)
