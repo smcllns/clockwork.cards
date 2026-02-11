@@ -3,13 +3,15 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "jsx": "preserve",
-    "jsxImportSource": "solid-js",
+    "jsx": "react-jsx",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "noEmit": true,
     "types": ["bun-types"]
   },
-  "include": ["src/**/*"]
+  "include": [
+    "src/index.tsx",
+    "src/simple-card/**/*"
+  ]
 }
