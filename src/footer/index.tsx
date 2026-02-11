@@ -7,7 +7,7 @@ export default function Footer() {
   return (
     <footer className="px-6 py-4 flex items-center justify-between text-sm"
       style={{ background: "var(--bg-secondary)", color: "var(--text-secondary)" }}>
-      <span>&copy; 2025 clockwork.cards</span>
+      <span>&copy; 2026 clockwork.cards</span>
       <button
         onClick={toggle}
         className="border rounded-full px-3 py-1 cursor-pointer transition-all"
