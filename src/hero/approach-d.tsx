@@ -5,7 +5,7 @@ import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
 import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
-import { FONT, CHAR_W, CHAR_H, CHAR_GAP, LINE_GAP, SPACE_W, birthdayLines } from "./font";
+import { FONT, CHAR_W, CHAR_H, CHAR_GAP, LINE_GAP, SPACE_W } from "./font";
 import { LIGHT, SHINY } from "./colors";
 import { useTheme } from "../store/theme";
 
@@ -16,7 +16,7 @@ const _yAxis = new THREE.Vector3(0, 1, 0);
 const _spinQuat = new THREE.Quaternion();
 const _vec3 = new THREE.Vector3();
 
-type Letter = { colorIndex: number; offsets: { x: number; y: number }[]; cx: number; cy: number };
+type Letter = { colorIndex: number; offsets: { x: number; y: number }[]; cx: number; cy: number; scale: number };
 
 type SceneState = {
   world: RAPIER.World;
@@ -38,30 +38,38 @@ type SceneState = {
   phases: Float32Array;
   camDist: number;
   spinAngle: number;
+  ageCount: number;
 };
 
-function layoutLetters(lines: string[]): { letters: Letter[]; maxW: number; totalH: number } {
-  const lineLayouts: { chars: { char: string; col: number }[]; width: number }[] = [];
-  for (const line of lines) {
+type LineSpec = { text: string; scale: number };
+
+function layoutLetters(specs: LineSpec[]): { letters: Letter[]; maxW: number; totalH: number } {
+  const lineLayouts: { chars: { char: string; col: number }[]; width: number; scale: number }[] = [];
+  for (const { text, scale } of specs) {
     const chars: { char: string; col: number }[] = [];
     let col = 0;
-    for (let i = 0; i < line.length; i++) {
-      if (line[i] === " ") { col += SPACE_W; continue; }
-      chars.push({ char: line[i], col });
-      col += CHAR_W;
-      if (i + 1 < line.length && line[i + 1] !== " ") col += CHAR_GAP;
+    for (let i = 0; i < text.length; i++) {
+      if (text[i] === " ") { col += SPACE_W * scale; continue; }
+      chars.push({ char: text[i], col });
+      col += CHAR_W * scale;
+      if (i + 1 < text.length && text[i + 1] !== " ") col += CHAR_GAP * scale;
     }
-    lineLayouts.push({ chars, width: col });
+    lineLayouts.push({ chars, width: col, scale });
   }
 
   const maxW = Math.max(...lineLayouts.map(l => l.width));
-  const totalH = lines.length * CHAR_H + (lines.length - 1) * LINE_GAP;
+  let totalH = 0;
+  for (let i = 0; i < lineLayouts.length; i++) {
+    totalH += CHAR_H * lineLayouts[i].scale;
+    if (i > 0) totalH += LINE_GAP * Math.max(lineLayouts[i - 1].scale, lineLayouts[i].scale);
+  }
   const letters: Letter[] = [];
 
+  let curY = 0;
   for (let li = 0; li < lineLayouts.length; li++) {
-    const { chars, width: lineW } = lineLayouts[li];
+    const { chars, width: lineW, scale } = lineLayouts[li];
+    if (li > 0) curY += LINE_GAP * Math.max(lineLayouts[li - 1].scale, lineLayouts[li].scale);
     const lineOffX = (maxW - lineW) / 2;
-    const lineOffY = li * (CHAR_H + LINE_GAP);
 
     for (const { char, col } of chars) {
       const glyph = FONT[char];
@@ -69,7 +77,7 @@ function layoutLetters(lines: string[]): { letters: Letter[]; maxW: number; tota
       const abs: { x: number; y: number }[] = [];
       for (let r = 0; r < CHAR_H; r++)
         for (let c = 0; c < CHAR_W; c++)
-          if (glyph[r][c]) abs.push({ x: lineOffX + col + c, y: lineOffY + r });
+          if (glyph[r][c]) abs.push({ x: lineOffX + col + c * scale, y: curY + r * scale });
       if (!abs.length) continue;
 
       const comX = abs.reduce((s, p) => s + p.x, 0) / abs.length;
@@ -79,8 +87,10 @@ function layoutLetters(lines: string[]): { letters: Letter[]; maxW: number; tota
         offsets: abs.map(p => ({ x: p.x - comX, y: -(p.y - comY) })),
         cx: comX - maxW / 2,
         cy: -(comY - totalH / 2),
+        scale,
       });
     }
+    curY += CHAR_H * scale;
   }
   return { letters, maxW, totalH };
 }
@@ -91,7 +101,8 @@ function setupScene(container: HTMLElement): { scene: THREE.Scene; camera: THREE
 
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(VFOV, w / h, 0.1, 200);
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setClearColor(0xffffff);
   renderer.setSize(w, h);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.shadowMap.enabled = true;
@@ -160,10 +171,12 @@ function createLetterBodies(
       clearcoat: 0.15,
       clearcoatRoughness: 0.4,
     });
+    const ls = letter.scale;
     const group = new THREE.Group();
     for (const off of letter.offsets) {
       const mesh = new THREE.Mesh(boxGeo, mat);
       mesh.position.set(off.x, off.y, 0);
+      mesh.scale.set(ls, ls, ls);
       mesh.castShadow = true;
       mesh.receiveShadow = true;
       group.add(mesh);
@@ -171,6 +184,7 @@ function createLetterBodies(
     group.position.set(letter.cx, letter.cy, 0);
     scene.add(group);
 
+    const halfCube = 0.46 * ls;
     const body = world.createRigidBody(
       RAPIER.RigidBodyDesc.dynamic()
         .setTranslation(letter.cx, letter.cy, 0)
@@ -180,7 +194,7 @@ function createLetterBodies(
     );
     for (const off of letter.offsets) {
       world.createCollider(
-        RAPIER.ColliderDesc.cuboid(0.46, 0.46, DEPTH / 2)
+        RAPIER.ColliderDesc.cuboid(halfCube, halfCube, DEPTH * ls / 2)
           .setTranslation(off.x, off.y, 0)
           .setRestitution(0.3)
           .setFriction(0.5),
@@ -344,7 +358,9 @@ function setupGrabHandlers(
   return { grabbed, target };
 }
 
-export default function ApproachD({ name, age }: { name: string; age: number }) {
+const MONTHS = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
+
+export default function ApproachD({ name, age, dob }: { name: string; age: number; dob: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const stateRef = useRef<SceneState | null>(null);
   const [chaos, setChaos] = useState(false);
@@ -377,7 +393,15 @@ export default function ApproachD({ name, age }: { name: string; age: number }) 
 
       const { scene, camera, renderer, composer, bloomPass, w, h } = setupScene(container);
       const world = new RAPIER.World({ x: 0, y: 0, z: 0 });
-      const { letters, maxW, totalH } = layoutLetters(birthdayLines(name, age));
+      const d = new Date(dob);
+      const dateLine = `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()} ${d.getUTCFullYear()}`;
+      const { letters, maxW, totalH } = layoutLetters([
+        { text: String(age), scale: 2.5 },
+        { text: "HAPPY", scale: 1.4 },
+        { text: "BIRTHDAY", scale: 1.4 },
+        { text: name.toUpperCase(), scale: 1.4 },
+        { text: dateLine, scale: 0.45 },
+      ]);
       const { bodies, meshes } = createLetterBodies(letters, world, scene);
       const aspect = w / h;
 
@@ -400,6 +424,7 @@ export default function ApproachD({ name, age }: { name: string; age: number }) 
         particles, particleVelocities,
         frame: 0, origins, anchored: true, colorIndices, shiny: false,
         startTime: performance.now(), phases, camDist, spinAngle: 0,
+        ageCount: String(age).length,
       };
 
       const vRad = (VFOV * Math.PI) / 180;
@@ -437,12 +462,19 @@ export default function ApproachD({ name, age }: { name: string; age: number }) 
           meshes[i].quaternion.set(rot.x, rot.y, rot.z, rot.w).premultiply(_spinQuat);
         }
 
-        // emissive pulse in shiny mode
         if (st.shiny) {
           for (let i = 0; i < meshes.length; i++) {
-            const pulse = 0.5 + 0.3 * Math.sin(elapsed * 1.5 + st.phases[i]);
+            const isAge = i < st.ageCount;
             for (const child of meshes[i].children) {
-              ((child as THREE.Mesh).material as THREE.MeshPhysicalMaterial).emissiveIntensity = pulse;
+              const mat = (child as THREE.Mesh).material as THREE.MeshPhysicalMaterial;
+              if (isAge) {
+                // always-bright glow cycling through hues
+                const hue = (elapsed * 0.08 + st.phases[i]) % 1;
+                mat.emissive.setHSL(hue, 1, 0.5);
+                mat.emissiveIntensity = 0.8 + 0.2 * Math.sin(elapsed * 2 + st.phases[i]);
+              } else {
+                mat.emissiveIntensity = 0.5 + 0.3 * Math.sin(elapsed * 1.5 + st.phases[i]);
+              }
             }
           }
 
@@ -489,7 +521,7 @@ export default function ApproachD({ name, age }: { name: string; age: number }) 
 
     s.shiny = shiny;
     const palette = shiny ? SHINY : LIGHT;
-    s.renderer.setClearColor(shiny ? 0x0a0a0f : 0xfffbeb);
+    s.renderer.setClearColor(shiny ? 0x0a0a0f : 0xffffff);
 
     // toggle bloom
     if (shiny) {
@@ -543,7 +575,7 @@ export default function ApproachD({ name, age }: { name: string; age: number }) 
   }
 
   return (
-    <section ref={containerRef} className="h-[90dvh] relative overflow-hidden" data-dot-grid data-shiny-overlay style={{ background: 'var(--bg-hero)' }}>
+    <section ref={containerRef} className="h-dvh relative overflow-hidden" data-dot-grid data-shiny-overlay style={{ background: 'var(--bg-hero)' }}>
       <nav className="relative z-10 flex items-center px-6 py-4">
         <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-display)' }}>clockwork.cards/{name.toLowerCase()}</span>
         <div className="ml-auto flex gap-2 items-center">

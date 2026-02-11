@@ -183,7 +183,7 @@ function HeartCard({ dob }: { dob: string }) {
 
 export default function Main({ name, dob }: { name: string; dob: string }) {
   return (
-    <section className="min-h-[90dvh] flex items-center justify-center p-6" style={{ background: "var(--bg-primary)" }}>
+    <section className="flex-1 flex items-center justify-center p-6" style={{ background: "var(--bg-primary)" }}>
       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
         <AgeCard dob={dob} />
         <SunCard dob={dob} />

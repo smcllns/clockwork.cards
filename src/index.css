@@ -1,5 +1,9 @@
 /* Tailwind loaded via <link href="tailwindcss"> in index.html */
 
+html, body {
+  overflow-x: hidden;
+}
+
 body {
   font-family: var(--font-display);
   -webkit-font-smoothing: antialiased;
