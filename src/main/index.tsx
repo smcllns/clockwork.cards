@@ -1,9 +1,5 @@
 import { useState, useEffect } from "react";
 import Card from "./Card";
-import Gauge from "./Gauge";
-import LEDs from "./LEDs";
-import Toggle from "./Toggle";
-import StatusText from "./StatusText";
 
 const EARTH_ORBITAL_MPH = 66_616;
 const EARTH_ORBITAL_KPH = 107_218;
@@ -12,15 +8,6 @@ const AVG_CHILD_BPM = 80;
 function msAlive(dob: string) {
   return Date.now() - new Date(dob).getTime();
 }
-
-const AGE_UNITS = [
-  { value: "years" as const, label: "years" },
-  { value: "months" as const, label: "months" },
-  { value: "days" as const, label: "days" },
-  { value: "hours" as const, label: "hours" },
-  { value: "minutes" as const, label: "min" },
-  { value: "seconds" as const, label: "sec" },
-];
 
 function AgeCard({ dob }: { dob: string }) {
   const [unit, setUnit] = useState<"years" | "months" | "days" | "hours" | "minutes" | "seconds">("years");
@@ -40,6 +27,7 @@ function AgeCard({ dob }: { dob: string }) {
   const years = Math.floor(days / 365.25);
 
   const values = { years, months, days, hours, minutes, seconds };
+  const labels = { years: "years", months: "months", days: "days", hours: "hours", minutes: "minutes", seconds: "seconds" };
 
   return (
     <Card
@@ -47,10 +35,23 @@ function AgeCard({ dob }: { dob: string }) {
         <div className="text-center">
           <p className="text-4xl font-bold mb-1" style={{ fontFamily: "var(--font-stat)" }} data-stat>{values[unit].toLocaleString()}</p>
           <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>
-            {unit} old today
+            {labels[unit]} old today
           </p>
-          <div className="flex justify-center">
-            <Toggle options={AGE_UNITS} selected={unit} onChange={setUnit} />
+          <div className="flex flex-wrap gap-1 justify-center">
+            {(Object.keys(labels) as (keyof typeof labels)[]).map((u) => (
+              <button
+                key={u}
+                onClick={(e) => { e.stopPropagation(); setUnit(u); }}
+                className="px-2 py-0.5 text-xs rounded-full border cursor-pointer"
+                style={{
+                  borderColor: u === unit ? "var(--text-accent)" : "var(--border-color)",
+                  color: u === unit ? "var(--text-accent)" : "var(--text-secondary)",
+                  background: "transparent",
+                }}
+              >
+                {u}
+              </button>
+            ))}
           </div>
         </div>
       }
@@ -90,12 +91,21 @@ function SunCard({ dob }: { dob: string }) {
           <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>
             {unit} around the sun
           </p>
-          <div className="flex justify-center">
-            <Toggle
-              options={[{ value: "miles" as const, label: "miles" }, { value: "km" as const, label: "km" }]}
-              selected={unit}
-              onChange={setUnit}
-            />
+          <div className="flex gap-1 justify-center">
+            {(["miles", "km"] as const).map((u) => (
+              <button
+                key={u}
+                onClick={(e) => { e.stopPropagation(); setUnit(u); }}
+                className="px-2 py-0.5 text-xs rounded-full border cursor-pointer"
+                style={{
+                  borderColor: u === unit ? "var(--text-accent)" : "var(--border-color)",
+                  color: u === unit ? "var(--text-accent)" : "var(--text-secondary)",
+                  background: "transparent",
+                }}
+              >
+                {u}
+              </button>
+            ))}
           </div>
         </div>
       }
@@ -136,16 +146,21 @@ function HeartCard({ dob }: { dob: string }) {
           <p className="text-sm mb-4" style={{ color: "var(--text-secondary)" }}>
             {values[unit].label}
           </p>
-          <div className="flex justify-center">
-            <Toggle
-              options={[
-                { value: "total" as const, label: "total" },
-                { value: "perDay" as const, label: "per day" },
-                { value: "millions" as const, label: "millions" },
-              ]}
-              selected={unit}
-              onChange={setUnit}
-            />
+          <div className="flex gap-1 justify-center">
+            {(["total", "perDay", "millions"] as const).map((u) => (
+              <button
+                key={u}
+                onClick={(e) => { e.stopPropagation(); setUnit(u); }}
+                className="px-2 py-0.5 text-xs rounded-full border cursor-pointer"
+                style={{
+                  borderColor: u === unit ? "var(--text-accent)" : "var(--border-color)",
+                  color: u === unit ? "var(--text-accent)" : "var(--text-secondary)",
+                  background: "transparent",
+                }}
+              >
+                {u === "perDay" ? "per day" : u}
+              </button>
+            ))}
           </div>
         </div>
       }
@@ -168,18 +183,12 @@ function HeartCard({ dob }: { dob: string }) {
 
 export default function Main({ name, dob }: { name: string; dob: string }) {
   return (
-    <section className="flex-1 flex flex-col items-center justify-center p-6 gap-4 relative" data-dot-grid style={{ background: "var(--bg-primary)" }}>
-      <LEDs />
+    <section className="min-h-[90dvh] flex items-center justify-center p-6" style={{ background: "var(--bg-primary)" }}>
       <div className="w-full grid grid-cols-1 sm:grid-cols-3 gap-4">
         <AgeCard dob={dob} />
         <SunCard dob={dob} />
         <HeartCard dob={dob} />
       </div>
-      <div className="flex items-center gap-6">
-        <Gauge bpm={AVG_CHILD_BPM} />
-        <StatusText />
-      </div>
-      <LEDs />
     </section>
   );
 }

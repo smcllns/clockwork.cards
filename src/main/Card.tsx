@@ -28,7 +28,7 @@ export default function Card({ front, back }: CardProps) {
             backfaceVisibility: "hidden",
             background: "var(--bg-card)",
             borderColor: "var(--border-color)",
-            boxShadow: "var(--shadow-md)",
+            boxShadow: "var(--shadow-sm)",
             color: "var(--text-primary)",
           }}
         >
@@ -41,7 +41,7 @@ export default function Card({ front, back }: CardProps) {
             transform: "rotateY(180deg)",
             background: "var(--bg-secondary)",
             borderColor: "var(--border-color)",
-            boxShadow: "var(--shadow-md)",
+            boxShadow: "var(--shadow-sm)",
             color: "var(--text-secondary)",
           }}
         >
