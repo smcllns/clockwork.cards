@@ -103,22 +103,63 @@ export default function ApproachC({ name, age }: { name: string; age: number }) 
 
     const ctx = canvas.getContext("2d")!;
     let frame: number;
+    const startTime = performance.now();
+
     function draw() {
+      const elapsed = (performance.now() - startTime) / 1000;
       Matter.Engine.update(engine, 1000 / 60);
       ctx.fillStyle = bgColorRef.current;
       ctx.fillRect(0, 0, w, h);
-      for (const body of bodies) {
-        ctx.fillStyle = (body.render as any).fillStyle;
-        ctx.globalAlpha = 0.85;
-        if (shinyRef.current) {
-          ctx.shadowBlur = 12;
-          ctx.shadowColor = (body.render as any).fillStyle;
+
+      if (shinyRef.current) {
+        // heavy glow pass
+        ctx.globalAlpha = 1;
+        for (const body of bodies) {
+          const fillColor = (body.render as any).fillStyle;
+          const r = body.circleRadius!;
+          ctx.shadowBlur = 24;
+          ctx.shadowColor = fillColor;
+          ctx.fillStyle = fillColor;
+          ctx.beginPath();
+          ctx.arc(body.position.x, body.position.y, r, 0, Math.PI * 2);
+          ctx.fill();
+          // second glow pass
+          ctx.beginPath();
+          ctx.arc(body.position.x, body.position.y, r, 0, Math.PI * 2);
+          ctx.fill();
         }
-        ctx.beginPath();
-        ctx.arc(body.position.x, body.position.y, body.circleRadius!, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.shadowBlur = 0;
+      } else {
+        // light mode — radial gradient fills with drop shadow
+        ctx.shadowColor = "rgba(0,0,0,0.12)";
+        ctx.shadowBlur = 6;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 2;
+        for (const body of bodies) {
+          const fillColor = (body.render as any).fillStyle;
+          const r = body.circleRadius!;
+          const x = body.position.x;
+          const y = body.position.y;
+          const grad = ctx.createRadialGradient(x - r * 0.25, y - r * 0.25, r * 0.1, x, y, r);
+          grad.addColorStop(0, "#ffffff");
+          grad.addColorStop(0.4, fillColor);
+          grad.addColorStop(1, fillColor);
+          ctx.globalAlpha = 0.9;
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(x, y, r, 0, Math.PI * 2);
+          ctx.fill();
+          // subtle outline
+          ctx.globalAlpha = 0.25;
+          ctx.strokeStyle = fillColor;
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetY = 0;
       }
-      ctx.shadowBlur = 0;
+
+      ctx.globalAlpha = 1;
       frame = requestAnimationFrame(draw);
     }
     draw();
