@@ -197,7 +197,7 @@ export default function ApproachC({ name, age }: { name: string; age: number }) 
   }
 
   return (
-    <section ref={containerRef} className="h-dvh relative overflow-hidden" style={{ background: 'var(--bg-hero)' }}>
+    <section ref={containerRef} className="h-dvh relative overflow-hidden" data-dot-grid data-shiny-overlay style={{ background: 'var(--bg-hero)' }}>
       <nav className="relative z-10 flex items-center px-6 py-4">
         <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>clockwork.cards/{name.toLowerCase()}</span>
         <div className="ml-auto flex gap-2">
