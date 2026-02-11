@@ -40,3 +40,6 @@ Hero banner (name, age) + 3-5 live-updating stat cards. Minimal/clean design —
 
 ## Design Direction
 Minimal and clean. No dark themes or heavy decoration. Typography and numbers are the star. Color used sparingly for emphasis.
+
+## Screenshots
+Save all screenshots to `screenshots/`. Keep them out of the repo root.

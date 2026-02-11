@@ -6,11 +6,12 @@ import Footer from "./footer";
 const params = new URLSearchParams(window.location.search);
 const name = params.get("name") ?? process.env.DEFAULT_NAME ?? "Birthday Star";
 const dob = params.get("dob") ?? process.env.DEFAULT_DOB ?? "2017-01-01";
+const hero = params.get("hero") ?? "a";
 
 function App() {
   return (
     <div className="max-w-[1024px] mx-auto">
-      <Hero name={name} dob={dob} />
+      <Hero name={name} dob={dob} approach={hero} />
       <div className="h-dvh flex flex-col">
         <Main name={name} dob={dob} />
         <Footer />
