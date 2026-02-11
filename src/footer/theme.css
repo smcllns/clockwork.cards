@@ -1,0 +1,77 @@
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-card: #ffffff;
+  --text-primary: #18181b;
+  --text-secondary: #71717a;
+  --text-accent: #3b82f6;
+  --border-color: #e4e4e7;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-glow: none;
+  --accent-1: #06b6d4;
+  --accent-2: #8b5cf6;
+  --accent-3: #ec4899;
+}
+
+:root.shiny {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #0f0f1a;
+  --bg-card: #16162a;
+  --text-primary: #e2e2ff;
+  --text-secondary: #7a7a9a;
+  --text-accent: #00ffff;
+  --border-color: #2a2a4a;
+  --shadow-sm: 0 0 8px rgba(0, 255, 255, 0.08);
+  --shadow-md: 0 0 16px rgba(0, 255, 255, 0.12), 0 0 32px rgba(139, 92, 246, 0.08);
+  --shadow-glow: 0 0 20px rgba(0, 255, 255, 0.25), 0 0 40px rgba(139, 92, 246, 0.15), 0 0 80px rgba(236, 72, 153, 0.08);
+  --accent-1: #00ffff;
+  --accent-2: #bf5af2;
+  --accent-3: #ff2d55;
+}
+
+*,
+*::before,
+*::after {
+  transition:
+    background-color 0.5s ease,
+    color 0.4s ease,
+    border-color 0.5s ease,
+    box-shadow 0.5s ease;
+}
+
+.shiny h1,
+.shiny h2,
+.shiny h3 {
+  text-shadow:
+    0 0 10px rgba(0, 255, 255, 0.4),
+    0 0 30px rgba(0, 255, 255, 0.2),
+    0 0 60px rgba(139, 92, 246, 0.1);
+}
+
+@keyframes neon-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 10px rgba(0, 255, 255, 0.2),
+      0 0 20px rgba(139, 92, 246, 0.1);
+  }
+  50% {
+    box-shadow:
+      0 0 16px rgba(0, 255, 255, 0.35),
+      0 0 36px rgba(139, 92, 246, 0.2),
+      0 0 60px rgba(236, 72, 153, 0.1);
+  }
+}
+
+@keyframes glow-border {
+  0%, 100% { border-color: rgba(0, 255, 255, 0.2); }
+  33% { border-color: rgba(191, 90, 242, 0.3); }
+  66% { border-color: rgba(255, 45, 85, 0.2); }
+}
+
+.shiny [data-card] {
+  animation:
+    neon-pulse 3s ease-in-out infinite,
+    glow-border 6s ease-in-out infinite;
+  border-color: rgba(0, 255, 255, 0.2);
+}
