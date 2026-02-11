@@ -579,9 +579,6 @@ export default function ApproachD({ name, age, dob }: { name: string; age: numbe
       <nav className="relative z-10 flex items-center px-6 py-4">
         <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-display)' }}>clockwork.cards/{name.toLowerCase()}</span>
         <div className="ml-auto flex gap-2 items-center">
-          {["d", "c"].map(v => (
-            <a key={v} href={`?hero=${v}`} className={`text-xs px-2 py-1 rounded ${v === "d" ? "bg-zinc-800 text-white" : "bg-zinc-200 text-zinc-600"}`}>{v.toUpperCase()}</a>
-          ))}
           <button
             onClick={() => useTheme.getState().toggle()}
             className="text-xs px-2 py-1 rounded cursor-pointer"
