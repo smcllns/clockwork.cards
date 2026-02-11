@@ -14,7 +14,7 @@ export default function ApproachC({ name, age }: { name: string; age: number }) 
   const anchorsRef = useRef<Matter.Constraint[]>([]);
   const colorIndicesRef = useRef<number[]>([]);
   const shinyRef = useRef<boolean>(false);
-  const bgColorRef = useRef<string>("#fffbeb");
+  const bgColorRef = useRef<string>("#ffffff");
   const [chaos, setChaos] = useState(false);
   const shiny = useTheme(s => s.shiny);
 
@@ -127,7 +127,7 @@ export default function ApproachC({ name, age }: { name: string; age: number }) 
   useEffect(() => {
     const palette = shiny ? SHINY : LIGHT;
     shinyRef.current = shiny;
-    bgColorRef.current = shiny ? "#0a0a0f" : "#fffbeb";
+    bgColorRef.current = shiny ? "#0a0a0f" : "#ffffff";
 
     const bodies = bodiesRef.current;
     const indices = colorIndicesRef.current;
@@ -154,7 +154,7 @@ export default function ApproachC({ name, age }: { name: string; age: number }) 
   }
 
   return (
-    <section ref={containerRef} className="h-[90dvh] relative overflow-hidden" style={{ background: 'var(--bg-hero)' }}>
+    <section ref={containerRef} className="h-dvh relative overflow-hidden" style={{ background: 'var(--bg-hero)' }}>
       <nav className="relative z-10 flex items-center px-6 py-4">
         <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)' }}>clockwork.cards/{name.toLowerCase()}</span>
         <div className="ml-auto flex gap-2 items-center">

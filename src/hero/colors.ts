@@ -1,6 +1,6 @@
 export const LIGHT = {
-  hex: [0xff6b6b, 0x4ecdc4, 0x45b7d1, 0x96ceb4, 0xffeaa7, 0xdda0dd, 0x98d8c8, 0xf7dc6f, 0xbb8fce, 0x85c1e9],
-  css: ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FFEAA7", "#DDA0DD", "#98D8C8", "#F7DC6F", "#BB8FCE", "#85C1E9"],
+  hex: [0x1a1a1a, 0x2d2d2d, 0x404040, 0x555555, 0x6a6a6a, 0x333333, 0x4a4a4a, 0x222222, 0x5e5e5e, 0x383838],
+  css: ["#1A1A1A", "#2D2D2D", "#404040", "#555555", "#6A6A6A", "#333333", "#4A4A4A", "#222222", "#5E5E5E", "#383838"],
 };
 
 export const SHINY = {
