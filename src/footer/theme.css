@@ -87,6 +87,11 @@
   border-color: rgba(0, 255, 255, 0.2);
 }
 
+.shiny [data-card] > div > div {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
 .shiny [data-stat] {
   text-shadow:
     0 0 10px #00ffff,

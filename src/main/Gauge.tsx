@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTheme } from "../store/theme";
 
 const SIZE = 120;
 const STROKE = 6;
@@ -9,15 +10,14 @@ const ARC_SWEEP = 270;
 
 export default function Gauge({ bpm = 80, label = "BPM" }: { bpm?: number; label?: string }) {
   const [angle, setAngle] = useState(ARC_START);
+  const shiny = useTheme(s => s.shiny);
 
   useEffect(() => {
     let frame: number;
     const startTime = performance.now();
     function tick() {
       const elapsed = (performance.now() - startTime) / 1000;
-      // oscillate around bpm: +-5 with slow sine
       const current = bpm + Math.sin(elapsed * 0.8) * 5;
-      // map 40-120 bpm range to arc
       const ratio = Math.max(0, Math.min(1, (current - 40) / 80));
       setAngle(ARC_START + ratio * ARC_SWEEP);
       frame = requestAnimationFrame(tick);
@@ -26,18 +26,29 @@ export default function Gauge({ bpm = 80, label = "BPM" }: { bpm?: number; label
     return () => cancelAnimationFrame(frame);
   }, [bpm]);
 
-  // arc path for background track
   const arcPath = describeArc(CENTER, CENTER, RADIUS, ARC_START, ARC_START + ARC_SWEEP);
 
-  // needle endpoint
   const needleRad = (angle * Math.PI) / 180;
   const needleLen = RADIUS - 8;
   const nx = CENTER + Math.cos(needleRad) * needleLen;
   const ny = CENTER + Math.sin(needleRad) * needleLen;
 
+  const needleColor = shiny ? "var(--accent-1)" : "var(--accent-3)";
+
   return (
     <div className="flex flex-col items-center gap-1">
       <svg width={SIZE} height={SIZE} viewBox={`0 0 ${SIZE} ${SIZE}`}>
+        {shiny && (
+          <defs>
+            <filter id="needle-glow">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
+        )}
         {/* track */}
         <path d={arcPath} fill="none" stroke="var(--border-color)" strokeWidth={STROKE} strokeLinecap="round" />
         {/* tick marks */}
@@ -50,11 +61,23 @@ export default function Gauge({ bpm = 80, label = "BPM" }: { bpm?: number; label
           return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="var(--text-secondary)" strokeWidth={1.5} strokeLinecap="round" />;
         })}
         {/* needle */}
-        <line x1={CENTER} y1={CENTER} x2={nx} y2={ny} stroke="var(--accent-3)" strokeWidth={2} strokeLinecap="round" />
+        <line
+          x1={CENTER} y1={CENTER} x2={nx} y2={ny}
+          stroke={needleColor}
+          strokeWidth={2}
+          strokeLinecap="round"
+          filter={shiny ? "url(#needle-glow)" : undefined}
+        />
         {/* center dot */}
-        <circle cx={CENTER} cy={CENTER} r={3} fill="var(--accent-3)" />
+        <circle cx={CENTER} cy={CENTER} r={3} fill={needleColor} />
         {/* value text */}
-        <text x={CENTER} y={CENTER + 22} textAnchor="middle" fontSize="14" fontWeight="700" fill="var(--text-primary)" style={{ fontFamily: "var(--font-stat)" }}>
+        <text
+          x={CENTER} y={CENTER + 22}
+          textAnchor="middle" fontSize="14" fontWeight="700"
+          fill="var(--text-primary)"
+          style={{ fontFamily: "var(--font-stat)" }}
+          data-stat
+        >
           {bpm}
         </text>
         <text x={CENTER} y={CENTER + 34} textAnchor="middle" fontSize="10" fill="var(--text-secondary)">
