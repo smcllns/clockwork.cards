@@ -581,13 +581,17 @@ export default function ApproachD({ name, age, dob }: { name: string; age: numbe
         <div className="ml-auto flex gap-2 items-center">
           <button
             onClick={() => useTheme.getState().toggle()}
-            className="text-xs px-2 py-1 rounded cursor-pointer"
-            style={{
-              background: shiny ? "var(--accent-1)" : "var(--border-color)",
-              color: shiny ? "#000" : "var(--text-secondary)",
-            }}
+            className="relative w-10 h-5 rounded-full cursor-pointer transition-colors duration-300"
+            style={{ background: shiny ? "var(--accent-1)" : "var(--border-color)" }}
           >
-            {shiny ? "✨" : "✨"}
+            <span
+              className="absolute top-0.5 w-4 h-4 rounded-full transition-transform duration-300"
+              style={{
+                background: shiny ? "#000" : "#fff",
+                boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+                transform: shiny ? "translateX(21px)" : "translateX(2px)",
+              }}
+            />
           </button>
         </div>
       </nav>
