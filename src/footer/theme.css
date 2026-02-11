@@ -55,6 +55,11 @@
     0 0 60px rgba(139, 92, 246, 0.1);
 }
 
+@keyframes led-blink {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
 @keyframes neon-pulse {
   0%, 100% {
     box-shadow:
