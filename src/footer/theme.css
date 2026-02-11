@@ -13,6 +13,9 @@
   --accent-1: #06b6d4;
   --accent-2: #8b5cf6;
   --accent-3: #ec4899;
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, monospace;
+  --font-stat: var(--font-display);
 }
 
 :root.shiny {
@@ -30,6 +33,7 @@
   --accent-1: #00ffff;
   --accent-2: #bf5af2;
   --accent-3: #ff2d55;
+  --font-stat: var(--font-mono);
 }
 
 *,
@@ -76,4 +80,10 @@
     neon-pulse 3s ease-in-out infinite,
     glow-border 6s ease-in-out infinite;
   border-color: rgba(0, 255, 255, 0.2);
+}
+
+.shiny [data-stat] {
+  text-shadow:
+    0 0 10px #00ffff,
+    0 0 20px rgba(0, 255, 255, 0.4);
 }
