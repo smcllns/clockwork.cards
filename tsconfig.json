@@ -10,8 +10,5 @@
     "noEmit": true,
     "types": ["bun-types"]
   },
-  "include": [
-    "src/index.tsx",
-    "src/simple-card/**/*"
-  ]
+  "include": ["src"]
 }
