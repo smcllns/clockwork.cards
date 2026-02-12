@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "bun ./index.html",
-    "build": "bun build ./index.html --outdir=dist --minify"
+    "build": "bun run build.ts"
   },
   "dependencies": {
     "@dimforge/rapier3d-compat": "^0.19.3",
