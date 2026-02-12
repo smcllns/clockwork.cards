@@ -8,3 +8,4 @@ dist
 .playwright-mcp
 .llm/sessions.jsonl
 screenshots
+.vercel
