@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import RAPIER from "@dimforge/rapier3d-compat";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
@@ -30,6 +30,8 @@ type SceneState = {
   particles: THREE.Points;
   particleVelocities: Float32Array;
   frame: number;
+  origins: { x: number; y: number; z: number }[];
+  anchored: boolean;
   colorIndices: number[];
   shiny: boolean;
   startTime: number;
@@ -162,14 +164,14 @@ function createBalls(
     const body = world.createRigidBody(
       RAPIER.RigidBodyDesc.dynamic()
         .setTranslation(ball.x, ball.y, 0)
-        .setLinearDamping(0.3)
-        .setAngularDamping(0.3)
+        .setLinearDamping(0.05)
+        .setAngularDamping(0.05)
         .setCanSleep(false)
     );
     world.createCollider(
       RAPIER.ColliderDesc.ball(radius)
-        .setRestitution(0.5)
-        .setFriction(0.3),
+        .setRestitution(0.7)
+        .setFriction(0.2),
       body,
     );
     bodies.push(body);
@@ -247,7 +249,7 @@ function addWalls(world: RAPIER.World, camera: THREE.PerspectiveCamera, aspect: 
 
   function wall(x: number, y: number, z: number, hx: number, hy: number, hz: number): void {
     const b = world.createRigidBody(RAPIER.RigidBodyDesc.fixed().setTranslation(x, y, z));
-    world.createCollider(RAPIER.ColliderDesc.cuboid(hx, hy, hz).setRestitution(0.3).setFriction(0.3), b);
+    world.createCollider(RAPIER.ColliderDesc.cuboid(hx, hy, hz).setRestitution(0.6).setFriction(0.2), b);
   }
   wall(0, -visH / 2 - 1, 0, half, 1, half);     // bottom
   wall(0, visH / 2 + 1, 0, half, 1, half);      // top
@@ -333,6 +335,7 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
   const age = Math.floor((Date.now() - new Date(dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
   const containerRef = useRef<HTMLDivElement>(null);
   const stateRef = useRef<SceneState | null>(null);
+  const [chaos, setChaos] = useState(false);
   const shiny = useTheme(s => s.shiny);
 
   useEffect(() => {
@@ -361,7 +364,7 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
       if (disposed) return;
 
       const { scene, camera, renderer, composer, bloomPass, w, h } = setupScene(container);
-      const world = new RAPIER.World({ x: 0, y: -60, z: 0 });
+      const world = new RAPIER.World({ x: 0, y: 0, z: 0 });
       const d = new Date(dob);
       const dateLine = `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()} ${d.getUTCFullYear()}`;
       const { balls, maxW, totalH } = layoutBalls([
@@ -380,6 +383,10 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
 
       const { points: particles, velocities: particleVelocities } = createParticles(scene, camera);
 
+      const origins = bodies.map(b => {
+        const t = b.translation();
+        return { x: t.x, y: t.y, z: t.z };
+      });
       const colorIndices = balls.map(b => b.colorIndex);
       const phases = new Float32Array(meshes.length);
       for (let i = 0; i < phases.length; i++) phases[i] = Math.random() * Math.PI * 2;
@@ -387,7 +394,7 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
       stateRef.current = {
         world, bodies, meshes, renderer, camera, scene, composer, bloomPass,
         particles, particleVelocities,
-        frame: 0, colorIndices, shiny: false,
+        frame: 0, origins, anchored: true, colorIndices, shiny: false,
         startTime: performance.now(), phases, camDist, spinAngle: 0,
       };
 
@@ -399,10 +406,19 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
         const st = stateRef.current!;
         const elapsed = (performance.now() - st.startTime) / 1000;
 
-        for (const body of grabbed) {
-          const pos = body.translation();
-          body.setLinvel({ x: (target.x - pos.x) * 12, y: (target.y - pos.y) * 12, z: 0 }, true);
-          body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+        if (!st.anchored) {
+          for (const body of grabbed) {
+            const pos = body.translation();
+            body.setLinvel({ x: (target.x - pos.x) * 12, y: (target.y - pos.y) * 12, z: 0 }, true);
+            body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+          }
+        }
+        if (st.anchored) {
+          for (let i = 0; i < bodies.length; i++) {
+            const pos = bodies[i].translation();
+            const orig = origins[i];
+            bodies[i].setLinvel({ x: (orig.x - pos.x) * 20, y: (orig.y - pos.y) * 20, z: -pos.z * 20 }, true);
+          }
         }
 
         world.step();
@@ -494,6 +510,19 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
     }
   }, [shiny]);
 
+  function unleashChaos(): void {
+    const s = stateRef.current;
+    if (!s) return;
+    setChaos(true);
+    s.anchored = false;
+    s.world.gravity = { x: 0, y: -80, z: 0 };
+    for (const body of s.bodies) {
+      body.wakeUp();
+      body.setLinvel({ x: (Math.random() - 0.5) * 10, y: (Math.random() - 0.5) * 5, z: (Math.random() - 0.5) * 3 }, true);
+      body.setAngvel({ x: (Math.random() - 0.5) * 3, y: (Math.random() - 0.5) * 3, z: (Math.random() - 0.5) * 3 }, true);
+    }
+  }
+
   return (
     <div className="h-dvh relative">
       <section ref={containerRef} className="h-full overflow-hidden" data-dot-grid data-shiny-overlay style={{ background: 'var(--bg-hero)' }}>
@@ -522,6 +551,37 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
           </div>
         </nav>
       </section>
+      <div className="absolute bottom-6 right-6 z-10 flex flex-col items-center gap-1.5">
+        <button
+          onClick={!chaos ? unleashChaos : undefined}
+          className={`relative w-10 h-10 rounded-full ${
+            chaos
+              ? "cursor-default scale-90"
+              : "cursor-pointer hover:scale-105 active:scale-95"
+          }`}
+          style={{
+            background: chaos
+              ? "radial-gradient(circle at 40% 35%, #666, #333)"
+              : "radial-gradient(circle at 40% 35%, #ff4444, #cc0000)",
+            boxShadow: chaos
+              ? "0 2px 8px rgba(0,0,0,0.2), inset 0 -2px 4px rgba(0,0,0,0.3)"
+              : "0 0 12px rgba(255,0,0,0.4), 0 0 24px rgba(255,0,0,0.2), 0 4px 8px rgba(0,0,0,0.3), inset 0 -3px 6px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,100,100,0.3)",
+            border: chaos ? "3px solid #555" : "3px solid #990000",
+            transition: "transform 0.3s, box-shadow 0.3s",
+          }}
+        />
+        <span
+          className="text-center leading-tight max-w-24"
+          style={{
+            fontFamily: "'Caveat', 'Segoe Script', cursive",
+            color: chaos ? "var(--text-secondary)" : "var(--text-primary)",
+            opacity: chaos ? 0.4 : 0.7,
+            fontSize: "0.95rem",
+          }}
+        >
+          Do not press this button
+        </span>
+      </div>
     </div>
   );
 }
