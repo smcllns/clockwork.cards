@@ -576,31 +576,37 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
   }
 
   return (
-    <section ref={containerRef} className="h-dvh relative overflow-hidden" data-dot-grid data-shiny-overlay style={{ background: 'var(--bg-hero)' }}>
-      <nav className="relative z-10 flex items-center px-6 py-4">
-        <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-display)' }}>clockwork.cards/{name.toLowerCase()}</span>
-        <div className="ml-auto flex gap-2 items-center">
-          <button
-            onClick={() => useTheme.getState().toggle()}
-            className="relative w-10 h-5 rounded-full cursor-pointer"
-            style={{ background: shiny ? "var(--accent-1)" : "var(--border-color)", transition: "background-color 0.3s" }}
-          >
-            <span
-              className="absolute left-0 top-0.5 w-4 h-4 rounded-full"
+    <div className="h-dvh relative">
+      <section ref={containerRef} className="h-full overflow-hidden" data-dot-grid data-shiny-overlay style={{ background: 'var(--bg-hero)' }}>
+        <nav className="relative z-10 flex items-center px-6 py-4">
+          <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-display)' }}>clockwork.cards/{name.toLowerCase()}</span>
+          <div className="ml-auto flex gap-2 items-center">
+            <button
+              onClick={() => useTheme.getState().toggle()}
+              className="relative w-10 h-5 rounded-full cursor-pointer"
               style={{
-                background: shiny ? "#000" : "#fff",
-                boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
-                transform: shiny ? "translateX(22px)" : "translateX(2px)",
-                transition: "transform 0.3s, background-color 0.3s",
+                background: shiny ? "var(--accent-1)" : "#c4c4cc",
+                boxShadow: shiny ? "0 0 8px rgba(0,255,255,0.3)" : "inset 0 1px 2px rgba(0,0,0,0.15)",
+                transition: "background-color 0.3s, box-shadow 0.3s",
               }}
-            />
-          </button>
-        </div>
-      </nav>
+            >
+              <span
+                className="absolute left-0 top-0.5 w-4 h-4 rounded-full"
+                style={{
+                  background: shiny ? "#000" : "#fff",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.25)",
+                  transform: shiny ? "translateX(22px)" : "translateX(2px)",
+                  transition: "transform 0.3s, background-color 0.3s",
+                }}
+              />
+            </button>
+          </div>
+        </nav>
+      </section>
       <div className="absolute bottom-6 right-6 z-10 flex flex-col items-center gap-1.5">
         <button
           onClick={!chaos ? unleashChaos : undefined}
-          className={`relative w-10 h-10 rounded-full transition-all duration-300 ${
+          className={`relative w-10 h-10 rounded-full ${
             chaos
               ? "cursor-default scale-90"
               : "cursor-pointer hover:scale-105 active:scale-95"
@@ -613,6 +619,7 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
               ? "0 2px 8px rgba(0,0,0,0.2), inset 0 -2px 4px rgba(0,0,0,0.3)"
               : "0 0 12px rgba(255,0,0,0.4), 0 0 24px rgba(255,0,0,0.2), 0 4px 8px rgba(0,0,0,0.3), inset 0 -3px 6px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,100,100,0.3)",
             border: chaos ? "3px solid #555" : "3px solid #990000",
+            transition: "transform 0.3s, box-shadow 0.3s",
           }}
         />
         <span
@@ -621,13 +628,12 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
             fontFamily: "'Caveat', 'Segoe Script', cursive",
             color: chaos ? "var(--text-secondary)" : "var(--text-primary)",
             opacity: chaos ? 0.4 : 0.7,
-            textDecoration: "none",
             fontSize: "0.95rem",
           }}
         >
           Do not press this button
         </span>
       </div>
-    </section>
+    </div>
   );
 }
