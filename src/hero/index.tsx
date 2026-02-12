@@ -582,15 +582,16 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
         <div className="ml-auto flex gap-2 items-center">
           <button
             onClick={() => useTheme.getState().toggle()}
-            className="relative w-10 h-5 rounded-full cursor-pointer transition-colors duration-300"
-            style={{ background: shiny ? "var(--accent-1)" : "var(--border-color)" }}
+            className="relative w-10 h-5 rounded-full cursor-pointer"
+            style={{ background: shiny ? "var(--accent-1)" : "var(--border-color)", transition: "background-color 0.3s" }}
           >
             <span
-              className="absolute top-0.5 w-4 h-4 rounded-full transition-transform duration-300"
+              className="absolute left-0 top-0.5 w-4 h-4 rounded-full"
               style={{
                 background: shiny ? "#000" : "#fff",
                 boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
-                transform: shiny ? "translateX(21px)" : "translateX(2px)",
+                transform: shiny ? "translateX(22px)" : "translateX(2px)",
+                transition: "transform 0.3s, background-color 0.3s",
               }}
             />
           </button>
