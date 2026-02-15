@@ -36,9 +36,11 @@
   --font-stat: var(--font-mono);
 }
 
-*,
-*::before,
-*::after {
+/* Theme transitions — scoped to key containers to preserve scroll perf */
+body,
+section,
+footer,
+[data-card] {
   transition:
     background-color 0.5s ease,
     color 0.4s ease,

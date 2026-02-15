@@ -53,6 +53,9 @@ export const DEFAULT_CONFIG: StatsConfig = {
 export interface Stats {
   // Time
   ageYears: number;
+  yearsAlive: number;
+  monthsAlive: number;
+  weeksAlive: number;
   daysAlive: number;
   hoursAlive: number;
   minutesAlive: number;
@@ -148,6 +151,9 @@ export function computeStats(dob: string, config: StatsConfig, now: number): Sta
 
   return {
     ageYears,
+    yearsAlive: ageYears,
+    monthsAlive: Math.floor(monthsAlive),
+    weeksAlive: Math.floor(daysAlive / 7),
     daysAlive: Math.floor(daysAlive),
     hoursAlive: Math.floor(hoursAlive),
     minutesAlive: Math.floor(minutesAlive),
