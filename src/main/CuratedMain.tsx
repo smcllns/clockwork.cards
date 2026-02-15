@@ -2,13 +2,26 @@ import { useState, useEffect } from "react";
 import { computeStats, DEFAULT_CONFIG, type StatsConfig, type Stats, fmt, fmtBig, fmtDecimal } from "./stats";
 import { InlineStepper, InlineSlider, InlinePills, BlockControl, BlockSlider, BlockStepper } from "./Controls";
 
+// ── ID tag (small muted label for feedback reference) ──────────────
+function IdTag({ id }: { id: string }) {
+  return (
+    <span
+      className="text-xs font-mono select-all"
+      style={{ color: "var(--text-secondary)", opacity: 0.4 }}
+    >
+      #{id}
+    </span>
+  );
+}
+
 // ── Reusable V8-style full-viewport slide ──────────────────────────
-function Slide({ children, alt }: { children: React.ReactNode; alt?: boolean }) {
+function Slide({ children, alt, id }: { children: React.ReactNode; alt?: boolean; id: string }) {
   return (
     <div
-      className="flex items-center justify-center px-6"
+      className="flex items-center justify-center px-6 relative"
       style={{ minHeight: "100vh", background: alt ? "var(--bg-secondary)" : "var(--bg-primary)" }}
     >
+      <div className="absolute top-4 right-6"><IdTag id={id} /></div>
       <div className="max-w-xl w-full py-16">{children}</div>
     </div>
   );
@@ -81,7 +94,7 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
       {/* ──────────────────────────────────────────────────────────
           1. TIME (V8 style)
           ────────────────────────────────────────────────────────── */}
-      <Slide>
+      <Slide id="1">
         <span className="text-4xl block mb-4">⏳</span>
         <BigNum>{fmt(timeValues[timeUnit])}</BigNum>
         <SlideUnit>{timeUnit} of being awesome</SlideUnit>
@@ -107,7 +120,7 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
       {/* ──────────────────────────────────────────────────────────
           2. SPACE (V8 style)
           ────────────────────────────────────────────────────────── */}
-      <Slide alt>
+      <Slide alt id="2">
         <span className="text-4xl block mb-4">🚀</span>
         <BigNum>{fmtBig(spaceVal)}</BigNum>
         <SlideUnit>{spaceUnit} through space</SlideUnit>
@@ -132,7 +145,7 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
       {/* ──────────────────────────────────────────────────────────
           3. YOGURT (V8 style)
           ────────────────────────────────────────────────────────── */}
-      <Slide>
+      <Slide id="3">
         <span className="text-4xl block mb-4">🥄</span>
         <BigNum>{fmt(s.yogurtKg)} kg</BigNum>
         <SlideUnit>of yogurt</SlideUnit>
@@ -156,7 +169,8 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
       {/* ──────────────────────────────────────────────────────────
           4. YOUR LIFE IN NUMBERS (V6 style — narrative + controls)
           ────────────────────────────────────────────────────────── */}
-      <div className="px-6 py-16 max-w-2xl mx-auto">
+      <div className="px-6 py-16 max-w-2xl mx-auto relative">
+        <div className="absolute top-4 right-6"><IdTag id="4" /></div>
         <h3
           className="text-sm font-semibold uppercase tracking-[0.15em] mb-10 pb-3 border-b"
           style={{ color: "var(--text-secondary)", borderColor: "var(--border-color)" }}
@@ -165,7 +179,7 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
         </h3>
         <article className="space-y-6 text-base leading-relaxed" style={{ color: "var(--text-primary)" }}>
           <p>
-            If you've walked{" "}
+            <IdTag id="4a" />{" "}If you've walked{" "}
             <InlineSlider value={config.stepsPerDay} min={2000} max={15000} step={1000}
               onChange={(v) => set("stepsPerDay", v)} />{" "}
             steps a day since you were{" "}
@@ -175,7 +189,7 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
           </p>
 
           <p>
-            If you spend{" "}
+            <IdTag id="4b" />{" "}If you spend{" "}
             <InlineStepper value={config.brushMinutes} min={1} max={5} step={1} unit=" min"
               onChange={(v) => set("brushMinutes", v)} />{" "}
             brushing your teeth every morning and night since age{" "}
@@ -186,11 +200,11 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
           </p>
 
           <p>
-            Think that's a lot? You've blinked about <N>{fmtBig(s.totalBlinks)} times</N> so far.
+            <IdTag id="4c" />{" "}Think that's a lot? You've blinked about <N>{fmtBig(s.totalBlinks)} times</N> so far.
           </p>
 
           <p>
-            Your hair grows about{" "}
+            <IdTag id="4d" />{" "}Your hair grows about{" "}
             <InlineStepper value={config.hairGrowthCmPerMonth} min={0.5} max={2.0} step={0.1}
               unit=" cm" decimals={1} onChange={(v) => set("hairGrowthCmPerMonth", v)} />{" "}
             per month. If you'd never had a haircut, your hair would now be about{" "}
@@ -198,7 +212,7 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
           </p>
 
           <p>
-            If you poop{" "}
+            <IdTag id="4e" />{" "}If you poop{" "}
             <InlineStepper value={config.poopsPerDay} min={0.5} max={4} step={0.5} decimals={1}
               onChange={(v) => set("poopsPerDay", v)} />{" "}
             times per day on average, you've pooped around <N>{fmt(s.totalPoops)} times</N> so far.
@@ -209,7 +223,8 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
       {/* ──────────────────────────────────────────────────────────
           5. YOUR BRAIN & BODY (V7 style — rich bento)
           ────────────────────────────────────────────────────────── */}
-      <div className="px-6 py-16" style={{ background: "var(--bg-secondary)" }}>
+      <div className="px-6 py-16 relative" style={{ background: "var(--bg-secondary)" }}>
+        <div className="absolute top-4 right-6"><IdTag id="5" /></div>
         <h3
           className="text-sm font-semibold uppercase tracking-[0.15em] mb-8 pb-3 border-b max-w-2xl mx-auto"
           style={{ color: "var(--text-secondary)", borderColor: "var(--border-color)" }}
@@ -223,7 +238,7 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
           {brainTiles(s).map((tile, i) => (
             <div
               key={i}
-              className="rounded-2xl border p-6 flex flex-col gap-3"
+              className="rounded-2xl border p-6 flex flex-col gap-3 relative"
               style={{
                 gridColumn: tile.wide ? "span 2" : "span 1",
                 background: "var(--bg-card)",
@@ -232,6 +247,7 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
               }}
               data-card
             >
+              <div className="absolute top-3 right-3"><IdTag id={tile.id} /></div>
               <div className="flex items-start gap-3">
                 <span className="text-2xl shrink-0 mt-1">{tile.emoji}</span>
                 <div>
@@ -261,7 +277,7 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
       {/* ──────────────────────────────────────────────────────────
           6. BINARY / BASE 2 (V8 style)
           ────────────────────────────────────────────────────────── */}
-      <Slide>
+      <Slide id="6">
         <span className="text-4xl block mb-4">💻</span>
         <BigNum>1001</BigNum>
         <SlideUnit>is {s.ageYears} in binary</SlideUnit>
@@ -303,7 +319,7 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
       {/* ──────────────────────────────────────────────────────────
           7. CLOSING (V8 style)
           ────────────────────────────────────────────────────────── */}
-      <Slide alt>
+      <Slide alt id="7">
         <div className="text-center">
           <p className="text-6xl mb-8">❤️</p>
           <p
@@ -320,7 +336,8 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
       {/* ──────────────────────────────────────────────────────────
           8. APPENDIX (V5 style — compact ticker of all facts)
           ────────────────────────────────────────────────────────── */}
-      <div className="px-6 py-16 max-w-2xl mx-auto">
+      <div className="px-6 py-16 max-w-2xl mx-auto relative">
+        <div className="absolute top-4 right-6"><IdTag id="8" /></div>
         <h3
           className="text-xs font-semibold uppercase tracking-[0.2em] mb-6 pb-2 border-b"
           style={{ color: "var(--text-secondary)", borderColor: "var(--border-color)" }}
@@ -358,31 +375,31 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
 function brainTiles(s: Stats) {
   return [
     {
-      wide: true, emoji: "🧠",
+      id: "5a", wide: true, emoji: "🧠",
       value: `${fmtDecimal(s.sleepYears)} years`, unit: "of brain filing time",
       headline: `${fmt(s.sleepHours)} hours of sleep so far`,
       body: "Every night while you sleep, your brain sorts through everything you learned that day and files it into long-term memory — like a librarian working the night shift. That's years of a tiny librarian organizing your entire life.",
     },
     {
-      wide: false, emoji: "🥦",
+      id: "5b", wide: false, emoji: "🥦",
       value: fmt(s.fruitServings), unit: "cell repair kits",
       headline: "Delivered by fruits & veggies",
       body: "Every time you eat fruits and vegetables, you're getting vitamins that help protect your cells. Your body does the hard work — your job is to keep sending supplies.",
     },
     {
-      wide: false, emoji: "🤗",
+      id: "5c", wide: false, emoji: "🤗",
       value: fmt(s.totalHugs), unit: "hugs",
       headline: "Moments of connection",
       body: `If you hug someone for 10 seconds, your body releases oxytocin, which helps you feel calm and safe. That's ${fmt(s.totalHugs)} moments where your body is quietly saying: "This person matters to me."`,
     },
     {
-      wide: true, emoji: "💪",
+      id: "5d", wide: true, emoji: "💪",
       value: fmtBig(s.lungExtraLiters), unit: "extra liters of air",
       headline: "Your lungs are getting seriously strong",
       body: "Every minute you spend running or playing hard, your lungs pull in 40–60 liters of air, compared with 5–8 when resting. Running around isn't just fun — it's a workout for your lungs.",
     },
     {
-      wide: false, emoji: "💧",
+      id: "5e", wide: false, emoji: "💧",
       value: `${fmt(s.waterLiters)} L`, unit: "of water",
       headline: `${fmtDecimal(s.waterPoolPercent)}% of an Olympic pool`,
       body: `An Olympic swimming pool holds 2.5 million liters. At this rate, it would take you about ${fmt(s.poolYearsRemaining)} more years to drink the rest.`,
