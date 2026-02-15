@@ -4,6 +4,9 @@ import V2Magazine from "./V2Magazine";
 import V3BentoBox from "./V3BentoBox";
 import V4Narrative from "./V4Narrative";
 import V5Ticker from "./V5Ticker";
+import V6InteractiveNarrative from "./V6InteractiveNarrative";
+import V7RichBento from "./V7RichBento";
+import V8FullViewport from "./V8FullViewport";
 
 function SectionLabel({ number, title, description }: { number: number; title: string; description: string }) {
   return (
@@ -63,6 +66,27 @@ export default function Main({ name, dob }: { name: string; dob: string }) {
         description="Clean tabular list. Label left, number right. Dense but readable — like a receipt or data printout."
       />
       <V5Ticker stats={stats} />
+
+      <SectionLabel
+        number={6}
+        title="Interactive Narrative"
+        description="Riff on V4 — the prose from the content spec, but every [bracketed] input becomes a playful inline control. Change the inputs and watch the numbers update in real time."
+      />
+      <V6InteractiveNarrative dob={dob} name={name} />
+
+      <SectionLabel
+        number={7}
+        title="Rich Bento"
+        description="Riff on V3 — same bento grid but each tile includes the full story/explanation. Fewer columns, bigger tiles, more to read per card."
+      />
+      <V7RichBento stats={stats} />
+
+      <SectionLabel
+        number={8}
+        title="Full-Viewport Immersive"
+        description="Riff on V2 — one fact per screen. Big number, full description, controls to tweak inputs. Scroll through one at a time. More to absorb per view."
+      />
+      <V8FullViewport dob={dob} />
     </section>
   );
 }
