@@ -157,10 +157,16 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
         <span className="text-4xl block mb-4">🥄</span>
         <BigNum>{fmt(s.yogurtKg)} kg</BigNum>
         <SlideUnit>of yogurt</SlideUnit>
-        <SlideHeadline>Roughly the weight of a baby hippo.</SlideHeadline>
+        <SlideHeadline>
+          {s.yogurtKg >= 55
+            ? `That's about ${fmtDecimal(s.yogurtKg / 40, 1)}× the weight of a baby hippo.`
+            : s.yogurtKg >= 25
+              ? "Roughly the weight of a baby hippo."
+              : `That's about ${Math.round((s.yogurtKg / 40) * 100)}% of a baby hippo.`}
+        </SlideHeadline>
         <SlideBody>
           If you've eaten yogurt every day since you were little, that's {fmt(s.yogurtKg)} kg of
-          creamy, tangy fuel. Baby hippos weigh about 25–55 kg at birth — you've eaten past that.
+          creamy, tangy fuel. Baby hippos weigh about 25–55 kg at birth{s.yogurtKg >= 25 ? " — you've eaten past that" : ""}.
         </SlideBody>
         <div className="space-y-3">
           <BlockControl label="Grams per day">
@@ -298,7 +304,7 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
           className="text-sm font-semibold uppercase tracking-[0.15em] mb-10 pb-3 border-b"
           style={{ color: "var(--text-secondary)", borderColor: "var(--border-color)" }}
         >
-          One more thing
+          One more thing (hard math! See if you can work it out)
         </h3>
 
         <p className="text-xl font-semibold mb-8" style={{ color: "var(--text-primary)" }}>
@@ -358,7 +364,7 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
             style={{ color: "var(--text-primary)" }}
           >
             We love you, we love your mind,<br />
-            happy <span style={{ fontFamily: "var(--font-stat)", color: "var(--text-accent)" }} data-stat>1001</span>st birthday {name}.
+            happy 1001st birthday {name}.
           </p>
         </div>
       </div>
