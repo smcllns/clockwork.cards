@@ -62,6 +62,12 @@ function N({ children }: { children: React.ReactNode }) {
   );
 }
 
+// ── Format year values: 3 decimals unless it's a round integer ────
+function fmtYears(n: number): string {
+  if (Math.abs(n - Math.round(n)) < 0.001) return Math.round(n).toLocaleString();
+  return n.toFixed(3);
+}
+
 // ── Types ──────────────────────────────────────────────────────────
 type TimeUnit = "years" | "months" | "weeks" | "days" | "hours" | "minutes" | "seconds";
 type SpaceUnit = "miles" | "km";
@@ -73,7 +79,7 @@ const LIGHT_SPEED_MPH = 669_600_000;
 export default function CuratedMain({ name, dob }: { name: string; dob: string }) {
   const [config, setConfig] = useState<StatsConfig>({ ...DEFAULT_CONFIG });
   const [now, setNow] = useState(Date.now());
-  const [timeUnit, setTimeUnit] = useState<TimeUnit>("days");
+  const [timeUnit, setTimeUnit] = useState<TimeUnit>("seconds");
   const [spaceUnit, setSpaceUnit] = useState<SpaceUnit>("miles");
 
   useEffect(() => {
@@ -101,11 +107,11 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
           ────────────────────────────────────────────────────────── */}
       <Slide id="1">
         <span className="text-4xl block mb-4">⏳</span>
-        <BigNum>{fmt(timeValues[timeUnit])}</BigNum>
+        <BigNum>{timeUnit === "years" ? fmtYears(timeValues[timeUnit]) : fmt(timeValues[timeUnit])}</BigNum>
         <SlideUnit>{timeUnit} of being awesome</SlideUnit>
         <SlideHeadline>And counting.</SlideHeadline>
         <SlideBody>
-          That's {fmt(s.yearsAlive)} years, {fmt(s.monthsAlive)} months, {fmt(s.weeksAlive)} weeks, {fmt(s.daysAlive)} days,{" "}
+          That's {fmtYears(s.yearsAlive)} years, {fmt(s.monthsAlive)} months, {fmt(s.weeksAlive)} weeks, {fmt(s.daysAlive)} days,{" "}
           {fmt(s.hoursAlive)} hours, {fmt(s.minutesAlive)} minutes,
           or {fmt(s.secondsAlive)} seconds — every single one of them yours.
         </SlideBody>
@@ -144,7 +150,7 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
         </SlideUnit>
         <SlideHeadline>You're an interstellar traveler.</SlideHeadline>
         <SlideBody>
-          {s.lapsAroundSun} laps around the sun. Earth moves at {earthSpeed} — you're not just a kid,
+          {fmtYears(s.lapsAroundSun)} laps around the sun. Earth moves at {earthSpeed} — you're not just a kid,
           you're an interstellar traveler. Though let's be real, light would still whoop you in a race:
           at {lightSpeed}, it would cover that distance in just {fmtDecimal(s.lightSpeedHours)} hours.
         </SlideBody>
@@ -158,15 +164,16 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
         <BigNum>{fmt(s.yogurtKg)} kg</BigNum>
         <SlideUnit>of yogurt</SlideUnit>
         <SlideHeadline>
-          {s.yogurtKg >= 55
-            ? `That's about ${fmtDecimal(s.yogurtKg / 40, 1)}× the weight of a baby hippo.`
-            : s.yogurtKg >= 25
-              ? "Roughly the weight of a baby hippo."
-              : `That's about ${Math.round((s.yogurtKg / 40) * 100)}% of a baby hippo.`}
+          {(() => {
+            const ratio = s.yogurtKg / 40;
+            if (ratio < 0.9) return `That's about ${Math.round(ratio * 100)}% the weight of a baby hippo.`;
+            if (ratio < 1.15) return "About the weight of a baby hippo.";
+            return `That's about ${fmtDecimal(ratio, 1)}× the weight of a baby hippo.`;
+          })()}
         </SlideHeadline>
         <SlideBody>
           If you've eaten yogurt every day since you were little, that's {fmt(s.yogurtKg)} kg of
-          creamy, tangy fuel. Baby hippos weigh about 25–55 kg at birth{s.yogurtKg >= 25 ? " — you've eaten past that" : ""}.
+          creamy, tangy fuel. Baby hippos weigh about 40 kg at birth.
         </SlideBody>
         <div className="space-y-3">
           <BlockControl label="Grams per day">
@@ -378,7 +385,7 @@ function brainTiles(s: Stats) {
   return [
     {
       id: "5a", emoji: "🧠",
-      value: `${fmtDecimal(s.sleepYears)} years`, unit: "of brain filing time",
+      value: `${fmtYears(s.sleepYears)} years`, unit: "of brain filing time",
       headline: `${fmt(s.sleepHours)} hours of sleep so far`,
       body: "Every night while you sleep, your brain sorts through everything you learned that day and files it into long-term memory — like a librarian working the night shift.",
     },
