@@ -48,17 +48,17 @@ In binary, 9 is 1001.
 
 "Binary" is what computers use — it just means base 2. Humans write numbers in base 10, where digits grow in powers of ten: 10 → 100 → 1000. Binary is the same idea but with powers of 2: 2 → 4 → 8 → 16.
 
-In base 2, there are only two numbers: 0, 1.
+In base 2, there are only two numbers: 0 and 1.
 In base 2, 1001 means: 1 eight, 0 fours, 0 twos, and 1 one.
 1001₂ = (1×2³) + (0×2²) + (0×2¹) + (1×2⁰) = 8 + 0 + 0 + 1 = 9
 
-In base 10, there are 10 numbers: 0 - 9.
-In base 10, 9 is ... 9. But to write it the same way: 0 hundreds, 0 tens, 9 ones.
+In base 10, there are 10 numbers: 0-9.
+In base 10, 9 is ... 9. But writing it the same way: 0 hundreds, 0 tens, 9 ones.
 9₁₀ = (0×10²) + (0×10¹) + (9×10⁰) = 0 + 0 + 9 = 9
 
-Any problem you can solve in base 10, you can also solve in base 2 — or base 3, or any base. You're just writing the numbers differently. It's like how "nine", "neuf", "nueve", and "九" all mean the same thing in different languages. 9 and 1001 are the same number in different bases.
+Any problem you can solve in base 10, you can also solve in base 2, or any other base*. You're just writing the numbers differently. It's like how "nine", "neuf", "nueve", and "九" all mean the same thing in different languages. 9 and 1001 are the same number in different bases.
 
-
+(*In base 16, there are 16 digits: 0–9 and A–F, where A=10, B=11, C=12, D=13, E=14, F=15. So how would we write 9₁₆?)
 
 ---
 
