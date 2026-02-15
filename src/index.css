@@ -9,3 +9,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+@media (max-width: 767px) {
+  [data-brain-bento] { grid-template-columns: 1fr !important; }
+  [data-brain-bento] > * { grid-column: span 1 !important; }
+}

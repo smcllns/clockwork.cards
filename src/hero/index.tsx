@@ -57,17 +57,19 @@ function layoutBalls(specs: LineSpec[]): { balls: Ball[]; maxW: number; totalH: 
   }
 
   const maxW = Math.max(...lineLayouts.map(l => l.width));
+  const gapBefore = (i: number) =>
+    i > 0 ? LINE_GAP * Math.max(lineLayouts[i - 1].scale, lineLayouts[i].scale) : 0;
+
   let totalH = 0;
   for (let i = 0; i < lineLayouts.length; i++) {
-    totalH += CHAR_H * lineLayouts[i].scale;
-    if (i > 0) totalH += LINE_GAP * Math.max(lineLayouts[i - 1].scale, lineLayouts[i].scale);
+    totalH += CHAR_H * lineLayouts[i].scale + gapBefore(i);
   }
 
   const balls: Ball[] = [];
   let curY = 0;
   for (let li = 0; li < lineLayouts.length; li++) {
     const { chars, width: lineW, scale } = lineLayouts[li];
-    if (li > 0) curY += LINE_GAP * Math.max(lineLayouts[li - 1].scale, lineLayouts[li].scale);
+    curY += gapBefore(li);
     const lineOffX = (maxW - lineW) / 2;
     const colorIndex = Math.floor(Math.random() * LIGHT.hex.length);
 
@@ -244,19 +246,21 @@ function addWalls(world: RAPIER.World, camera: THREE.PerspectiveCamera, aspect: 
   const camDist = camera.position.z;
   const vRad = (VFOV * Math.PI) / 180;
   const visH = 2 * camDist * Math.tan(vRad / 2);
-  const visW = visH * aspect;
-  const half = Math.max(visW, visH) / 2 + 2;
+  const half = Math.max(visH * aspect, visH) / 2 + 2;
+  const hh = visH / 2 + 1;
 
-  function wall(x: number, y: number, z: number, hx: number, hy: number, hz: number): void {
+  const walls: [number, number, number, number, number, number][] = [
+    [0, -hh, 0, half, 1, half],      // bottom
+    [0, hh, 0, half, 1, half],       // top
+    [-half, 0, 0, 1, hh, half],      // left
+    [half, 0, 0, 1, hh, half],       // right
+    [0, 0, -half, half, hh, 1],      // back
+    [0, 0, half, half, hh, 1],       // front
+  ];
+  for (const [x, y, z, hx, hy, hz] of walls) {
     const b = world.createRigidBody(RAPIER.RigidBodyDesc.fixed().setTranslation(x, y, z));
     world.createCollider(RAPIER.ColliderDesc.cuboid(hx, hy, hz).setRestitution(0.6).setFriction(0.2), b);
   }
-  wall(0, -visH / 2 - 1, 0, half, 1, half);     // bottom
-  wall(0, visH / 2 + 1, 0, half, 1, half);      // top
-  wall(-half, 0, 0, 1, visH / 2 + 1, half);     // left
-  wall(half, 0, 0, 1, visH / 2 + 1, half);      // right
-  wall(0, 0, -half, half, visH / 2 + 1, 1);     // back
-  wall(0, 0, half, half, visH / 2 + 1, 1);      // front
 }
 
 function setupGrabHandlers(
@@ -401,42 +405,42 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
     observer.observe(container);
 
     // Theme updates — applied directly via Zustand subscription, no React render
+    const THEME = {
+      shiny: {
+        clearColor: 0x0a0a0f,
+        bloom: { strength: 1.2, radius: 0.4, threshold: 0.2 },
+        particleOpacity: 0.6,
+        mat: { emissiveIntensity: 0.6, roughness: 0.3, metalness: 0.2, clearcoat: 0 },
+      },
+      light: {
+        clearColor: 0xffffff,
+        bloom: { strength: 0, radius: 0, threshold: 1 },
+        particleOpacity: 0,
+        mat: { emissiveIntensity: 0, roughness: 0.4, metalness: 0.15, clearcoat: 0.3 },
+      },
+    } as const;
+
     function applyTheme(shinyVal: boolean) {
       const s = stateRef.current;
       if (!s) return;
       s.shiny = shinyVal;
+      const cfg = THEME[shinyVal ? "shiny" : "light"];
       const palette = shinyVal ? SHINY : LIGHT;
-      s.renderer.setClearColor(shinyVal ? 0x0a0a0f : 0xffffff);
-
-      if (shinyVal) {
-        s.bloomPass.strength = 1.2;
-        s.bloomPass.radius = 0.4;
-        s.bloomPass.threshold = 0.2;
-        (s.particles.material as THREE.PointsMaterial).opacity = 0.6;
-      } else {
-        s.bloomPass.strength = 0;
-        s.bloomPass.radius = 0;
-        s.bloomPass.threshold = 1;
-        (s.particles.material as THREE.PointsMaterial).opacity = 0;
-      }
+      s.renderer.setClearColor(cfg.clearColor);
+      s.bloomPass.strength = cfg.bloom.strength;
+      s.bloomPass.radius = cfg.bloom.radius;
+      s.bloomPass.threshold = cfg.bloom.threshold;
+      (s.particles.material as THREE.PointsMaterial).opacity = cfg.particleOpacity;
 
       for (let i = 0; i < s.meshes.length; i++) {
         const material = s.meshes[i].material as THREE.MeshPhysicalMaterial;
         const hexColor = palette.hex[s.colorIndices[i]];
         material.color.setHex(hexColor);
-        if (shinyVal) {
-          material.emissive.setHex(hexColor);
-          material.emissiveIntensity = 0.6;
-          material.roughness = 0.3;
-          material.metalness = 0.2;
-          material.clearcoat = 0;
-        } else {
-          material.emissive.setHex(0x000000);
-          material.emissiveIntensity = 0;
-          material.roughness = 0.4;
-          material.metalness = 0.15;
-          material.clearcoat = 0.3;
-        }
+        material.emissive.setHex(shinyVal ? hexColor : 0x000000);
+        material.emissiveIntensity = cfg.mat.emissiveIntensity;
+        material.roughness = cfg.mat.roughness;
+        material.metalness = cfg.mat.metalness;
+        material.clearcoat = cfg.mat.clearcoat;
       }
     }
 
