@@ -10,10 +10,8 @@ function App() {
   return (
     <div className="max-w-[1024px] mx-auto">
       <Hero name={name} dob={dob} />
-      <div className="h-dvh flex flex-col">
-        <Main name={name} dob={dob} />
-        <Footer />
-      </div>
+      <Main name={name} dob={dob} />
+      <Footer />
     </div>
   );
 }
