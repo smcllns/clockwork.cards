@@ -497,8 +497,11 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
     let grabbed: RAPIER.RigidBody[] = [];
     let target = { x: 0, y: 0 };
     let bodies: RAPIER.RigidBody[] = [];
+    let meshes: THREE.Mesh[] = [];
     let origins: { x: number; y: number; z: number }[] = [];
     let world: RAPIER.World;
+    let particles: THREE.Points;
+    let particleVelocities: Float32Array;
     let visH = 0, visW = 0;
 
     RAPIER.init().then(() => {
@@ -517,7 +520,7 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
       ]);
       const result = createBalls(balls, world, scene);
       bodies = result.bodies;
-      const meshes = result.meshes;
+      meshes = result.meshes;
       const aspect = w / h;
 
       const camDist = fitCamera(camera, maxW, totalH, aspect);
@@ -526,7 +529,9 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
       grabbed = grabResult.grabbed;
       target = grabResult.target;
 
-      const { points: particles, velocities: particleVelocities } = createParticles(scene, camera);
+      const particleResult = createParticles(scene, camera);
+      particles = particleResult.points;
+      particleVelocities = particleResult.velocities;
 
       origins = bodies.map(b => {
         const t = b.translation();

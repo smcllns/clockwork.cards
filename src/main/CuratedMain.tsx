@@ -69,21 +69,12 @@ const KM_PER_MILE = 1.60934;
 const EARTH_ORBITAL_MPH = 67_000;
 const LIGHT_SPEED_MPH = 669_600_000;
 
-// ── Weight comparisons for yogurt ──────────────────────────────────
-const WEIGHT_COMPARISONS = [
-  { label: "baby hippo", emoji: "🦛", kg: 40, fact: "Baby hippos weigh about 40 kg at birth" },
-  { label: "big Labrador", emoji: "🐕", kg: 30, fact: "A fully-grown Labrador weighs about 30 kg" },
-  { label: "yearling horse", emoji: "🐴", kg: 250, fact: "A 1-year-old horse weighs about 250 kg" },
-  { label: "baby elephant", emoji: "🐘", kg: 120, fact: "A newborn elephant weighs about 120 kg" },
-];
-
 // ════════════════════════════════════════════════════════════════════
 export default function CuratedMain({ name, dob }: { name: string; dob: string }) {
   const [config, setConfig] = useState<StatsConfig>({ ...DEFAULT_CONFIG });
   const [now, setNow] = useState(Date.now());
   const [timeUnit, setTimeUnit] = useState<TimeUnit>("days");
   const [spaceUnit, setSpaceUnit] = useState<SpaceUnit>("miles");
-  const [comparisonIdx, setComparisonIdx] = useState(0);
 
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
@@ -101,8 +92,6 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
   const spaceVal = spaceUnit === "miles" ? s.milesInSpace : s.milesInSpace * KM_PER_MILE;
   const earthSpeed = spaceUnit === "miles" ? `${fmt(EARTH_ORBITAL_MPH)} mph` : `${fmt(Math.round(EARTH_ORBITAL_MPH * KM_PER_MILE))} kph`;
   const lightSpeed = spaceUnit === "miles" ? `${fmt(LIGHT_SPEED_MPH)} mph` : `${fmt(Math.round(LIGHT_SPEED_MPH * KM_PER_MILE))} kph`;
-  const cmp = WEIGHT_COMPARISONS[comparisonIdx];
-  const yogurtRatio = s.yogurtKg / cmp.kg;
 
   return (
     <section style={{ background: "var(--bg-primary)" }}>
@@ -168,28 +157,12 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
         <span className="text-4xl block mb-4">🥄</span>
         <BigNum>{fmt(s.yogurtKg)} kg</BigNum>
         <SlideUnit>of yogurt</SlideUnit>
-        <SlideHeadline>
-          {yogurtRatio >= 2
-            ? `That's about ${Math.round(yogurtRatio)}× the weight of a ${cmp.label}. ${cmp.emoji}`
-            : yogurtRatio >= 1
-              ? `That's more than a ${cmp.label}. ${cmp.emoji}`
-              : `That's about ${Math.round(yogurtRatio * 100)}% the weight of a ${cmp.label}. ${cmp.emoji}`}
-        </SlideHeadline>
+        <SlideHeadline>Roughly the weight of a baby hippo.</SlideHeadline>
         <SlideBody>
           If you've eaten yogurt every day since you were little, that's {fmt(s.yogurtKg)} kg of
-          creamy, tangy fuel. {cmp.fact} — {yogurtRatio >= 1 ? "you've eaten past that" : "you're getting there"}.
+          creamy, tangy fuel. Baby hippos weigh about 25–55 kg at birth — you've eaten past that.
         </SlideBody>
         <div className="space-y-3">
-          <BlockControl label="Compare to">
-            <InlinePills
-              options={WEIGHT_COMPARISONS.map((c, i) => ({
-                value: String(i),
-                label: `${c.emoji} ${c.label}`,
-              }))}
-              value={String(comparisonIdx)}
-              onChange={(v) => setComparisonIdx(Number(v))}
-            />
-          </BlockControl>
           <BlockControl label="Grams per day">
             <BlockSlider value={config.yogurtGramsPerDay} min={10} max={150} step={10} unit="g"
               onChange={(v) => set("yogurtGramsPerDay", v)} />
@@ -268,37 +241,45 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
         </h3>
         <div
           data-brain-bento
-          style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "20px" }}
+          style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "20px", maxWidth: "900px", margin: "0 auto" }}
         >
-          {brainTiles(s).map((tile, i) => (
-            <div
-              key={i}
-              className="rounded-2xl border p-6 flex flex-col gap-3 relative"
-              style={{
-                background: "var(--bg-card)",
-                borderColor: "var(--border-color)",
-                boxShadow: "var(--shadow-sm)",
-              }}
-              data-card
-            >
-              <div className="absolute top-3 right-3"><IdTag id={tile.id} /></div>
-              <div className="flex items-start gap-3">
-                <span className="text-2xl shrink-0 mt-1">{tile.emoji}</span>
-                <div>
-                  <div className="flex items-baseline gap-2 flex-wrap">
-                    <span
-                      className="font-bold"
-                      style={{ fontFamily: "var(--font-stat)", color: "var(--text-primary)", fontSize: "1.75rem", lineHeight: 1.1 }}
-                      data-stat
-                    >{tile.value}</span>
-                    <span className="text-sm" style={{ color: "var(--text-secondary)" }}>{tile.unit}</span>
+          {brainTiles(s).map((tile, i) => {
+            // Brick pattern: rows alternate wide/narrow sides
+            // Row 0: [3][2], Row 1: [2][3], Row 2: [3][2]
+            const row = Math.floor(i / 2);
+            const isFirst = i % 2 === 0;
+            const span = (row % 2 === 0) === isFirst ? 3 : 2;
+            return (
+              <div
+                key={i}
+                className="rounded-2xl border p-6 flex flex-col gap-3 relative"
+                style={{
+                  gridColumn: `span ${span}`,
+                  background: "var(--bg-card)",
+                  borderColor: "var(--border-color)",
+                  boxShadow: "var(--shadow-sm)",
+                }}
+                data-card
+              >
+                <div className="absolute top-3 right-3"><IdTag id={tile.id} /></div>
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl shrink-0 mt-1">{tile.emoji}</span>
+                  <div>
+                    <div className="flex items-baseline gap-2 flex-wrap">
+                      <span
+                        className="font-bold"
+                        style={{ fontFamily: "var(--font-stat)", color: "var(--text-primary)", fontSize: "1.75rem", lineHeight: 1.1 }}
+                        data-stat
+                      >{tile.value}</span>
+                      <span className="text-sm" style={{ color: "var(--text-secondary)" }}>{tile.unit}</span>
+                    </div>
+                    <p className="text-sm font-semibold mt-1" style={{ color: "var(--text-primary)" }}>{tile.headline}</p>
                   </div>
-                  <p className="text-sm font-semibold mt-1" style={{ color: "var(--text-primary)" }}>{tile.headline}</p>
                 </div>
+                <p className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)", paddingLeft: "44px" }}>{tile.body}</p>
               </div>
-              <p className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)", paddingLeft: "44px" }}>{tile.body}</p>
-            </div>
-          ))}
+            );
+          })}
         </div>
         <style>{`
           @media (max-width: 767px) {
@@ -320,135 +301,56 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
           One more thing
         </h3>
 
-        {/* The big reveal */}
-        <div className="text-center mb-10">
-          <p className="text-lg mb-3" style={{ color: "var(--text-secondary)" }}>
-            In binary, {s.ageYears} is written as
-          </p>
-          <p
-            className="font-bold"
-            style={{ fontFamily: "var(--font-stat)", color: "var(--text-primary)", fontSize: "clamp(3rem, 12vw, 6rem)" }}
-            data-stat
-          >
-            1001
-          </p>
-        </div>
-
-        <p className="text-base leading-relaxed mb-8" style={{ color: "var(--text-secondary)" }}>
-          "Binary" is what computers use — it means base 2. Humans write numbers in base 10,
-          where each column is worth 10× more than the last: ones → tens → hundreds → thousands.
-          Binary works the same way, but each column is worth <strong style={{ color: "var(--text-primary)" }}>2×</strong> more.
+        <p className="text-xl font-semibold mb-8" style={{ color: "var(--text-primary)" }}>
+          In binary, {s.ageYears} is{" "}
+          <span style={{ fontFamily: "var(--font-stat)", color: "var(--text-accent)" }} data-stat>1001</span>.
         </p>
 
-        {/* Place-value grid */}
+        <p className="text-base leading-relaxed mb-10" style={{ color: "var(--text-secondary)" }}>
+          "Binary" is what computers use — it just means base 2. Humans write numbers in base 10,
+          where digits grow in powers of ten: 10 → 100 → 1000. Binary is the same idea but
+          with powers of 2: 2 → 4 → 8 → 16.
+        </p>
+
+        {/* Base 2 block */}
         <div
-          className="rounded-xl border p-5 mb-8"
+          className="rounded-xl border p-5 mb-6 space-y-3"
           style={{ background: "var(--bg-card)", borderColor: "var(--border-color)" }}
         >
-          <p className="text-xs font-semibold uppercase tracking-[0.15em] mb-4" style={{ color: "var(--text-secondary)" }}>
-            Breaking it down — each column is a power of 2
+          <p style={{ color: "var(--text-primary)" }}>
+            In base 2, there are only two numbers: <strong>0</strong> and <strong>1</strong>.
           </p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "8px", textAlign: "center" }}>
-            {/* Power labels */}
-            <div className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>2³</div>
-            <div className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>2²</div>
-            <div className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>2¹</div>
-            <div className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>2⁰</div>
-            {/* Place values */}
-            <div className="text-sm" style={{ color: "var(--text-secondary)" }}>= 8</div>
-            <div className="text-sm" style={{ color: "var(--text-secondary)" }}>= 4</div>
-            <div className="text-sm" style={{ color: "var(--text-secondary)" }}>= 2</div>
-            <div className="text-sm" style={{ color: "var(--text-secondary)" }}>= 1</div>
-            {/* Binary digits — highlight the 1s */}
-            <div
-              className="text-3xl font-bold rounded-lg py-3"
-              style={{ fontFamily: "var(--font-stat)", color: "var(--text-accent)", background: "color-mix(in srgb, var(--text-accent) 10%, transparent)" }}
-              data-stat
-            >1</div>
-            <div
-              className="text-3xl font-bold rounded-lg py-3"
-              style={{ fontFamily: "var(--font-stat)", color: "var(--text-secondary)", opacity: 0.3 }}
-              data-stat
-            >0</div>
-            <div
-              className="text-3xl font-bold rounded-lg py-3"
-              style={{ fontFamily: "var(--font-stat)", color: "var(--text-secondary)", opacity: 0.3 }}
-              data-stat
-            >0</div>
-            <div
-              className="text-3xl font-bold rounded-lg py-3"
-              style={{ fontFamily: "var(--font-stat)", color: "var(--text-accent)", background: "color-mix(in srgb, var(--text-accent) 10%, transparent)" }}
-              data-stat
-            >1</div>
-            {/* Result row */}
-            <div className="text-lg font-bold pt-1" style={{ fontFamily: "var(--font-stat)", color: "var(--text-accent)" }} data-stat>8</div>
-            <div className="text-lg font-bold pt-1" style={{ fontFamily: "var(--font-stat)", color: "var(--text-secondary)", opacity: 0.3 }} data-stat>0</div>
-            <div className="text-lg font-bold pt-1" style={{ fontFamily: "var(--font-stat)", color: "var(--text-secondary)", opacity: 0.3 }} data-stat>0</div>
-            <div className="text-lg font-bold pt-1" style={{ fontFamily: "var(--font-stat)", color: "var(--text-accent)" }} data-stat>1</div>
-          </div>
-          <div className="text-center mt-4 pt-4 border-t" style={{ borderColor: "var(--border-color)" }}>
-            <p style={{ fontFamily: "var(--font-stat)", color: "var(--text-accent)", fontSize: "1.25rem" }} data-stat>
-              8 + 0 + 0 + 1 = <strong>{s.ageYears}</strong>
-            </p>
-          </div>
+          <p style={{ color: "var(--text-secondary)" }}>
+            1001 means: 1 eight, 0 fours, 0 twos, and 1 one.
+          </p>
+          <p className="pt-2" style={{ fontFamily: "var(--font-stat)", color: "var(--text-accent)", fontSize: "1.1rem" }} data-stat>
+            1001₂ = (1×2³) + (0×2²) + (0×2¹) + (1×2⁰) = 8 + 0 + 0 + 1 = {s.ageYears}
+          </p>
         </div>
 
-        {/* Base 10 comparison */}
+        {/* Base 10 block */}
         <div
-          className="rounded-xl border p-5 mb-8"
+          className="rounded-xl border p-5 mb-10 space-y-3"
           style={{ background: "var(--bg-card)", borderColor: "var(--border-color)" }}
         >
-          <p className="text-xs font-semibold uppercase tracking-[0.15em] mb-4" style={{ color: "var(--text-secondary)" }}>
-            Compare with base 10 — same idea, powers of 10
+          <p style={{ color: "var(--text-primary)" }}>
+            In base 10, there are 10 numbers: 0 – 9.
           </p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px", textAlign: "center" }}>
-            <div className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>10²</div>
-            <div className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>10¹</div>
-            <div className="text-xs font-medium" style={{ color: "var(--text-secondary)" }}>10⁰</div>
-            <div className="text-sm" style={{ color: "var(--text-secondary)" }}>= 100</div>
-            <div className="text-sm" style={{ color: "var(--text-secondary)" }}>= 10</div>
-            <div className="text-sm" style={{ color: "var(--text-secondary)" }}>= 1</div>
-            <div
-              className="text-3xl font-bold rounded-lg py-3"
-              style={{ fontFamily: "var(--font-stat)", color: "var(--text-secondary)", opacity: 0.3 }}
-              data-stat
-            >0</div>
-            <div
-              className="text-3xl font-bold rounded-lg py-3"
-              style={{ fontFamily: "var(--font-stat)", color: "var(--text-secondary)", opacity: 0.3 }}
-              data-stat
-            >0</div>
-            <div
-              className="text-3xl font-bold rounded-lg py-3"
-              style={{ fontFamily: "var(--font-stat)", color: "var(--text-accent)", background: "color-mix(in srgb, var(--text-accent) 10%, transparent)" }}
-              data-stat
-            >{s.ageYears}</div>
-            <div className="text-lg font-bold pt-1" style={{ fontFamily: "var(--font-stat)", color: "var(--text-secondary)", opacity: 0.3 }} data-stat>0</div>
-            <div className="text-lg font-bold pt-1" style={{ fontFamily: "var(--font-stat)", color: "var(--text-secondary)", opacity: 0.3 }} data-stat>0</div>
-            <div className="text-lg font-bold pt-1" style={{ fontFamily: "var(--font-stat)", color: "var(--text-accent)" }} data-stat>{s.ageYears}</div>
-          </div>
-          <div className="text-center mt-4 pt-4 border-t" style={{ borderColor: "var(--border-color)" }}>
-            <p style={{ fontFamily: "var(--font-stat)", color: "var(--text-accent)", fontSize: "1.25rem" }} data-stat>
-              0 + 0 + {s.ageYears} = <strong>{s.ageYears}</strong>
-            </p>
-          </div>
-        </div>
-
-        <div className="space-y-4 text-base leading-relaxed mb-12" style={{ color: "var(--text-secondary)" }}>
-          <p>
-            Same number, different way of writing it. It's like how "nine", "neuf",
-            "nueve", and "九" all mean the same thing in different languages.{" "}
-            <strong style={{ color: "var(--text-primary)" }}>{s.ageYears}</strong> and{" "}
-            <strong style={{ color: "var(--text-primary)" }}>1001</strong> are the same number in different bases.
+          <p style={{ color: "var(--text-secondary)" }}>
+            {s.ageYears} is … {s.ageYears}. But to write it the same way: 0 hundreds, 0 tens, {s.ageYears} ones.
           </p>
-          <p>
-            In base 2 there are only two digits: <strong style={{ color: "var(--text-primary)" }}>0</strong> and{" "}
-            <strong style={{ color: "var(--text-primary)" }}>1</strong>. That's it.
-            Every number you can think of can be written with just those two.
+          <p className="pt-2" style={{ fontFamily: "var(--font-stat)", color: "var(--text-accent)", fontSize: "1.1rem" }} data-stat>
+            {s.ageYears}₁₀ = (0×10²) + (0×10¹) + ({s.ageYears}×10⁰) = 0 + 0 + {s.ageYears} = {s.ageYears}
           </p>
         </div>
 
-        {/* Closing — merged from former #7 */}
+        <p className="text-base leading-relaxed mb-12" style={{ color: "var(--text-secondary)" }}>
+          Any problem you can solve in base 10, you can also solve in base 2 — or base 3, or any base.
+          You're just writing the numbers differently. It's like how "nine", "neuf", "nueve", and "九"
+          all mean the same thing in different languages. {s.ageYears} and 1001 are the same number in different bases.
+        </p>
+
+        {/* Closing */}
         <div className="pt-8 border-t text-center" style={{ borderColor: "var(--border-color)" }}>
           <p className="text-4xl mb-6">❤️</p>
           <p
@@ -461,40 +363,6 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
         </div>
       </div>
 
-      {/* ──────────────────────────────────────────────────────────
-          7. APPENDIX (V5 style — compact ticker of all facts)
-          ────────────────────────────────────────────────────────── */}
-      <div className="px-6 py-16 max-w-2xl mx-auto relative">
-        <div className="absolute top-4 right-6"><IdTag id="7" /></div>
-        <h3
-          className="text-xs font-semibold uppercase tracking-[0.2em] mb-6 pb-2 border-b"
-          style={{ color: "var(--text-secondary)", borderColor: "var(--border-color)" }}
-        >
-          All the numbers
-        </h3>
-        {tickerGroups(s, spaceUnit, spaceVal).map((g) => (
-          <div key={g.section} className="mb-8">
-            <h4
-              className="text-xs font-semibold uppercase tracking-[0.15em] mb-3"
-              style={{ color: "var(--text-secondary)" }}
-            >
-              {g.section}
-            </h4>
-            {g.rows.map((row, i) => (
-              <div
-                key={row.label}
-                className="flex items-baseline justify-between py-2 border-b"
-                style={{ borderColor: i < g.rows.length - 1 ? "var(--border-color)" : "transparent" }}
-              >
-                <span className="text-sm" style={{ color: "var(--text-secondary)" }}>{row.label}</span>
-                <span className="text-base font-bold tabular-nums" style={{ fontFamily: "var(--font-stat)", color: "var(--text-primary)" }} data-stat>
-                  {row.value}
-                </span>
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
     </section>
   );
 }
@@ -541,48 +409,3 @@ function brainTiles(s: Stats) {
   ];
 }
 
-// ── Appendix ticker rows ───────────────────────────────────────────
-function tickerGroups(s: Stats, spaceUnit: SpaceUnit, spaceVal: number) {
-  return [
-    {
-      section: "Time & Space",
-      rows: [
-        { label: "Years alive", value: fmt(s.yearsAlive) },
-        { label: "Months alive", value: fmt(s.monthsAlive) },
-        { label: "Weeks alive", value: fmt(s.weeksAlive) },
-        { label: "Days alive", value: fmt(s.daysAlive) },
-        { label: "Hours alive", value: fmt(s.hoursAlive) },
-        { label: "Minutes alive", value: fmt(s.minutesAlive) },
-        { label: "Seconds alive", value: fmt(s.secondsAlive) },
-        { label: "Laps around the sun", value: String(s.lapsAroundSun) },
-        { label: `${spaceUnit === "miles" ? "Miles" : "Km"} through space`, value: fmtBig(spaceVal) },
-        { label: "Light speed equivalent", value: `${fmtDecimal(s.lightSpeedHours)} hrs` },
-      ],
-    },
-    {
-      section: "Your Life in Numbers",
-      rows: [
-        { label: "Yogurt consumed", value: `${fmt(s.yogurtKg)} kg` },
-        { label: "Steps taken", value: fmtBig(s.totalSteps) },
-        { label: "Days brushing teeth", value: fmtDecimal(s.brushingDays) },
-        { label: "Brush strokes", value: fmtBig(s.brushStrokes) },
-        { label: "Times blinked", value: fmtBig(s.totalBlinks) },
-        { label: "Hair length (never cut)", value: `${fmtDecimal(s.hairLengthCm / 100)} m` },
-        { label: "Total poops", value: fmt(s.totalPoops) },
-      ],
-    },
-    {
-      section: "Your Brain & Body",
-      rows: [
-        { label: "Heartbeats", value: fmtBig(s.totalHeartbeats) },
-        { label: "Hours of sleep", value: fmt(s.sleepHours) },
-        { label: "Years of brain filing", value: `${fmtDecimal(s.sleepYears)} yrs` },
-        { label: "Fruit & veg servings", value: fmt(s.fruitServings) },
-        { label: "Hugs given", value: fmt(s.totalHugs) },
-        { label: "Extra liters of air (lungs)", value: fmtBig(s.lungExtraLiters) },
-        { label: "Water consumed", value: `${fmt(s.waterLiters)} L` },
-        { label: "% of Olympic pool", value: `${fmtDecimal(s.waterPoolPercent)}%` },
-      ],
-    },
-  ];
-}
