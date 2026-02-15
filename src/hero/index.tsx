@@ -57,17 +57,19 @@ function layoutBalls(specs: LineSpec[]): { balls: Ball[]; maxW: number; totalH: 
   }
 
   const maxW = Math.max(...lineLayouts.map(l => l.width));
+  const gapBefore = (i: number) =>
+    i > 0 ? LINE_GAP * Math.max(lineLayouts[i - 1].scale, lineLayouts[i].scale) : 0;
+
   let totalH = 0;
   for (let i = 0; i < lineLayouts.length; i++) {
-    totalH += CHAR_H * lineLayouts[i].scale;
-    if (i > 0) totalH += LINE_GAP * Math.max(lineLayouts[i - 1].scale, lineLayouts[i].scale);
+    totalH += CHAR_H * lineLayouts[i].scale + gapBefore(i);
   }
 
   const balls: Ball[] = [];
   let curY = 0;
   for (let li = 0; li < lineLayouts.length; li++) {
     const { chars, width: lineW, scale } = lineLayouts[li];
-    if (li > 0) curY += LINE_GAP * Math.max(lineLayouts[li - 1].scale, lineLayouts[li].scale);
+    curY += gapBefore(li);
     const lineOffX = (maxW - lineW) / 2;
     const colorIndex = Math.floor(Math.random() * LIGHT.hex.length);
 
@@ -244,19 +246,21 @@ function addWalls(world: RAPIER.World, camera: THREE.PerspectiveCamera, aspect: 
   const camDist = camera.position.z;
   const vRad = (VFOV * Math.PI) / 180;
   const visH = 2 * camDist * Math.tan(vRad / 2);
-  const visW = visH * aspect;
-  const half = Math.max(visW, visH) / 2 + 2;
+  const half = Math.max(visH * aspect, visH) / 2 + 2;
+  const hh = visH / 2 + 1;
 
-  function wall(x: number, y: number, z: number, hx: number, hy: number, hz: number): void {
+  const walls: [number, number, number, number, number, number][] = [
+    [0, -hh, 0, half, 1, half],      // bottom
+    [0, hh, 0, half, 1, half],       // top
+    [-half, 0, 0, 1, hh, half],      // left
+    [half, 0, 0, 1, hh, half],       // right
+    [0, 0, -half, half, hh, 1],      // back
+    [0, 0, half, half, hh, 1],       // front
+  ];
+  for (const [x, y, z, hx, hy, hz] of walls) {
     const b = world.createRigidBody(RAPIER.RigidBodyDesc.fixed().setTranslation(x, y, z));
     world.createCollider(RAPIER.ColliderDesc.cuboid(hx, hy, hz).setRestitution(0.6).setFriction(0.2), b);
   }
-  wall(0, -visH / 2 - 1, 0, half, 1, half);     // bottom
-  wall(0, visH / 2 + 1, 0, half, 1, half);      // top
-  wall(-half, 0, 0, 1, visH / 2 + 1, half);     // left
-  wall(half, 0, 0, 1, visH / 2 + 1, half);      // right
-  wall(0, 0, -half, half, visH / 2 + 1, 1);     // back
-  wall(0, 0, half, half, visH / 2 + 1, 1);      // front
 }
 
 function setupGrabHandlers(
@@ -331,17 +335,44 @@ function setupGrabHandlers(
 
 const MONTHS = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
 
+// ── Isolated theme toggle — only this re-renders on theme change ──
+function ThemeToggle() {
+  const shiny = useTheme(s => s.shiny);
+  return (
+    <button
+      onClick={() => useTheme.getState().toggle()}
+      className="relative w-10 h-5 rounded-full cursor-pointer"
+      style={{
+        background: shiny ? "var(--accent-1)" : "#c4c4cc",
+        boxShadow: shiny ? "0 0 8px rgba(0,255,255,0.3)" : "inset 0 1px 2px rgba(0,0,0,0.15)",
+        transition: "background-color 0.3s, box-shadow 0.3s",
+      }}
+    >
+      <span
+        className="absolute left-0 top-0.5 w-4 h-4 rounded-full"
+        style={{
+          background: shiny ? "#000" : "#fff",
+          boxShadow: "0 1px 3px rgba(0,0,0,0.25)",
+          transform: shiny ? "translateX(22px)" : "translateX(2px)",
+          transition: "transform 0.3s, background-color 0.3s",
+        }}
+      />
+    </button>
+  );
+}
+
 export default function Hero({ name, dob }: { name: string; dob: string }) {
   const age = Math.floor((Date.now() - new Date(dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
   const containerRef = useRef<HTMLDivElement>(null);
   const stateRef = useRef<SceneState | null>(null);
   const [chaos, setChaos] = useState(false);
-  const shiny = useTheme(s => s.shiny);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
     let disposed = false;
+    let unsubTheme: (() => void) | null = null;
+    let visible = true; // IntersectionObserver tracks this
 
     let dragging = false;
     let lastX = 0;
@@ -360,11 +391,128 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
     container.addEventListener("pointermove", onPointerMove);
     container.addEventListener("pointerup", onPointerUp);
 
+    // Pause rAF when hero scrolls out of view to free GPU for scroll compositing
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        visible = entry.isIntersecting;
+        // Resume loop if it was paused while visible
+        if (visible && stateRef.current && !stateRef.current.frame) {
+          stateRef.current.frame = requestAnimationFrame(animateLoop);
+        }
+      },
+      { threshold: 0 },
+    );
+    observer.observe(container);
+
+    // Theme updates — applied directly via Zustand subscription, no React render
+    const THEME = {
+      shiny: {
+        clearColor: 0x0a0a0f,
+        bloom: { strength: 1.2, radius: 0.4, threshold: 0.2 },
+        particleOpacity: 0.6,
+        mat: { emissiveIntensity: 0.6, roughness: 0.3, metalness: 0.2, clearcoat: 0 },
+      },
+      light: {
+        clearColor: 0xffffff,
+        bloom: { strength: 0, radius: 0, threshold: 1 },
+        particleOpacity: 0,
+        mat: { emissiveIntensity: 0, roughness: 0.4, metalness: 0.15, clearcoat: 0.3 },
+      },
+    } as const;
+
+    function applyTheme(shinyVal: boolean) {
+      const s = stateRef.current;
+      if (!s) return;
+      s.shiny = shinyVal;
+      const cfg = THEME[shinyVal ? "shiny" : "light"];
+      const palette = shinyVal ? SHINY : LIGHT;
+      s.renderer.setClearColor(cfg.clearColor);
+      s.bloomPass.strength = cfg.bloom.strength;
+      s.bloomPass.radius = cfg.bloom.radius;
+      s.bloomPass.threshold = cfg.bloom.threshold;
+      (s.particles.material as THREE.PointsMaterial).opacity = cfg.particleOpacity;
+
+      for (let i = 0; i < s.meshes.length; i++) {
+        const material = s.meshes[i].material as THREE.MeshPhysicalMaterial;
+        const hexColor = palette.hex[s.colorIndices[i]];
+        material.color.setHex(hexColor);
+        material.emissive.setHex(shinyVal ? hexColor : 0x000000);
+        material.emissiveIntensity = cfg.mat.emissiveIntensity;
+        material.roughness = cfg.mat.roughness;
+        material.metalness = cfg.mat.metalness;
+        material.clearcoat = cfg.mat.clearcoat;
+      }
+    }
+
+    // Shared animate function reference for visibility resume
+    function animateLoop(): void {
+      const st = stateRef.current!;
+      if (!visible) { st.frame = 0; return; } // pause when off-screen
+
+      const elapsed = (performance.now() - st.startTime) / 1000;
+
+      if (!st.anchored) {
+        for (const body of grabbed) {
+          const pos = body.translation();
+          body.setLinvel({ x: (target.x - pos.x) * 12, y: (target.y - pos.y) * 12, z: 0 }, true);
+          body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+        }
+      }
+      if (st.anchored) {
+        for (let i = 0; i < bodies.length; i++) {
+          const pos = bodies[i].translation();
+          const orig = origins[i];
+          bodies[i].setLinvel({ x: (orig.x - pos.x) * 20, y: (orig.y - pos.y) * 20, z: -pos.z * 20 }, true);
+        }
+      }
+
+      world.step();
+      _spinQuat.setFromAxisAngle(_yAxis, st.spinAngle);
+      for (let i = 0; i < bodies.length; i++) {
+        const pos = bodies[i].translation();
+        _vec3.set(pos.x, pos.y, pos.z).applyQuaternion(_spinQuat);
+        meshes[i].position.copy(_vec3);
+      }
+
+      if (st.shiny) {
+        for (let i = 0; i < meshes.length; i++) {
+          const mat = meshes[i].material as THREE.MeshPhysicalMaterial;
+          mat.emissiveIntensity = 0.5 + 0.3 * Math.sin(elapsed * 1.5 + st.phases[i]);
+        }
+
+        const posAttr = particles.geometry.getAttribute("position") as THREE.BufferAttribute;
+        const pos = posAttr.array as Float32Array;
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+          pos[i * 3] += particleVelocities[i * 3];
+          pos[i * 3 + 1] += particleVelocities[i * 3 + 1];
+          if (pos[i * 3 + 1] > visH / 2) {
+            pos[i * 3 + 1] = -visH / 2;
+            pos[i * 3] = (Math.random() - 0.5) * visW;
+          }
+        }
+        posAttr.needsUpdate = true;
+      }
+
+      st.composer.render();
+      st.frame = requestAnimationFrame(animateLoop);
+    }
+
+    // These are hoisted — populated after RAPIER init
+    let grabbed: RAPIER.RigidBody[] = [];
+    let target = { x: 0, y: 0 };
+    let bodies: RAPIER.RigidBody[] = [];
+    let meshes: THREE.Mesh[] = [];
+    let origins: { x: number; y: number; z: number }[] = [];
+    let world: RAPIER.World;
+    let particles: THREE.Points;
+    let particleVelocities: Float32Array;
+    let visH = 0, visW = 0;
+
     RAPIER.init().then(() => {
       if (disposed) return;
 
       const { scene, camera, renderer, composer, bloomPass, w, h } = setupScene(container);
-      const world = new RAPIER.World({ x: 0, y: 0, z: 0 });
+      world = new RAPIER.World({ x: 0, y: 0, z: 0 });
       const d = new Date(dob);
       const dateLine = `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()} ${d.getUTCFullYear()}`;
       const { balls, maxW, totalH } = layoutBalls([
@@ -374,16 +522,22 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
         { text: name.toUpperCase(), scale: 1.4 },
         { text: dateLine, scale: 0.45 },
       ]);
-      const { bodies, meshes } = createBalls(balls, world, scene);
+      const result = createBalls(balls, world, scene);
+      bodies = result.bodies;
+      meshes = result.meshes;
       const aspect = w / h;
 
       const camDist = fitCamera(camera, maxW, totalH, aspect);
       addWalls(world, camera, aspect);
-      const { grabbed, target } = setupGrabHandlers(renderer.domElement, camera, bodies, w, h);
+      const grabResult = setupGrabHandlers(renderer.domElement, camera, bodies, w, h);
+      grabbed = grabResult.grabbed;
+      target = grabResult.target;
 
-      const { points: particles, velocities: particleVelocities } = createParticles(scene, camera);
+      const particleResult = createParticles(scene, camera);
+      particles = particleResult.points;
+      particleVelocities = particleResult.velocities;
 
-      const origins = bodies.map(b => {
+      origins = bodies.map(b => {
         const t = b.translation();
         return { x: t.x, y: t.y, z: t.z };
       });
@@ -399,63 +553,20 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
       };
 
       const vRad = (VFOV * Math.PI) / 180;
-      const visH = 2 * camDist * Math.tan(vRad / 2);
-      const visW = visH * aspect;
+      visH = 2 * camDist * Math.tan(vRad / 2);
+      visW = visH * aspect;
 
-      function animate(): void {
-        const st = stateRef.current!;
-        const elapsed = (performance.now() - st.startTime) / 1000;
+      // Apply initial theme state and subscribe for future changes
+      applyTheme(useTheme.getState().shiny);
+      unsubTheme = useTheme.subscribe((state) => applyTheme(state.shiny));
 
-        if (!st.anchored) {
-          for (const body of grabbed) {
-            const pos = body.translation();
-            body.setLinvel({ x: (target.x - pos.x) * 12, y: (target.y - pos.y) * 12, z: 0 }, true);
-            body.setAngvel({ x: 0, y: 0, z: 0 }, true);
-          }
-        }
-        if (st.anchored) {
-          for (let i = 0; i < bodies.length; i++) {
-            const pos = bodies[i].translation();
-            const orig = origins[i];
-            bodies[i].setLinvel({ x: (orig.x - pos.x) * 20, y: (orig.y - pos.y) * 20, z: -pos.z * 20 }, true);
-          }
-        }
-
-        world.step();
-        _spinQuat.setFromAxisAngle(_yAxis, st.spinAngle);
-        for (let i = 0; i < bodies.length; i++) {
-          const pos = bodies[i].translation();
-          _vec3.set(pos.x, pos.y, pos.z).applyQuaternion(_spinQuat);
-          meshes[i].position.copy(_vec3);
-        }
-
-        if (st.shiny) {
-          for (let i = 0; i < meshes.length; i++) {
-            const mat = meshes[i].material as THREE.MeshPhysicalMaterial;
-            mat.emissiveIntensity = 0.5 + 0.3 * Math.sin(elapsed * 1.5 + st.phases[i]);
-          }
-
-          const posAttr = particles.geometry.getAttribute("position") as THREE.BufferAttribute;
-          const pos = posAttr.array as Float32Array;
-          for (let i = 0; i < PARTICLE_COUNT; i++) {
-            pos[i * 3] += particleVelocities[i * 3];
-            pos[i * 3 + 1] += particleVelocities[i * 3 + 1];
-            if (pos[i * 3 + 1] > visH / 2) {
-              pos[i * 3 + 1] = -visH / 2;
-              pos[i * 3] = (Math.random() - 0.5) * visW;
-            }
-          }
-          posAttr.needsUpdate = true;
-        }
-
-        st.composer.render();
-        st.frame = requestAnimationFrame(animate);
-      }
-      animate();
+      animateLoop();
     });
 
     return () => {
       disposed = true;
+      unsubTheme?.();
+      observer.disconnect();
       container.removeEventListener("pointerdown", onPointerDown);
       container.removeEventListener("pointermove", onPointerMove);
       container.removeEventListener("pointerup", onPointerUp);
@@ -469,46 +580,6 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
       }
     };
   }, []);
-
-  useEffect(() => {
-    const s = stateRef.current;
-    if (!s) return;
-
-    s.shiny = shiny;
-    const palette = shiny ? SHINY : LIGHT;
-    s.renderer.setClearColor(shiny ? 0x0a0a0f : 0xffffff);
-
-    if (shiny) {
-      s.bloomPass.strength = 1.2;
-      s.bloomPass.radius = 0.4;
-      s.bloomPass.threshold = 0.2;
-      (s.particles.material as THREE.PointsMaterial).opacity = 0.6;
-    } else {
-      s.bloomPass.strength = 0;
-      s.bloomPass.radius = 0;
-      s.bloomPass.threshold = 1;
-      (s.particles.material as THREE.PointsMaterial).opacity = 0;
-    }
-
-    for (let i = 0; i < s.meshes.length; i++) {
-      const material = s.meshes[i].material as THREE.MeshPhysicalMaterial;
-      const hexColor = palette.hex[s.colorIndices[i]];
-      material.color.setHex(hexColor);
-      if (shiny) {
-        material.emissive.setHex(hexColor);
-        material.emissiveIntensity = 0.6;
-        material.roughness = 0.3;
-        material.metalness = 0.2;
-        material.clearcoat = 0;
-      } else {
-        material.emissive.setHex(0x000000);
-        material.emissiveIntensity = 0;
-        material.roughness = 0.4;
-        material.metalness = 0.15;
-        material.clearcoat = 0.3;
-      }
-    }
-  }, [shiny]);
 
   function unleashChaos(): void {
     const s = stateRef.current;
@@ -529,25 +600,7 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
         <nav className="relative z-10 flex items-center px-6 py-4">
           <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-display)' }}>clockwork.cards/{name.toLowerCase()}</span>
           <div className="ml-auto flex gap-2 items-center">
-            <button
-              onClick={() => useTheme.getState().toggle()}
-              className="relative w-10 h-5 rounded-full cursor-pointer"
-              style={{
-                background: shiny ? "var(--accent-1)" : "#c4c4cc",
-                boxShadow: shiny ? "0 0 8px rgba(0,255,255,0.3)" : "inset 0 1px 2px rgba(0,0,0,0.15)",
-                transition: "background-color 0.3s, box-shadow 0.3s",
-              }}
-            >
-              <span
-                className="absolute left-0 top-0.5 w-4 h-4 rounded-full"
-                style={{
-                  background: shiny ? "#000" : "#fff",
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.25)",
-                  transform: shiny ? "translateX(22px)" : "translateX(2px)",
-                  transition: "transform 0.3s, background-color 0.3s",
-                }}
-              />
-            </button>
+            <ThemeToggle />
           </div>
         </nav>
       </section>

@@ -4,11 +4,13 @@
   "type": "module",
   "scripts": {
     "dev": "bun ./index.html",
-    "build": "bun run build.ts"
+    "build": "bun run build.ts",
+    "test": "bun test"
   },
   "dependencies": {
     "@dimforge/rapier3d-compat": "^0.19.3",
     "matter-js": "^0.20.0",
+    "puppeteer-core": "^24.37.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "three": "^0.182.0",
