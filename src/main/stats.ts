@@ -96,6 +96,24 @@ function daysSinceAge(dob: Date, age: number, now: number): number {
   return Math.max(0, (now - start.getTime()) / MS_PER_DAY);
 }
 
+// Calendar-based age: returns integer age and precise fractional years
+function calendarAge(dob: Date, nowMs: number): { ageYears: number; preciseYears: number } {
+  const now = new Date(nowMs);
+  let age = now.getFullYear() - dob.getFullYear();
+  const monthDiff = now.getMonth() - dob.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < dob.getDate())) {
+    age--;
+  }
+  // Fractional part: how far through the current year of life
+  const lastBirthday = new Date(dob);
+  lastBirthday.setFullYear(dob.getFullYear() + age);
+  const nextBirthday = new Date(dob);
+  nextBirthday.setFullYear(dob.getFullYear() + age + 1);
+  const yearMs = nextBirthday.getTime() - lastBirthday.getTime();
+  const elapsed = nowMs - lastBirthday.getTime();
+  return { ageYears: age, preciseYears: age + elapsed / yearMs };
+}
+
 export function computeStats(dob: string, config: StatsConfig, now: number): Stats {
   const dobDate = new Date(dob);
   const msAlive = now - dobDate.getTime();
@@ -103,7 +121,7 @@ export function computeStats(dob: string, config: StatsConfig, now: number): Sta
   const hoursAlive = msAlive / MS_PER_HOUR;
   const minutesAlive = msAlive / MS_PER_MIN;
   const secondsAlive = msAlive / MS_PER_SEC;
-  const ageYears = Math.floor(daysAlive / DAYS_PER_YEAR);
+  const { ageYears, preciseYears } = calendarAge(dobDate, now);
   const monthsAlive = daysAlive / (DAYS_PER_YEAR / 12);
 
   // Space
@@ -151,14 +169,14 @@ export function computeStats(dob: string, config: StatsConfig, now: number): Sta
 
   return {
     ageYears,
-    yearsAlive: ageYears,
+    yearsAlive: preciseYears,
     monthsAlive: Math.floor(monthsAlive),
     weeksAlive: Math.floor(daysAlive / 7),
     daysAlive: Math.floor(daysAlive),
     hoursAlive: Math.floor(hoursAlive),
     minutesAlive: Math.floor(minutesAlive),
     secondsAlive: Math.floor(secondsAlive),
-    lapsAroundSun: ageYears,
+    lapsAroundSun: preciseYears,
     milesInSpace,
     lightSpeedHours,
     totalHeartbeats,
