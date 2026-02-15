@@ -7,8 +7,9 @@ const MS_PER_HOUR = MS_PER_MIN * 60;
 const MS_PER_DAY = MS_PER_HOUR * 24;
 const DAYS_PER_YEAR = 365.25;
 
-const EARTH_ORBITAL_MPH = 67_000;
-const LIGHT_SPEED_MPH = 669_600_000;
+export const KM_PER_MILE = 1.60934;
+export const EARTH_ORBITAL_MPH = 67_000;
+export const LIGHT_SPEED_MPH = 669_600_000;
 const AVG_CHILD_BPM = 80;
 const BLINKS_PER_DAY = 15_000;
 const OLYMPIC_POOL_LITERS = 2_500_000;
@@ -123,6 +124,8 @@ export function computeStats(dob: string, config: StatsConfig, now: number): Sta
   const secondsAlive = msAlive / MS_PER_SEC;
   const { ageYears, preciseYears } = calendarAge(dobDate, now);
   const monthsAlive = daysAlive / (DAYS_PER_YEAR / 12);
+  const wholeDays = Math.floor(daysAlive);
+  const since = (age: number) => daysSinceAge(dobDate, age, now);
 
   // Space
   const milesInSpace = hoursAlive * EARTH_ORBITAL_MPH;
@@ -133,36 +136,23 @@ export function computeStats(dob: string, config: StatsConfig, now: number): Sta
   const heartbeatsPerDay = AVG_CHILD_BPM * 60 * 24;
 
   // Life in Numbers
-  const yogurtDays = daysSinceAge(dobDate, config.yogurtStartAge, now);
-  const yogurtKg = (yogurtDays * config.yogurtGramsPerDay) / 1000;
-
-  const stepsDays = daysSinceAge(dobDate, config.stepsStartAge, now);
-  const totalSteps = stepsDays * config.stepsPerDay;
-
-  const brushDays = daysSinceAge(dobDate, config.brushStartAge, now);
-  const brushMinutesTotal = brushDays * config.brushMinutes * 2; // 2x per day
+  const yogurtKg = (since(config.yogurtStartAge) * config.yogurtGramsPerDay) / 1000;
+  const totalSteps = since(config.stepsStartAge) * config.stepsPerDay;
+  const brushMinutesTotal = since(config.brushStartAge) * config.brushMinutes * 2; // 2x per day
   const brushingDays = brushMinutesTotal / (60 * 24);
   const brushStrokes = brushMinutesTotal * BRUSH_STROKES_PER_MIN;
-
-  const totalBlinks = Math.floor(daysAlive) * BLINKS_PER_DAY;
-
+  const totalBlinks = wholeDays * BLINKS_PER_DAY;
   const hairLengthCm = monthsAlive * config.hairGrowthCmPerMonth;
-
   const totalPoops = Math.floor(daysAlive * config.poopsPerDay);
 
   // Brain & Body
-  const sleepHours = Math.floor(daysAlive) * config.sleepHoursPerNight;
+  const sleepHours = wholeDays * config.sleepHoursPerNight;
   const sleepYears = sleepHours / (24 * DAYS_PER_YEAR);
-
-  const fruitServings = Math.floor(daysAlive) * config.fruitServingsPerDay;
-
-  const totalHugs = Math.floor(daysAlive) * config.hugsPerDay;
-
-  const lungExtraLiters =
-    Math.floor(daysAlive) * config.playHoursPerDay * 60 * HARD_PLAY_LITERS_PER_MIN;
-
+  const fruitServings = wholeDays * config.fruitServingsPerDay;
+  const totalHugs = wholeDays * config.hugsPerDay;
+  const lungExtraLiters = wholeDays * config.playHoursPerDay * 60 * HARD_PLAY_LITERS_PER_MIN;
   const waterLitersPerDay = (config.waterGlassesPerDay * GLASS_ML) / 1000;
-  const waterLiters = Math.floor(daysAlive) * waterLitersPerDay;
+  const waterLiters = wholeDays * waterLitersPerDay;
   const waterPoolPercent = (waterLiters / OLYMPIC_POOL_LITERS) * 100;
   const litersRemaining = OLYMPIC_POOL_LITERS - waterLiters;
   const poolYearsRemaining = litersRemaining / waterLitersPerDay / DAYS_PER_YEAR;
@@ -224,4 +214,16 @@ export function fmtBig(n: number): string {
 
 export function fmtDecimal(n: number, decimals = 1): string {
   return n.toFixed(decimals);
+}
+
+export function fmtYears(n: number): string {
+  if (Math.abs(n - Math.round(n)) < 0.001) return Math.round(n).toLocaleString();
+  return n.toFixed(3);
+}
+
+export function hippoHeadline(yogurtKg: number): string {
+  const ratio = yogurtKg / 40;
+  if (ratio < 0.9) return `That's about ${Math.round(ratio * 100)}% the weight of a baby hippo.`;
+  if (ratio < 1.15) return "About the weight of a baby hippo.";
+  return `That's about ${fmtDecimal(ratio, 1)}× the weight of a baby hippo.`;
 }

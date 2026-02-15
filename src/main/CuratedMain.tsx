@@ -1,6 +1,15 @@
 import { useState, useEffect } from "react";
-import { computeStats, DEFAULT_CONFIG, type StatsConfig, type Stats, fmt, fmtBig, fmtDecimal } from "./stats";
+import { computeStats, DEFAULT_CONFIG, type StatsConfig, type Stats, fmt, fmtBig, fmtDecimal, fmtYears, hippoHeadline, KM_PER_MILE, EARTH_ORBITAL_MPH, LIGHT_SPEED_MPH } from "./stats";
 import { InlineStepper, InlineSlider, InlinePills, BlockControl, BlockSlider, BlockStepper } from "./Controls";
+
+// ── Shared styles (CSS custom properties used throughout) ──────────
+const css = {
+  primary: { color: "var(--text-primary)" } as const,
+  secondary: { color: "var(--text-secondary)" } as const,
+  sectionHead: { color: "var(--text-secondary)", borderColor: "var(--border-color)" } as const,
+  card: { background: "var(--bg-card)", borderColor: "var(--border-color)" } as const,
+  formula: { fontFamily: "var(--font-stat)", color: "var(--text-accent)", fontSize: "1.1rem" } as const,
+};
 
 // ── ID tag (small muted label for feedback reference) ──────────────
 function IdTag({ id }: { id: string }) {
@@ -42,15 +51,15 @@ function BigNum({ children }: { children: React.ReactNode }) {
 }
 
 function SlideUnit({ children }: { children: React.ReactNode }) {
-  return <p className="text-lg font-medium mb-6" style={{ color: "var(--text-secondary)" }}>{children}</p>;
+  return <p className="text-lg font-medium mb-6" style={css.secondary}>{children}</p>;
 }
 
 function SlideHeadline({ children }: { children: React.ReactNode }) {
-  return <p className="text-xl font-semibold mb-4" style={{ color: "var(--text-primary)" }}>{children}</p>;
+  return <p className="text-xl font-semibold mb-4" style={css.primary}>{children}</p>;
 }
 
 function SlideBody({ children }: { children: React.ReactNode }) {
-  return <p className="text-base leading-relaxed mb-8" style={{ color: "var(--text-secondary)" }}>{children}</p>;
+  return <p className="text-base leading-relaxed mb-8" style={css.secondary}>{children}</p>;
 }
 
 // ── V6-style inline highlight ──────────────────────────────────────
@@ -62,18 +71,18 @@ function N({ children }: { children: React.ReactNode }) {
   );
 }
 
-// ── Format year values: 3 decimals unless it's a round integer ────
-function fmtYears(n: number): string {
-  if (Math.abs(n - Math.round(n)) < 0.001) return Math.round(n).toLocaleString();
-  return n.toFixed(3);
-}
-
-// ── Types ──────────────────────────────────────────────────────────
-type TimeUnit = "years" | "months" | "weeks" | "days" | "hours" | "minutes" | "seconds";
+// ── Types & constants ──────────────────────────────────────────────
+const TIME_UNITS = [
+  { value: "years", label: "yrs" },
+  { value: "months", label: "mo" },
+  { value: "weeks", label: "wks" },
+  { value: "days", label: "days" },
+  { value: "hours", label: "hrs" },
+  { value: "minutes", label: "min" },
+  { value: "seconds", label: "sec" },
+] as const;
+type TimeUnit = typeof TIME_UNITS[number]["value"];
 type SpaceUnit = "miles" | "km";
-const KM_PER_MILE = 1.60934;
-const EARTH_ORBITAL_MPH = 67_000;
-const LIGHT_SPEED_MPH = 669_600_000;
 
 // ════════════════════════════════════════════════════════════════════
 export default function CuratedMain({ name, dob }: { name: string; dob: string }) {
@@ -95,9 +104,12 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
     years: s.yearsAlive, months: s.monthsAlive, weeks: s.weeksAlive,
     days: s.daysAlive, hours: s.hoursAlive, minutes: s.minutesAlive, seconds: s.secondsAlive,
   };
-  const spaceVal = spaceUnit === "miles" ? s.milesInSpace : s.milesInSpace * KM_PER_MILE;
-  const earthSpeed = spaceUnit === "miles" ? `${fmt(EARTH_ORBITAL_MPH)} mph` : `${fmt(Math.round(EARTH_ORBITAL_MPH * KM_PER_MILE))} kph`;
-  const lightSpeed = spaceUnit === "miles" ? `${fmt(LIGHT_SPEED_MPH)} mph` : `${fmt(Math.round(LIGHT_SPEED_MPH * KM_PER_MILE))} kph`;
+  const isMiles = spaceUnit === "miles";
+  const toUnit = (mph: number) => isMiles ? mph : mph * KM_PER_MILE;
+  const speedLabel = (mph: number) => `${fmt(Math.round(toUnit(mph)))} ${isMiles ? "mph" : "kph"}`;
+  const spaceVal = toUnit(s.milesInSpace);
+  const earthSpeed = speedLabel(EARTH_ORBITAL_MPH);
+  const lightSpeed = speedLabel(LIGHT_SPEED_MPH);
 
   return (
     <section style={{ background: "var(--bg-primary)" }}>
@@ -116,19 +128,7 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
           or {fmt(s.secondsAlive)} seconds — every single one of them yours.
         </SlideBody>
         <BlockControl label="Show as">
-          <InlinePills
-            options={[
-              { value: "years" as TimeUnit, label: "yrs" },
-              { value: "months" as TimeUnit, label: "mo" },
-              { value: "weeks" as TimeUnit, label: "wks" },
-              { value: "days" as TimeUnit, label: "days" },
-              { value: "hours" as TimeUnit, label: "hrs" },
-              { value: "minutes" as TimeUnit, label: "min" },
-              { value: "seconds" as TimeUnit, label: "sec" },
-            ]}
-            value={timeUnit}
-            onChange={setTimeUnit}
-          />
+          <InlinePills options={TIME_UNITS} value={timeUnit} onChange={setTimeUnit} />
         </BlockControl>
       </Slide>
 
@@ -163,14 +163,7 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
         <span className="text-4xl block mb-4">🥄</span>
         <BigNum>{fmt(s.yogurtKg)} kg</BigNum>
         <SlideUnit>of yogurt</SlideUnit>
-        <SlideHeadline>
-          {(() => {
-            const ratio = s.yogurtKg / 40;
-            if (ratio < 0.9) return `That's about ${Math.round(ratio * 100)}% the weight of a baby hippo.`;
-            if (ratio < 1.15) return "About the weight of a baby hippo.";
-            return `That's about ${fmtDecimal(ratio, 1)}× the weight of a baby hippo.`;
-          })()}
-        </SlideHeadline>
+        <SlideHeadline>{hippoHeadline(s.yogurtKg)}</SlideHeadline>
         <SlideBody>
           If you've eaten yogurt every day since you were little, that's {fmt(s.yogurtKg)} kg of
           creamy, tangy fuel. Baby hippos weigh about 40 kg at birth.
@@ -194,11 +187,11 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
         <div className="absolute top-4 right-6"><IdTag id="4" /></div>
         <h3
           className="text-sm font-semibold uppercase tracking-[0.15em] mb-10 pb-3 border-b"
-          style={{ color: "var(--text-secondary)", borderColor: "var(--border-color)" }}
+          style={css.sectionHead}
         >
           Your life in numbers
         </h3>
-        <article className="space-y-6 text-base leading-relaxed" style={{ color: "var(--text-primary)" }}>
+        <article className="space-y-6 text-base leading-relaxed" style={css.primary}>
           <p>
             <IdTag id="4a" />{" "}If you've walked{" "}
             <InlineSlider value={config.stepsPerDay} min={2000} max={15000} step={1000}
@@ -248,7 +241,7 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
         <div className="absolute top-4 right-6"><IdTag id="5" /></div>
         <h3
           className="text-sm font-semibold uppercase tracking-[0.15em] mb-8 pb-3 border-b max-w-2xl mx-auto"
-          style={{ color: "var(--text-secondary)", borderColor: "var(--border-color)" }}
+          style={css.sectionHead}
         >
           Your brain &amp; body
         </h3>
@@ -284,22 +277,16 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
                         style={{ fontFamily: "var(--font-stat)", color: "var(--text-primary)", fontSize: "1.75rem", lineHeight: 1.1 }}
                         data-stat
                       >{tile.value}</span>
-                      <span className="text-sm" style={{ color: "var(--text-secondary)" }}>{tile.unit}</span>
+                      <span className="text-sm" style={css.secondary}>{tile.unit}</span>
                     </div>
-                    <p className="text-sm font-semibold mt-1" style={{ color: "var(--text-primary)" }}>{tile.headline}</p>
+                    <p className="text-sm font-semibold mt-1" style={css.primary}>{tile.headline}</p>
                   </div>
                 </div>
-                <p className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)", paddingLeft: "44px" }}>{tile.body}</p>
+                <p className="text-sm leading-relaxed" style={{ ...css.secondary, paddingLeft: "44px" }}>{tile.body}</p>
               </div>
             );
           })}
         </div>
-        <style>{`
-          @media (max-width: 767px) {
-            [data-brain-bento] { grid-template-columns: 1fr !important; }
-            [data-brain-bento] > * { grid-column: span 1 !important; }
-          }
-        `}</style>
       </div>
 
       {/* ──────────────────────────────────────────────────────────
@@ -309,17 +296,17 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
         <div className="absolute top-4 right-6"><IdTag id="6" /></div>
         <h3
           className="text-sm font-semibold uppercase tracking-[0.15em] mb-10 pb-3 border-b"
-          style={{ color: "var(--text-secondary)", borderColor: "var(--border-color)" }}
+          style={css.sectionHead}
         >
           One more thing (hard math! See if you can work it out)
         </h3>
 
-        <p className="text-xl font-semibold mb-8" style={{ color: "var(--text-primary)" }}>
+        <p className="text-xl font-semibold mb-8" style={css.primary}>
           In binary, {s.ageYears} is{" "}
           <span style={{ fontFamily: "var(--font-stat)", color: "var(--text-accent)" }} data-stat>1001</span>.
         </p>
 
-        <p className="text-base leading-relaxed mb-10" style={{ color: "var(--text-secondary)" }}>
+        <p className="text-base leading-relaxed mb-10" style={css.secondary}>
           "Binary" is what computers use — it just means base 2. Humans write numbers in base 10,
           where digits grow in powers of ten: 10 → 100 → 1000. Binary is the same idea but
           with powers of 2: 2 → 4 → 8 → 16.
@@ -328,15 +315,15 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
         {/* Base 2 block */}
         <div
           className="rounded-xl border p-5 mb-6 space-y-3"
-          style={{ background: "var(--bg-card)", borderColor: "var(--border-color)" }}
+          style={css.card}
         >
-          <p style={{ color: "var(--text-primary)" }}>
+          <p style={css.primary}>
             In base 2, there are only two numbers: <strong>0</strong> and <strong>1</strong>.
           </p>
-          <p style={{ color: "var(--text-secondary)" }}>
+          <p style={css.secondary}>
             1001 means: 1 eight, 0 fours, 0 twos, and 1 one.
           </p>
-          <p className="pt-2" style={{ fontFamily: "var(--font-stat)", color: "var(--text-accent)", fontSize: "1.1rem" }} data-stat>
+          <p className="pt-2" style={css.formula} data-stat>
             1001₂ = (1×2³) + (0×2²) + (0×2¹) + (1×2⁰) = 8 + 0 + 0 + 1 = {s.ageYears}
           </p>
         </div>
@@ -344,20 +331,20 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
         {/* Base 10 block */}
         <div
           className="rounded-xl border p-5 mb-10 space-y-3"
-          style={{ background: "var(--bg-card)", borderColor: "var(--border-color)" }}
+          style={css.card}
         >
-          <p style={{ color: "var(--text-primary)" }}>
+          <p style={css.primary}>
             In base 10, there are 10 numbers: 0 – 9.
           </p>
-          <p style={{ color: "var(--text-secondary)" }}>
+          <p style={css.secondary}>
             {s.ageYears} is … {s.ageYears}. But to write it the same way: 0 hundreds, 0 tens, {s.ageYears} ones.
           </p>
-          <p className="pt-2" style={{ fontFamily: "var(--font-stat)", color: "var(--text-accent)", fontSize: "1.1rem" }} data-stat>
+          <p className="pt-2" style={css.formula} data-stat>
             {s.ageYears}₁₀ = (0×10²) + (0×10¹) + ({s.ageYears}×10⁰) = 0 + 0 + {s.ageYears} = {s.ageYears}
           </p>
         </div>
 
-        <p className="text-base leading-relaxed mb-12" style={{ color: "var(--text-secondary)" }}>
+        <p className="text-base leading-relaxed mb-12" style={css.secondary}>
           Any problem you can solve in base 10, you can also solve in base 2 — or base 3, or any base.
           You're just writing the numbers differently. It's like how "nine", "neuf", "nueve", and "九"
           all mean the same thing in different languages. {s.ageYears} and 1001 are the same number in different bases.
@@ -368,7 +355,7 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
           <p className="text-4xl mb-6">❤️</p>
           <p
             className="text-2xl sm:text-3xl font-semibold leading-snug"
-            style={{ color: "var(--text-primary)" }}
+            style={css.primary}
           >
             We love you, we love your mind,<br />
             happy 1001st birthday {name}.
