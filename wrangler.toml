@@ -1,7 +1,3 @@
 name = "clockwork-cards"
 pages_build_output_dir = "./dist"
 compatibility_date = "2025-01-01"
-
-[[kv_namespaces]]
-binding = "KV"
-id = "77776b6f9ea4457083740ca0877bb0f2"
