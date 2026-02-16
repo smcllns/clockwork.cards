@@ -5,9 +5,14 @@ import type { HeroMode } from "./hero";
 import Cards from "./cards";
 import Footer from "./footer";
 
-const params = new URLSearchParams(window.location.search);
-const name = params.get("name") ?? process.env.DEFAULT_NAME ?? "Oscar";
-const dob = params.get("dob") ?? process.env.DEFAULT_DOB ?? "2017-02-20";
+declare global {
+  interface Window { __CARD__?: { name: string; displayName?: string; dob: string; sex?: string } }
+}
+
+const card = window.__CARD__;
+const params = card ? null : new URLSearchParams(window.location.search);
+const name = card?.displayName ?? card?.name ?? params?.get("name") ?? process.env.DEFAULT_NAME ?? "Oscar";
+const dob = card?.dob ?? params?.get("dob") ?? process.env.DEFAULT_DOB ?? "2017-02-20";
 
 function App() {
   const [mode, setMode] = useState<HeroMode>("off");
