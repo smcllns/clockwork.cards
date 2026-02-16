@@ -43,9 +43,9 @@ export const onRequest: PagesFunction<Env> = async (context) => {
   const url = new URL(context.request.url);
   const path = url.pathname.slice(1);
 
-  // Root — serve landing page
+  // Root — serve SPA (welcome mat mode, no __CARD__ injected)
   if (!path || path === "") {
-    return context.env.ASSETS.fetch(new URL("/landing.html", url.origin));
+    return context.env.ASSETS.fetch(new URL("/index.html", url.origin));
   }
 
   // Static assets — pass through
