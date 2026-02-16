@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createRoot } from "react-dom/client";
 import Hero from "./hero";
 import type { HeroMode } from "./hero";
-import CuratedMain from "./main/CuratedMain";
+import Cards from "./cards";
 import Footer from "./footer";
 
 const params = new URLSearchParams(window.location.search);
@@ -185,7 +185,7 @@ function App() {
         </div>
       </div>
 
-      <CuratedMain name={name} dob={dob} />
+      <Cards name={name} dob={dob} />
       <Footer />
     </div>
   );

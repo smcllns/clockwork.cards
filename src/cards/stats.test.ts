@@ -1,5 +1,5 @@
 import { describe, test, expect } from "bun:test";
-import { computeStats, DEFAULT_CONFIG, fmt, fmtBig, fmtDecimal, type Stats } from "./stats";
+import { computeStats, DEFAULT_CONFIG, fmt, fmtBig, fmtDecimal, fmtYears, hippoHeadline, KM_PER_MILE, type Stats } from "./stats";
 
 // Fixed timestamp for deterministic tests: 2026-02-15T12:00:00Z
 const FEB_15_2026 = new Date("2026-02-15T12:00:00Z").getTime();
@@ -235,5 +235,61 @@ describe("snapshot", () => {
     expect(s.totalHugs).toBeGreaterThan(0);
     expect(s.lungExtraLiters).toBeGreaterThan(0);
     expect(s.waterLiters).toBeGreaterThan(0);
+  });
+});
+
+// ── fmtYears: 3 decimal places unless round integer ──────────────────
+
+describe("fmtYears", () => {
+  test("round integer -> no decimals", () => {
+    expect(fmtYears(9)).toBe("9");
+    expect(fmtYears(9.0005)).toBe("9"); // within 0.001 threshold
+  });
+
+  test("non-integer -> 3 decimal places", () => {
+    expect(fmtYears(8.998)).toBe("8.998");
+    expect(fmtYears(9.002)).toBe("9.002");
+    expect(fmtYears(8.5)).toBe("8.500");
+  });
+});
+
+// ── hippoHeadline: yogurt-to-hippo comparison ────────────────────────
+
+describe("hippoHeadline", () => {
+  test("well below hippo weight -> percentage", () => {
+    expect(hippoHeadline(20)).toBe("That's about 50% the weight of a baby hippo.");
+  });
+
+  test("close to hippo weight -> 'about the weight'", () => {
+    expect(hippoHeadline(38)).toBe("About the weight of a baby hippo.");
+    expect(hippoHeadline(40)).toBe("About the weight of a baby hippo.");
+    expect(hippoHeadline(44)).toBe("About the weight of a baby hippo.");
+  });
+
+  test("above hippo weight -> multiplier", () => {
+    expect(hippoHeadline(80)).toBe("That's about 2.0\u00d7 the weight of a baby hippo.");
+    expect(hippoHeadline(60)).toBe("That's about 1.5\u00d7 the weight of a baby hippo.");
+  });
+
+  test("boundary at 0.9 ratio (36kg)", () => {
+    expect(hippoHeadline(35.9)).toContain("%");
+    expect(hippoHeadline(36)).toBe("About the weight of a baby hippo.");
+  });
+
+  test("boundary at 1.15 ratio (46kg)", () => {
+    expect(hippoHeadline(45.9)).toBe("About the weight of a baby hippo.");
+    expect(hippoHeadline(46)).toContain("\u00d7");
+  });
+});
+
+// ── Space unit conversion ────────────────────────────────────────────
+
+describe("KM_PER_MILE constant", () => {
+  test("is approximately 1.609", () => {
+    expect(KM_PER_MILE).toBeCloseTo(1.60934, 4);
+  });
+
+  test("67000 mph converts to ~107826 kph", () => {
+    expect(fmt(Math.round(67_000 * KM_PER_MILE))).toBe("107,826");
   });
 });
