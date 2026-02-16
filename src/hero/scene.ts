@@ -9,8 +9,10 @@ import {
   setupScene, fitCamera, addWalls, createBalls, setupGrabHandlers,
   VFOV, BALL_RADIUS_FACTOR,
   type SceneOpts,
-} from "./variations";
+} from "./shared";
 import { FONT, CHAR_H, CHAR_W } from "./font";
+
+const DYING_COLOR = new THREE.Color(0x221100);
 
 function countGlyphPixels(text: string): number[] {
   const counts: number[] = [];
@@ -384,7 +386,7 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
           mat.emissiveIntensity = flicker * flickerDecay * flickerDecay * 0.8;
           const warmth = ballT * 0.5;
           mat.emissive.setRGB(1, Math.max(0, 0.6 - warmth), Math.max(0, 0.2 - warmth));
-          mat.color.lerp(new THREE.Color(0x221100), 0.005);
+          mat.color.lerp(DYING_COLOR, 0.005);
         }
       }
 
