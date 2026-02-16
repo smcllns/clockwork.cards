@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { computeStats, DEFAULT_CONFIG, type StatsConfig, type Stats, fmt, fmtBig, fmtDecimal, fmtYears, hippoHeadline, KM_PER_MILE, EARTH_ORBITAL_MPH, LIGHT_SPEED_MPH } from "./stats";
-import { InlineStepper, InlineSlider, InlinePills, BlockControl, BlockSlider, BlockStepper } from "./Controls";
+import { InlineStepper, InlineSlider, InlinePills, BlockControl, BlockSlider, BlockStepper } from "./controls";
 
 // ── Shared styles (CSS custom properties used throughout) ──────────
 const css = {
@@ -141,7 +141,7 @@ function FlipCard({ ageYears }: { ageYears: number }) {
 }
 
 // ════════════════════════════════════════════════════════════════════
-export default function CuratedMain({ name, dob }: { name: string; dob: string }) {
+export default function Cards({ name, dob }: { name: string; dob: string }) {
   const [config, setConfig] = useState<StatsConfig>({ ...DEFAULT_CONFIG });
   const [now, setNow] = useState(Date.now());
   const [timeUnit, setTimeUnit] = useState<TimeUnit>("seconds");
