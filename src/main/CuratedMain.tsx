@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { computeStats, DEFAULT_CONFIG, type StatsConfig, type Stats, fmt, fmtBig, fmtDecimal, fmtYears, hippoHeadline, KM_PER_MILE, EARTH_ORBITAL_MPH, LIGHT_SPEED_MPH } from "./stats";
 import { InlineStepper, InlineSlider, InlinePills, BlockControl, BlockSlider, BlockStepper } from "./Controls";
 
@@ -27,8 +27,8 @@ function IdTag({ id }: { id: string }) {
 function Slide({ children, alt, id }: { children: React.ReactNode; alt?: boolean; id: string }) {
   return (
     <div
-      className="flex items-center justify-center px-6 relative"
-      style={{ minHeight: "100vh", background: alt ? "var(--bg-secondary)" : "var(--bg-primary)" }}
+      className="flex items-center justify-center px-6 relative snap-section"
+      style={{ minHeight: "100dvh", background: alt ? "var(--bg-secondary)" : "var(--bg-primary)" }}
     >
       <div className="absolute top-4 right-6"><IdTag id={id} /></div>
       <div className="max-w-xl w-full py-16">{children}</div>
@@ -65,7 +65,7 @@ function SlideBody({ children }: { children: React.ReactNode }) {
 // ── V6-style inline highlight ──────────────────────────────────────
 function N({ children }: { children: React.ReactNode }) {
   return (
-    <span className="font-bold text-lg" style={{ fontFamily: "var(--font-stat)", color: "var(--text-accent)" }} data-stat>
+    <span className="font-bold text-lg" style={{ fontFamily: "var(--font-stat)", color: "var(--text-primary)" }} data-stat>
       {children}
     </span>
   );
@@ -83,6 +83,69 @@ const TIME_UNITS = [
 ] as const;
 type TimeUnit = typeof TIME_UNITS[number]["value"];
 type SpaceUnit = "miles" | "km";
+
+// ── Flippable binary/base-10 card ─────────────────────────────────
+function FlipCard({ ageYears }: { ageYears: number }) {
+  const [flipped, setFlipped] = useState(false);
+  const toggle = useCallback(() => setFlipped(f => !f), []);
+
+  return (
+    <div
+      className="mb-10 cursor-pointer"
+      style={{ perspective: "800px" }}
+      onClick={toggle}
+    >
+      <div
+        style={{
+          position: "relative",
+          transition: "transform 0.6s",
+          transformStyle: "preserve-3d",
+          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
+        }}
+      >
+        {/* Front: Base 2 */}
+        <div
+          className="rounded-xl border p-5 space-y-3"
+          style={{ ...css.card, backfaceVisibility: "hidden" }}
+          data-card
+        >
+          <p className="text-xs uppercase tracking-widest font-semibold" style={css.secondary}>
+            Base 2 — tap to flip
+          </p>
+          <p style={css.primary}>
+            In base 2, there are only two numbers: <strong>0</strong> and <strong>1</strong>.
+          </p>
+          <p style={css.secondary}>
+            1001 means: 1 eight, 0 fours, 0 twos, and 1 one.
+          </p>
+          <p className="pt-2" style={css.formula} data-stat>
+            1001₂ = (1×2³) + (0×2²) + (0×2¹) + (1×2⁰) = 8 + 0 + 0 + 1 = {ageYears}
+          </p>
+        </div>
+
+        {/* Back: Base 10 */}
+        <div
+          className="rounded-xl border p-5 space-y-3 absolute inset-0"
+          style={{ ...css.card, backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
+          data-card
+        >
+          <p className="text-xs uppercase tracking-widest font-semibold" style={css.secondary}>
+            Base 10 — tap to flip
+          </p>
+          <p style={css.primary}>
+            In base 10, there are 10 numbers: 0 – 9.
+          </p>
+          <p style={css.secondary}>
+            {ageYears} is … {ageYears}. But to write it the same way: 0 hundreds, 0 tens, {ageYears} ones.
+          </p>
+          <p className="pt-2" style={css.formula} data-stat>
+            {ageYears}₁₀ = (0×10²) + (0×10¹) + ({ageYears}×10⁰) = 0 + 0 + {ageYears} = {ageYears}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 // ════════════════════════════════════════════════════════════════════
 export default function CuratedMain({ name, dob }: { name: string; dob: string }) {
@@ -183,7 +246,7 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
       {/* ──────────────────────────────────────────────────────────
           4. YOUR LIFE IN NUMBERS (V6 style — narrative + controls)
           ────────────────────────────────────────────────────────── */}
-      <div className="px-6 py-16 max-w-2xl mx-auto relative">
+      <div className="px-6 py-16 max-w-2xl mx-auto relative snap-section" style={{ minHeight: "100dvh" }}>
         <div className="absolute top-4 right-6"><IdTag id="4" /></div>
         <h3
           className="text-sm font-semibold uppercase tracking-[0.15em] mb-10 pb-3 border-b"
@@ -237,7 +300,7 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
       {/* ──────────────────────────────────────────────────────────
           5. YOUR BRAIN & BODY (V7 style — rich bento)
           ────────────────────────────────────────────────────────── */}
-      <div className="px-6 py-16 relative" style={{ background: "var(--bg-secondary)" }}>
+      <div className="px-6 py-16 relative snap-section" style={{ minHeight: "100dvh", background: "var(--bg-secondary)" }}>
         <div className="absolute top-4 right-6"><IdTag id="5" /></div>
         <h3
           className="text-sm font-semibold uppercase tracking-[0.15em] mb-8 pb-3 border-b max-w-2xl mx-auto"
@@ -292,7 +355,7 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
       {/* ──────────────────────────────────────────────────────────
           6. BINARY / BASE 2 — step-by-step lesson + closing
           ────────────────────────────────────────────────────────── */}
-      <div className="px-6 py-16 max-w-2xl mx-auto relative" style={{ background: "var(--bg-primary)" }}>
+      <div className="px-6 py-16 max-w-2xl mx-auto relative snap-section" style={{ minHeight: "100dvh", background: "var(--bg-primary)" }}>
         <div className="absolute top-4 right-6"><IdTag id="6" /></div>
         <h3
           className="text-sm font-semibold uppercase tracking-[0.15em] mb-10 pb-3 border-b"
@@ -312,37 +375,7 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
           with powers of 2: 2 → 4 → 8 → 16.
         </p>
 
-        {/* Base 2 block */}
-        <div
-          className="rounded-xl border p-5 mb-6 space-y-3"
-          style={css.card}
-        >
-          <p style={css.primary}>
-            In base 2, there are only two numbers: <strong>0</strong> and <strong>1</strong>.
-          </p>
-          <p style={css.secondary}>
-            1001 means: 1 eight, 0 fours, 0 twos, and 1 one.
-          </p>
-          <p className="pt-2" style={css.formula} data-stat>
-            1001₂ = (1×2³) + (0×2²) + (0×2¹) + (1×2⁰) = 8 + 0 + 0 + 1 = {s.ageYears}
-          </p>
-        </div>
-
-        {/* Base 10 block */}
-        <div
-          className="rounded-xl border p-5 mb-10 space-y-3"
-          style={css.card}
-        >
-          <p style={css.primary}>
-            In base 10, there are 10 numbers: 0 – 9.
-          </p>
-          <p style={css.secondary}>
-            {s.ageYears} is … {s.ageYears}. But to write it the same way: 0 hundreds, 0 tens, {s.ageYears} ones.
-          </p>
-          <p className="pt-2" style={css.formula} data-stat>
-            {s.ageYears}₁₀ = (0×10²) + (0×10¹) + ({s.ageYears}×10⁰) = 0 + 0 + {s.ageYears} = {s.ageYears}
-          </p>
-        </div>
+        <FlipCard ageYears={s.ageYears} />
 
         <p className="text-base leading-relaxed mb-12" style={css.secondary}>
           Any problem you can solve in base 10, you can also solve in base 2 — or base 3, or any base.

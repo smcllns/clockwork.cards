@@ -1,639 +1,309 @@
 import { useEffect, useRef, useState } from "react";
-import * as THREE from "three";
 import RAPIER from "@dimforge/rapier3d-compat";
-import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
-import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
-import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPass.js";
-import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
-import { FONT, CHAR_W, CHAR_H, CHAR_GAP, LINE_GAP, SPACE_W } from "./font";
-import { LIGHT, SHINY } from "./colors";
-import { useTheme } from "../store/theme";
 
-const VFOV = 50;
-const BALL_RADIUS_FACTOR = 0.46;
-const PARTICLE_COUNT = 60;
-const _yAxis = new THREE.Vector3(0, 1, 0);
-const _spinQuat = new THREE.Quaternion();
-const _vec3 = new THREE.Vector3();
+type HeroMode = "off" | "on" | "broken";
+type VariationHandle = { setMode: (m: HeroMode) => void; dispose: () => void };
 
-type Ball = { x: number; y: number; colorIndex: number; scale: number };
+const VARIATION_NAMES = [
+  "Holographic Grid",
+  "Digital Rain",
+  "Blueprint Builder",
+  "Particle Nebula",
+  "Neon Circuits",
+  "Dying Lights",
+  "Glass Floor",
+  "Neon Letters",
+  "Two Buttons",
+  "Glass Box",
+  "Slow Death",
+  "Short Circuit",
+];
 
-type SceneState = {
-  world: RAPIER.World;
-  bodies: RAPIER.RigidBody[];
-  meshes: THREE.Mesh[];
-  renderer: THREE.WebGLRenderer;
-  camera: THREE.PerspectiveCamera;
-  scene: THREE.Scene;
-  composer: EffectComposer;
-  bloomPass: UnrealBloomPass;
-  particles: THREE.Points;
-  particleVelocities: Float32Array;
-  frame: number;
-  origins: { x: number; y: number; z: number }[];
-  anchored: boolean;
-  colorIndices: number[];
-  shiny: boolean;
-  startTime: number;
-  phases: Float32Array;
-  camDist: number;
-  spinAngle: number;
-};
+const TOTAL_VARIATIONS = 12;
 
-type LineSpec = { text: string; scale: number };
-
-function layoutBalls(specs: LineSpec[]): { balls: Ball[]; maxW: number; totalH: number } {
-  const lineLayouts: { chars: { char: string; col: number }[]; width: number; scale: number }[] = [];
-  for (const { text, scale } of specs) {
-    const chars: { char: string; col: number }[] = [];
-    let col = 0;
-    for (let i = 0; i < text.length; i++) {
-      if (text[i] === " ") { col += SPACE_W * scale; continue; }
-      chars.push({ char: text[i], col });
-      col += CHAR_W * scale;
-      if (i + 1 < text.length && text[i + 1] !== " ") col += CHAR_GAP * scale;
-    }
-    lineLayouts.push({ chars, width: col, scale });
+function getVariation(): number {
+  const v = new URLSearchParams(window.location.search).get("v");
+  if (v) {
+    const n = parseInt(v, 10);
+    if (n >= 1 && n <= TOTAL_VARIATIONS) return n;
   }
-
-  const maxW = Math.max(...lineLayouts.map(l => l.width));
-  const gapBefore = (i: number) =>
-    i > 0 ? LINE_GAP * Math.max(lineLayouts[i - 1].scale, lineLayouts[i].scale) : 0;
-
-  let totalH = 0;
-  for (let i = 0; i < lineLayouts.length; i++) {
-    totalH += CHAR_H * lineLayouts[i].scale + gapBefore(i);
-  }
-
-  const balls: Ball[] = [];
-  let curY = 0;
-  for (let li = 0; li < lineLayouts.length; li++) {
-    const { chars, width: lineW, scale } = lineLayouts[li];
-    curY += gapBefore(li);
-    const lineOffX = (maxW - lineW) / 2;
-    const colorIndex = Math.floor(Math.random() * LIGHT.hex.length);
-
-    for (const { char, col } of chars) {
-      const glyph = FONT[char];
-      if (!glyph) continue;
-      const charColor = Math.floor(Math.random() * LIGHT.hex.length);
-      for (let r = 0; r < CHAR_H; r++) {
-        for (let c = 0; c < CHAR_W; c++) {
-          if (!glyph[r][c]) continue;
-          const x = lineOffX + col + c * scale - maxW / 2;
-          const y = -(curY + r * scale - totalH / 2);
-          balls.push({ x, y, colorIndex: charColor, scale });
-        }
-      }
-    }
-    curY += CHAR_H * scale;
-  }
-  return { balls, maxW, totalH };
-}
-
-function setupScene(container: HTMLElement): { scene: THREE.Scene; camera: THREE.PerspectiveCamera; renderer: THREE.WebGLRenderer; composer: EffectComposer; bloomPass: UnrealBloomPass; w: number; h: number } {
-  const w = container.clientWidth;
-  const h = container.clientHeight;
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(VFOV, w / h, 0.1, 200);
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setClearColor(0xffffff);
-  renderer.setSize(w, h);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.0;
-  renderer.domElement.style.position = "absolute";
-  renderer.domElement.style.inset = "0";
-  container.appendChild(renderer.domElement);
-
-  scene.add(new THREE.AmbientLight(0xffffff, 0.4));
-  const hemi = new THREE.HemisphereLight(0xfff5e6, 0xe8f0ff, 0.4);
-  scene.add(hemi);
-  const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-  dirLight.position.set(10, 20, 15);
-  dirLight.castShadow = true;
-  dirLight.shadow.mapSize.set(1024, 1024);
-  dirLight.shadow.camera.near = 0.5;
-  dirLight.shadow.camera.far = 100;
-  dirLight.shadow.camera.left = -30;
-  dirLight.shadow.camera.right = 30;
-  dirLight.shadow.camera.top = 30;
-  dirLight.shadow.camera.bottom = -30;
-  dirLight.shadow.radius = 4;
-  scene.add(dirLight);
-
-  const composer = new EffectComposer(renderer);
-  composer.addPass(new RenderPass(scene, camera));
-  const bloomPass = new UnrealBloomPass(
-    new THREE.Vector2(w, h),
-    0, 0, 0,
-  );
-  composer.addPass(bloomPass);
-  composer.addPass(new OutputPass());
-
-  return { scene, camera, renderer, composer, bloomPass, w, h };
-}
-
-function createBalls(
-  balls: Ball[],
-  world: RAPIER.World,
-  scene: THREE.Scene,
-): { bodies: RAPIER.RigidBody[]; meshes: THREE.Mesh[] } {
-  const sphereGeo = new THREE.SphereGeometry(BALL_RADIUS_FACTOR, 16, 12);
-
-  const bodies: RAPIER.RigidBody[] = [];
-  const meshes: THREE.Mesh[] = [];
-
-  for (const ball of balls) {
-    const mat = new THREE.MeshPhysicalMaterial({
-      color: LIGHT.hex[ball.colorIndex],
-      roughness: 0.4,
-      metalness: 0.15,
-      clearcoat: 0.3,
-      clearcoatRoughness: 0.3,
-    });
-    const mesh = new THREE.Mesh(sphereGeo, mat);
-    mesh.scale.setScalar(ball.scale);
-    mesh.position.set(ball.x, ball.y, 0);
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-    scene.add(mesh);
-
-    const radius = BALL_RADIUS_FACTOR * ball.scale;
-    const body = world.createRigidBody(
-      RAPIER.RigidBodyDesc.dynamic()
-        .setTranslation(ball.x, ball.y, 0)
-        .setLinearDamping(0.05)
-        .setAngularDamping(0.05)
-        .setCanSleep(false)
-    );
-    world.createCollider(
-      RAPIER.ColliderDesc.ball(radius)
-        .setRestitution(0.7)
-        .setFriction(0.2),
-      body,
-    );
-    bodies.push(body);
-    meshes.push(mesh);
-  }
-
-  return { bodies, meshes };
-}
-
-function createParticles(scene: THREE.Scene, camera: THREE.PerspectiveCamera): { points: THREE.Points; velocities: Float32Array } {
-  const camDist = camera.position.z;
-  const vRad = (VFOV * Math.PI) / 180;
-  const visH = 2 * camDist * Math.tan(vRad / 2);
-  const visW = visH * (camera.aspect);
-
-  const positions = new Float32Array(PARTICLE_COUNT * 3);
-  const velocities = new Float32Array(PARTICLE_COUNT * 3);
-
-  for (let i = 0; i < PARTICLE_COUNT; i++) {
-    positions[i * 3] = (Math.random() - 0.5) * visW;
-    positions[i * 3 + 1] = (Math.random() - 0.5) * visH;
-    positions[i * 3 + 2] = (Math.random() - 0.5) * 4 - 1;
-    velocities[i * 3] = (Math.random() - 0.5) * 0.02;
-    velocities[i * 3 + 1] = Math.random() * 0.03 + 0.01;
-    velocities[i * 3 + 2] = 0;
-  }
-
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-
-  const canvas = document.createElement("canvas");
-  canvas.width = 32;
-  canvas.height = 32;
-  const ctx = canvas.getContext("2d")!;
-  const grad = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
-  grad.addColorStop(0, "rgba(255,255,255,1)");
-  grad.addColorStop(0.3, "rgba(255,255,255,0.6)");
-  grad.addColorStop(1, "rgba(255,255,255,0)");
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, 32, 32);
-  const texture = new THREE.CanvasTexture(canvas);
-
-  const mat = new THREE.PointsMaterial({
-    size: 0.15,
-    map: texture,
-    transparent: true,
-    blending: THREE.AdditiveBlending,
-    depthWrite: false,
-    opacity: 0,
-  });
-
-  const points = new THREE.Points(geo, mat);
-  scene.add(points);
-
-  return { points, velocities };
-}
-
-function fitCamera(camera: THREE.PerspectiveCamera, maxW: number, totalH: number, aspect: number): number {
-  const vRad = (VFOV * Math.PI) / 180;
-  const distH = ((totalH / 0.76) / 2) / Math.tan(vRad / 2);
-  const hRad = 2 * Math.atan(aspect * Math.tan(vRad / 2));
-  const distW = ((maxW / 0.9) / 2) / Math.tan(hRad / 2);
-  const dist = Math.max(distH, distW);
-  camera.position.set(0, 0, dist);
-  camera.lookAt(0, 0, 0);
-  return dist;
-}
-
-function addWalls(world: RAPIER.World, camera: THREE.PerspectiveCamera, aspect: number): void {
-  const camDist = camera.position.z;
-  const vRad = (VFOV * Math.PI) / 180;
-  const visH = 2 * camDist * Math.tan(vRad / 2);
-  const half = Math.max(visH * aspect, visH) / 2 + 2;
-  const hh = visH / 2 + 1;
-
-  const walls: [number, number, number, number, number, number][] = [
-    [0, -hh, 0, half, 1, half],      // bottom
-    [0, hh, 0, half, 1, half],       // top
-    [-half, 0, 0, 1, hh, half],      // left
-    [half, 0, 0, 1, hh, half],       // right
-    [0, 0, -half, half, hh, 1],      // back
-    [0, 0, half, half, hh, 1],       // front
-  ];
-  for (const [x, y, z, hx, hy, hz] of walls) {
-    const b = world.createRigidBody(RAPIER.RigidBodyDesc.fixed().setTranslation(x, y, z));
-    world.createCollider(RAPIER.ColliderDesc.cuboid(hx, hy, hz).setRestitution(0.6).setFriction(0.2), b);
-  }
-}
-
-function setupGrabHandlers(
-  canvas: HTMLCanvasElement,
-  camera: THREE.PerspectiveCamera,
-  bodies: RAPIER.RigidBody[],
-  w: number,
-  h: number,
-): { grabbed: RAPIER.RigidBody[]; target: { x: number; y: number } } {
-  const grabbed: RAPIER.RigidBody[] = [];
-  const target = { x: 0, y: 0 };
-  const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
-  const raycaster = new THREE.Raycaster();
-  const pointer = new THREE.Vector2();
-  const hitPoint = new THREE.Vector3();
-
-  function screenToWorld(mx: number, my: number): { x: number; y: number } {
-    pointer.set((mx / w) * 2 - 1, -(my / h) * 2 + 1);
-    raycaster.setFromCamera(pointer, camera);
-    raycaster.ray.intersectPlane(plane, hitPoint);
-    return { x: hitPoint.x, y: hitPoint.y };
-  }
-
-  function startGrab(mx: number, my: number): boolean {
-    const wp = screenToWorld(mx, my);
-    grabbed.length = 0;
-    for (const body of bodies) {
-      const pos = body.translation();
-      const dx = pos.x - wp.x, dy = pos.y - wp.y;
-      if (dx * dx + dy * dy < 9) {
-        body.wakeUp();
-        grabbed.push(body);
-      }
-    }
-    if (grabbed.length) { target.x = wp.x; target.y = wp.y; }
-    return grabbed.length > 0;
-  }
-
-  function moveGrab(mx: number, my: number): void {
-    const wp = screenToWorld(mx, my);
-    target.x = wp.x;
-    target.y = wp.y;
-  }
-
-  function endGrab(): void {
-    for (const b of grabbed) b.wakeUp();
-    grabbed.length = 0;
-  }
-
-  function touchPos(e: TouchEvent): { x: number; y: number } {
-    const t = e.touches[0], r = canvas.getBoundingClientRect();
-    return { x: t.clientX - r.left, y: t.clientY - r.top };
-  }
-
-  canvas.addEventListener("mousedown", e => startGrab(e.offsetX, e.offsetY));
-  canvas.addEventListener("mousemove", e => { if (grabbed.length) moveGrab(e.offsetX, e.offsetY); });
-  canvas.addEventListener("mouseup", endGrab);
-  canvas.addEventListener("touchstart", e => {
-    const p = touchPos(e);
-    if (startGrab(p.x, p.y)) e.preventDefault();
-  }, { passive: false });
-  canvas.addEventListener("touchmove", e => {
-    if (!grabbed.length) return;
-    e.preventDefault();
-    const p = touchPos(e);
-    moveGrab(p.x, p.y);
-  }, { passive: false });
-  canvas.addEventListener("touchend", endGrab);
-
-  return { grabbed, target };
-}
-
-const MONTHS = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
-
-// ── Isolated theme toggle — only this re-renders on theme change ──
-function ThemeToggle() {
-  const shiny = useTheme(s => s.shiny);
-  return (
-    <button
-      onClick={() => useTheme.getState().toggle()}
-      className="relative w-10 h-5 rounded-full cursor-pointer"
-      style={{
-        background: shiny ? "var(--accent-1)" : "#c4c4cc",
-        boxShadow: shiny ? "0 0 8px rgba(0,255,255,0.3)" : "inset 0 1px 2px rgba(0,0,0,0.15)",
-        transition: "background-color 0.3s, box-shadow 0.3s",
-      }}
-    >
-      <span
-        className="absolute left-0 top-0.5 w-4 h-4 rounded-full"
-        style={{
-          background: shiny ? "#000" : "#fff",
-          boxShadow: "0 1px 3px rgba(0,0,0,0.25)",
-          transform: shiny ? "translateX(22px)" : "translateX(2px)",
-          transition: "transform 0.3s, background-color 0.3s",
-        }}
-      />
-    </button>
-  );
+  return 1;
 }
 
 export default function Hero({ name, dob }: { name: string; dob: string }) {
-  const age = Math.floor((Date.now() - new Date(dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
   const containerRef = useRef<HTMLDivElement>(null);
-  const stateRef = useRef<SceneState | null>(null);
-  const [chaos, setChaos] = useState(false);
+  const handleRef = useRef<VariationHandle | null>(null);
+  const [mode, setMode] = useState<HeroMode>("off");
+  const [variation, setVariation] = useState(getVariation);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
     let disposed = false;
-    let unsubTheme: (() => void) | null = null;
-    let visible = true; // IntersectionObserver tracks this
 
-    let dragging = false;
-    let lastX = 0;
-    function onPointerDown(e: PointerEvent) {
-      dragging = true;
-      lastX = e.clientX;
-    }
-    function onPointerMove(e: PointerEvent) {
-      if (!dragging || !stateRef.current) return;
-      const dx = e.clientX - lastX;
-      lastX = e.clientX;
-      stateRef.current.spinAngle += dx * 0.01;
-    }
-    function onPointerUp() { dragging = false; }
-    container.addEventListener("pointerdown", onPointerDown);
-    container.addEventListener("pointermove", onPointerMove);
-    container.addEventListener("pointerup", onPointerUp);
+    const prev = container.querySelector("canvas");
+    if (prev) prev.remove();
+    handleRef.current?.dispose();
+    handleRef.current = null;
+    setReady(false);
 
-    // Pause rAF when hero scrolls out of view to free GPU for scroll compositing
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        visible = entry.isIntersecting;
-        // Resume loop if it was paused while visible
-        if (visible && stateRef.current && !stateRef.current.frame) {
-          stateRef.current.frame = requestAnimationFrame(animateLoop);
-        }
-      },
-      { threshold: 0 },
-    );
-    observer.observe(container);
-
-    // Theme updates — applied directly via Zustand subscription, no React render
-    const THEME = {
-      shiny: {
-        clearColor: 0x0a0a0f,
-        bloom: { strength: 1.2, radius: 0.4, threshold: 0.2 },
-        particleOpacity: 0.6,
-        mat: { emissiveIntensity: 0.6, roughness: 0.3, metalness: 0.2, clearcoat: 0 },
-      },
-      light: {
-        clearColor: 0xffffff,
-        bloom: { strength: 0, radius: 0, threshold: 1 },
-        particleOpacity: 0,
-        mat: { emissiveIntensity: 0, roughness: 0.4, metalness: 0.15, clearcoat: 0.3 },
-      },
-    } as const;
-
-    function applyTheme(shinyVal: boolean) {
-      const s = stateRef.current;
-      if (!s) return;
-      s.shiny = shinyVal;
-      const cfg = THEME[shinyVal ? "shiny" : "light"];
-      const palette = shinyVal ? SHINY : LIGHT;
-      s.renderer.setClearColor(cfg.clearColor);
-      s.bloomPass.strength = cfg.bloom.strength;
-      s.bloomPass.radius = cfg.bloom.radius;
-      s.bloomPass.threshold = cfg.bloom.threshold;
-      (s.particles.material as THREE.PointsMaterial).opacity = cfg.particleOpacity;
-
-      for (let i = 0; i < s.meshes.length; i++) {
-        const material = s.meshes[i].material as THREE.MeshPhysicalMaterial;
-        const hexColor = palette.hex[s.colorIndices[i]];
-        material.color.setHex(hexColor);
-        material.emissive.setHex(shinyVal ? hexColor : 0x000000);
-        material.emissiveIntensity = cfg.mat.emissiveIntensity;
-        material.roughness = cfg.mat.roughness;
-        material.metalness = cfg.mat.metalness;
-        material.clearcoat = cfg.mat.clearcoat;
-      }
-    }
-
-    // Shared animate function reference for visibility resume
-    function animateLoop(): void {
-      const st = stateRef.current!;
-      if (!visible) { st.frame = 0; return; } // pause when off-screen
-
-      const elapsed = (performance.now() - st.startTime) / 1000;
-
-      if (!st.anchored) {
-        for (const body of grabbed) {
-          const pos = body.translation();
-          body.setLinvel({ x: (target.x - pos.x) * 12, y: (target.y - pos.y) * 12, z: 0 }, true);
-          body.setAngvel({ x: 0, y: 0, z: 0 }, true);
-        }
-      }
-      if (st.anchored) {
-        for (let i = 0; i < bodies.length; i++) {
-          const pos = bodies[i].translation();
-          const orig = origins[i];
-          bodies[i].setLinvel({ x: (orig.x - pos.x) * 20, y: (orig.y - pos.y) * 20, z: -pos.z * 20 }, true);
-        }
-      }
-
-      world.step();
-      _spinQuat.setFromAxisAngle(_yAxis, st.spinAngle);
-      for (let i = 0; i < bodies.length; i++) {
-        const pos = bodies[i].translation();
-        _vec3.set(pos.x, pos.y, pos.z).applyQuaternion(_spinQuat);
-        meshes[i].position.copy(_vec3);
-      }
-
-      if (st.shiny) {
-        for (let i = 0; i < meshes.length; i++) {
-          const mat = meshes[i].material as THREE.MeshPhysicalMaterial;
-          mat.emissiveIntensity = 0.5 + 0.3 * Math.sin(elapsed * 1.5 + st.phases[i]);
-        }
-
-        const posAttr = particles.geometry.getAttribute("position") as THREE.BufferAttribute;
-        const pos = posAttr.array as Float32Array;
-        for (let i = 0; i < PARTICLE_COUNT; i++) {
-          pos[i * 3] += particleVelocities[i * 3];
-          pos[i * 3 + 1] += particleVelocities[i * 3 + 1];
-          if (pos[i * 3 + 1] > visH / 2) {
-            pos[i * 3 + 1] = -visH / 2;
-            pos[i * 3] = (Math.random() - 0.5) * visW;
-          }
-        }
-        posAttr.needsUpdate = true;
-      }
-
-      st.composer.render();
-      st.frame = requestAnimationFrame(animateLoop);
-    }
-
-    // These are hoisted — populated after RAPIER init
-    let grabbed: RAPIER.RigidBody[] = [];
-    let target = { x: 0, y: 0 };
-    let bodies: RAPIER.RigidBody[] = [];
-    let meshes: THREE.Mesh[] = [];
-    let origins: { x: number; y: number; z: number }[] = [];
-    let world: RAPIER.World;
-    let particles: THREE.Points;
-    let particleVelocities: Float32Array;
-    let visH = 0, visW = 0;
-
-    RAPIER.init().then(() => {
+    RAPIER.init().then(async () => {
       if (disposed) return;
 
-      const { scene, camera, renderer, composer, bloomPass, w, h } = setupScene(container);
-      world = new RAPIER.World({ x: 0, y: 0, z: 0 });
-      const d = new Date(dob);
-      const dateLine = `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()} ${d.getUTCFullYear()}`;
-      const { balls, maxW, totalH } = layoutBalls([
-        { text: String(age), scale: 2.5 },
-        { text: "HAPPY", scale: 1.4 },
-        { text: "BIRTHDAY", scale: 1.4 },
-        { text: name.toUpperCase(), scale: 1.4 },
-        { text: dateLine, scale: 0.45 },
-      ]);
-      const result = createBalls(balls, world, scene);
-      bodies = result.bodies;
-      meshes = result.meshes;
-      const aspect = w / h;
+      let initFn: (container: HTMLElement, name: string, dob: string) => VariationHandle;
+      switch (variation) {
+        case 1: initFn = (await import("./v1-holographic-grid")).initV1; break;
+        case 2: initFn = (await import("./v2-digital-rain")).initV2; break;
+        case 3: initFn = (await import("./v3-blueprint")).initV3; break;
+        case 4: initFn = (await import("./v4-particle-nebula")).initV4; break;
+        case 5: initFn = (await import("./v5-neon-circuits")).initV5; break;
+        case 6: initFn = (await import("./v6-dying-lights")).initV6; break;
+        case 7: initFn = (await import("./v7-glass-floor")).initV7; break;
+        case 8: initFn = (await import("./v8-neon-letters")).initV8; break;
+        case 9: initFn = (await import("./v9-two-buttons")).initV9; break;
+        case 10: initFn = (await import("./v7b-glass-box")).initV7b; break;
+        case 11: initFn = (await import("./v11-slow-death")).initV11; break;
+        case 12: initFn = (await import("./v12-short-circuit")).initV12; break;
+        default: initFn = (await import("./v1-holographic-grid")).initV1; break;
+      }
 
-      const camDist = fitCamera(camera, maxW, totalH, aspect);
-      addWalls(world, camera, aspect);
-      const grabResult = setupGrabHandlers(renderer.domElement, camera, bodies, w, h);
-      grabbed = grabResult.grabbed;
-      target = grabResult.target;
-
-      const particleResult = createParticles(scene, camera);
-      particles = particleResult.points;
-      particleVelocities = particleResult.velocities;
-
-      origins = bodies.map(b => {
-        const t = b.translation();
-        return { x: t.x, y: t.y, z: t.z };
-      });
-      const colorIndices = balls.map(b => b.colorIndex);
-      const phases = new Float32Array(meshes.length);
-      for (let i = 0; i < phases.length; i++) phases[i] = Math.random() * Math.PI * 2;
-
-      stateRef.current = {
-        world, bodies, meshes, renderer, camera, scene, composer, bloomPass,
-        particles, particleVelocities,
-        frame: 0, origins, anchored: true, colorIndices, shiny: false,
-        startTime: performance.now(), phases, camDist, spinAngle: 0,
-      };
-
-      const vRad = (VFOV * Math.PI) / 180;
-      visH = 2 * camDist * Math.tan(vRad / 2);
-      visW = visH * aspect;
-
-      // Apply initial theme state and subscribe for future changes
-      applyTheme(useTheme.getState().shiny);
-      unsubTheme = useTheme.subscribe((state) => applyTheme(state.shiny));
-
-      animateLoop();
+      if (disposed) return;
+      const handle = initFn(container, name, dob);
+      handleRef.current = handle;
+      setReady(true);
     });
 
     return () => {
       disposed = true;
-      unsubTheme?.();
-      observer.disconnect();
-      container.removeEventListener("pointerdown", onPointerDown);
-      container.removeEventListener("pointermove", onPointerMove);
-      container.removeEventListener("pointerup", onPointerUp);
-      const s = stateRef.current;
-      if (s) {
-        cancelAnimationFrame(s.frame);
-        s.composer.dispose();
-        s.renderer.dispose();
-        container.removeChild(s.renderer.domElement);
-        s.world.free();
-      }
+      handleRef.current?.dispose();
+      handleRef.current = null;
     };
-  }, []);
+  }, [variation, name, dob]);
 
-  function unleashChaos(): void {
-    const s = stateRef.current;
-    if (!s) return;
-    setChaos(true);
-    s.anchored = false;
-    s.world.gravity = { x: 0, y: -80, z: 0 };
-    for (const body of s.bodies) {
-      body.wakeUp();
-      body.setLinvel({ x: (Math.random() - 0.5) * 10, y: (Math.random() - 0.5) * 5, z: (Math.random() - 0.5) * 3 }, true);
-      body.setAngvel({ x: (Math.random() - 0.5) * 3, y: (Math.random() - 0.5) * 3, z: (Math.random() - 0.5) * 3 }, true);
+  useEffect(() => {
+    if (ready && handleRef.current) {
+      handleRef.current.setMode(mode);
     }
+  }, [mode, ready]);
+
+  function toggleShiny() {
+    if (mode === "broken") return;
+    const next = mode === "off" ? "on" : "off";
+    setMode(next);
+    document.documentElement.classList.toggle("shiny", next === "on");
   }
 
+  function breakGlass() {
+    if (mode === "broken") return;
+    if (mode === "off") {
+      handleRef.current?.setMode("on");
+      document.documentElement.classList.add("shiny");
+    }
+    setMode("broken");
+  }
+
+  function switchVariation(v: number) {
+    setMode("off");
+    document.documentElement.classList.remove("shiny");
+    setVariation(v);
+    const url = new URL(window.location.href);
+    url.searchParams.set("v", String(v));
+    window.history.replaceState({}, "", url.toString());
+  }
+
+  const shinyOn = mode === "on" || mode === "broken";
+
   return (
-    <div className="h-dvh relative">
-      <section ref={containerRef} className="h-full overflow-hidden" data-dot-grid data-shiny-overlay style={{ background: 'var(--bg-hero)' }}>
-        <nav className="relative z-10 flex items-center px-6 py-4">
-          <span className="text-sm font-medium" style={{ color: 'var(--text-secondary)', fontFamily: 'var(--font-display)' }}>clockwork.cards/{name.toLowerCase()}</span>
-          <div className="ml-auto flex gap-2 items-center">
-            <ThemeToggle />
-          </div>
-        </nav>
-      </section>
-      <div className="absolute bottom-6 right-6 z-10 flex flex-col items-center gap-1.5">
-        <button
-          onClick={!chaos ? unleashChaos : undefined}
-          className={`relative w-10 h-10 rounded-full ${
-            chaos
-              ? "cursor-default scale-90"
-              : "cursor-pointer hover:scale-105 active:scale-95"
-          }`}
-          style={{
-            background: chaos
-              ? "radial-gradient(circle at 40% 35%, #666, #333)"
-              : "radial-gradient(circle at 40% 35%, #ff4444, #cc0000)",
-            boxShadow: chaos
-              ? "0 2px 8px rgba(0,0,0,0.2), inset 0 -2px 4px rgba(0,0,0,0.3)"
-              : "0 0 12px rgba(255,0,0,0.4), 0 0 24px rgba(255,0,0,0.2), 0 4px 8px rgba(0,0,0,0.3), inset 0 -3px 6px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,100,100,0.3)",
-            border: chaos ? "3px solid #555" : "3px solid #990000",
-            transition: "transform 0.3s, box-shadow 0.3s",
-          }}
-        />
+    <div className="h-[90dvh] relative snap-section">
+      <section
+        ref={containerRef}
+        className="h-full overflow-hidden"
+        style={{ background: mode === "off" ? "#fff" : "#0a0a0f", transition: "background-color 0.5s" }}
+      />
+
+      {/* Top nav */}
+      <nav className="absolute top-0 left-0 right-0 z-10 flex items-center px-6 py-4">
         <span
-          className="text-center leading-tight max-w-24"
+          className="text-sm font-medium"
           style={{
-            fontFamily: "'Caveat', 'Segoe Script', cursive",
-            color: chaos ? "var(--text-secondary)" : "var(--text-primary)",
-            opacity: chaos ? 0.4 : 0.7,
-            fontSize: "0.95rem",
+            color: mode === "off" ? "#71717a" : "#7a7a9a",
+            fontFamily: "'Space Grotesk', system-ui, sans-serif",
+            transition: "color 0.5s",
           }}
         >
-          Do not press this button
+          clockwork.cards/{name.toLowerCase()}
         </span>
+      </nav>
+
+      {/* Dev: variation switcher (temporary — will be removed when we go V11-only) */}
+      <div className="absolute bottom-4 left-4 z-10 flex flex-wrap gap-1 max-w-48">
+        {Array.from({ length: TOTAL_VARIATIONS }, (_, i) => i + 1).map(v => (
+          <button
+            key={v}
+            onClick={() => switchVariation(v)}
+            title={VARIATION_NAMES[v - 1]}
+            className="w-6 h-6 rounded-full text-[10px] font-bold cursor-pointer"
+            style={{
+              background: v === variation
+                ? (mode === "off" ? "#18181b" : "#00ffff")
+                : (mode === "off" ? "rgba(228,228,231,0.7)" : "rgba(26,26,46,0.7)"),
+              color: v === variation
+                ? (mode === "off" ? "#fff" : "#000")
+                : (mode === "off" ? "#71717a" : "#555"),
+              border: "none",
+              transition: "all 0.3s",
+            }}
+          >
+            {v}
+          </button>
+        ))}
+      </div>
+
+      {/* 🚨 CHAOS TOGGLE — The fire alarm.
+       * Character: A warning panel that says "do not touch." Hazard-striped,
+       * industrial, clearly dangerous. The forbidden switch that adults would
+       * say no to — which is exactly why a kid wants to flip it.
+       * Behavior: One-shot only. Once flipped, it's over. The balls fall, the
+       * lights die, and there's no going back. The panel goes dead.
+       * Position: Absolute within the hero section. Scrolls away — you leave
+       * the scene of the crime behind. */}
+      <div
+        className="absolute top-3 z-10"
+        style={{ right: 92 }}
+      >
+        <div
+          className="select-none flex flex-col items-center gap-1.5 px-3 py-2 rounded-lg transition-all duration-500"
+          style={{
+            backgroundColor: mode === "broken"
+              ? "rgba(41,37,36,0.85)"
+              : mode === "off" ? "rgba(255,255,255,0.85)" : "rgba(30,10,10,0.85)",
+            backdropFilter: "blur(8px)",
+            border: mode === "broken"
+              ? "1px solid #44403c"
+              : mode === "off" ? "1px solid #e7e5e4" : "1px solid rgba(153,27,27,0.5)",
+            boxShadow: mode === "broken"
+              ? "0 2px 8px rgba(0,0,0,0.3)"
+              : "0 2px 12px rgba(0,0,0,0.15)",
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "'Space Mono', monospace",
+              fontSize: "0.55rem",
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase" as const,
+              color: mode === "broken"
+                ? "#57534e"
+                : mode === "off" ? "#dc2626" : "#fca5a5",
+              transition: "color 0.5s",
+            }}
+          >🚫 Do not touch</span>
+          <button
+            onClick={mode !== "broken" ? breakGlass : undefined}
+            className={`relative flex-shrink-0 transition-all duration-300 ${
+              mode === "broken" ? "cursor-default" : "cursor-pointer"
+            }`}
+            style={{
+              width: 44,
+              height: 24,
+              borderRadius: 12,
+              backgroundColor: mode === "broken"
+                ? "#292524"
+                : mode === "off" ? "#78716c" : "#57534e",
+              boxShadow: mode === "broken"
+                ? "inset 0 1px 3px rgba(0,0,0,0.4)"
+                : "inset 0 1px 3px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.1)",
+              border: mode === "broken"
+                ? "1px solid #44403c"
+                : "1px solid #a8a29e",
+              transition: "all 0.5s",
+            }}
+          >
+            <div
+              className="absolute top-[2px] rounded-full shadow-md transition-all duration-500"
+              style={{
+                width: 18,
+                height: 18,
+                left: mode === "broken" ? 23 : 2,
+                backgroundColor: mode === "broken" ? "#57534e" : "#e7e5e4",
+                boxShadow: "0 1px 2px rgba(0,0,0,0.2)",
+              }}
+            />
+          </button>
+        </div>
+      </div>
+
+      {/* ⚡ SHINY TOGGLE — The room's power switch.
+       * Character: A clean wall panel labeled "SHINY." Warm, inviting — the main
+       * light switch that transforms the whole page from daylight to neon cyberpunk.
+       * It glows when on, calling you to flip it. The on-switch for the party.
+       * Behavior: Togglable on/off freely. Locks on once chaos triggers.
+       * Position: Fixed top-right. Always accessible while scrolling the page. */}
+      <div className="fixed top-3 right-3 z-50">
+        <div
+          className={`select-none flex flex-col items-center gap-1.5 px-3 py-2 rounded-lg transition-all duration-300 ${
+            mode === "broken" ? "opacity-50" : ""
+          }`}
+          style={{
+            backgroundColor: shinyOn
+              ? "rgba(30,20,0,0.85)"
+              : "rgba(255,255,255,0.85)",
+            backdropFilter: "blur(8px)",
+            border: shinyOn
+              ? "1px solid rgba(217,119,6,0.4)"
+              : "1px solid #e7e5e4",
+            boxShadow: shinyOn
+              ? "0 0 16px rgba(245,158,11,0.3), 0 2px 8px rgba(0,0,0,0.2)"
+              : "0 2px 8px rgba(0,0,0,0.08)",
+            transition: "all 0.3s",
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "'Space Mono', monospace",
+              fontSize: "0.55rem",
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase" as const,
+              color: shinyOn ? "#f59e0b" : "#d97706",
+              transition: "color 0.3s",
+            }}
+          >✨ Shiny</span>
+          <button
+            onClick={toggleShiny}
+            disabled={mode === "broken"}
+            className={`relative transition-all duration-300 ${
+              mode === "broken" ? "cursor-default" : "cursor-pointer"
+            }`}
+            style={{
+              width: 44,
+              height: 24,
+              borderRadius: 12,
+              backgroundColor: shinyOn ? "#f59e0b" : "#fbbf24",
+              boxShadow: shinyOn
+                ? "0 0 10px rgba(245,158,11,0.5), inset 0 1px 2px rgba(255,255,255,0.2)"
+                : "0 0 6px rgba(251,191,36,0.4), inset 0 1px 2px rgba(255,255,255,0.15)",
+              border: shinyOn
+                ? "1px solid #d97706"
+                : "1px solid #f59e0b",
+              transition: "all 0.3s",
+            }}
+          >
+            <div
+              className="absolute top-[2px] rounded-full bg-white transition-all duration-300"
+              style={{
+                width: 18,
+                height: 18,
+                left: shinyOn ? 23 : 2,
+                boxShadow: shinyOn
+                  ? "0 1px 4px rgba(0,0,0,0.2), 0 0 6px rgba(245,158,11,0.3)"
+                  : "0 1px 3px rgba(0,0,0,0.2)",
+              }}
+            />
+          </button>
+        </div>
       </div>
     </div>
   );
