@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import RAPIER from "@dimforge/rapier3d-compat";
-import { initV11 } from "./v11-slow-death";
+import { initV11 } from "./scene";
 
 type HeroMode = "off" | "on" | "broken";
 type VariationHandle = { setMode: (m: HeroMode) => void; dispose: () => void };
