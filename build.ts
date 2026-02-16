@@ -13,3 +13,5 @@ await Bun.build({
   plugins: [tailwind],
   define,
 });
+
+await Bun.write("dist/landing.html", Bun.file("landing.html"));
