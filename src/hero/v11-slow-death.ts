@@ -107,7 +107,7 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
   let frame = 0;
   const startTime = performance.now();
 
-  const { scene, camera, renderer, composer, bloomPass, w, h } = setupScene(container, { antialias: true, shadows: true });
+  const { scene, camera, renderer, composer, bloomPass, w, h } = setupScene(container, { antialias: false, shadows: true });
   renderer.setClearColor(0xf5f5f0);
 
   // Perf: cap pixel ratio at 1 (skip retina rendering)
