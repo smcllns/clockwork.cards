@@ -1,4 +1,5 @@
 # Clockwork Cards — Golden Spec
+<!-- 92 lines spec → 2,525 lines source. 1:27 ratio. -->
 
 Digital birthday card for Oscar (DOB 2017-02-20). Live-updating stats about time alive, space travel, body facts. Numbers are the star. Designed for a kid who loves math.
 
