@@ -16,9 +16,10 @@ const VARIATION_NAMES = [
   "Two Buttons",
   "Glass Box",
   "Slow Death",
+  "Short Circuit",
 ];
 
-const TOTAL_VARIATIONS = 11;
+const TOTAL_VARIATIONS = 12;
 
 function getVariation(): number {
   const v = new URLSearchParams(window.location.search).get("v");
@@ -63,6 +64,7 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
         case 9: initFn = (await import("./v9-two-buttons")).initV9; break;
         case 10: initFn = (await import("./v7b-glass-box")).initV7b; break;
         case 11: initFn = (await import("./v11-slow-death")).initV11; break;
+        case 12: initFn = (await import("./v12-short-circuit")).initV12; break;
         default: initFn = (await import("./v1-holographic-grid")).initV1; break;
       }
 
