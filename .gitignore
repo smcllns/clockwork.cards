@@ -6,6 +6,6 @@ dist
 *.tsbuildinfo
 .claude
 .playwright-mcp
-.llm/sessions.jsonl
+.llm
 screenshots
 .vercel
