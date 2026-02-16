@@ -188,6 +188,11 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
     flickerSpeeds[i] = 3 + Math.random() * 8;
   }
 
+  const releaseDelays = new Float32Array(meshes.length);
+  const released = new Uint8Array(meshes.length);
+  const hitGround = new Uint8Array(meshes.length);
+  const floorY = -visH / 2 + 4 + 1.5;
+
   let spinAngle = 0;
   const _yAxis = new THREE.Vector3(0, 1, 0);
   const _spinQuat = new THREE.Quaternion();
@@ -234,7 +239,30 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
         body.setAngvel({ x: 0, y: 0, z: 0 }, true);
       }
 
-      if (mode !== "broken" && grabbed.length === 0) {
+      if (mode === "broken") {
+        const t = elapsed - breakTime;
+        for (let i = 0; i < bodies.length; i++) {
+          if (released[i]) continue;
+          if (t >= releaseDelays[i]) {
+            released[i] = 1;
+            bodies[i].setLinearDamping(0.6);
+            bodies[i].setLinvel({
+              x: (Math.random() - 0.5) * 25,
+              y: Math.random() * 15,
+              z: (Math.random() - 0.5) * 12,
+            }, true);
+            bodies[i].setAngvel({
+              x: (Math.random() - 0.5) * 8,
+              y: (Math.random() - 0.5) * 8,
+              z: (Math.random() - 0.5) * 8,
+            }, true);
+          } else {
+            const pos = bodies[i].translation();
+            const orig = origins[i];
+            bodies[i].setLinvel({ x: (orig.x - pos.x) * 20, y: (orig.y - pos.y) * 20, z: -pos.z * 20 }, true);
+          }
+        }
+      } else if (grabbed.length === 0) {
         for (let i = 0; i < bodies.length; i++) {
           const pos = bodies[i].translation();
           const orig = origins[i];
@@ -315,8 +343,22 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
         }
       });
 
-      // Per-ball dying lightbulb with very long tail
+      // Color change on first ground hit
+      const SPARK = [0xff6600, 0xff4400, 0xffaa00, 0xff2200, 0xff8800, 0xffcc00, 0xff3300, 0xff5500, 0xff7700, 0xff1100];
+      for (let i = 0; i < bodies.length; i++) {
+        if (!hitGround[i] && released[i] && bodies[i].translation().y <= floorY) {
+          hitGround[i] = 1;
+          const mat = meshes[i].material as THREE.MeshPhysicalMaterial;
+          const hex = SPARK[colorIndices[i]];
+          mat.color.setHex(hex);
+          mat.emissive.setHex(hex);
+          mat.emissiveIntensity = 1.2;
+        }
+      }
+
+      // Per-ball dying lightbulb with very long tail (only after ground hit)
       for (let i = 0; i < meshes.length; i++) {
+        if (!hitGround[i]) continue;
         const mat = meshes[i].material as THREE.MeshPhysicalMaterial;
         const ballT = t / deathTimes[i];
 
@@ -419,24 +461,29 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
         for (let i = 0; i < meshes.length; i++) {
           meshes[i].material = physicalMats[i];
           const mat = physicalMats[i];
-          mat.color.setHex(0xffaa44);
-          mat.emissive.setHex(0xff8833);
-          mat.emissiveIntensity = 1.2;
+          const hex = SHINY.hex[colorIndices[i]];
+          mat.color.setHex(hex);
+          mat.emissive.setHex(hex);
+          mat.emissiveIntensity = 0.4;
+          hitGround[i] = 0;
         }
 
-        world.gravity = { x: 0, y: -40, z: 0 };
-        for (const body of bodies) {
-          body.wakeUp();
-          body.setLinvel({
-            x: (Math.random() - 0.5) * 15,
-            y: Math.random() * 10,
-            z: (Math.random() - 0.5) * 8,
-          }, true);
-          body.setAngvel({
-            x: (Math.random() - 0.5) * 5,
-            y: (Math.random() - 0.5) * 5,
-            z: (Math.random() - 0.5) * 5,
-          }, true);
+        world.gravity = { x: 0, y: -80, z: 0 };
+
+        // Stagger release: balls near a random impact point fall first
+        const impactX = (Math.random() - 0.5) * visW * 0.8;
+        const impactY = (Math.random() - 0.5) * visH * 0.8;
+        let maxDist = 0;
+        for (let i = 0; i < bodies.length; i++) {
+          const pos = bodies[i].translation();
+          const dist = Math.sqrt((pos.x - impactX) ** 2 + (pos.y - impactY) ** 2);
+          releaseDelays[i] = dist;
+          if (dist > maxDist) maxDist = dist;
+          released[i] = 0;
+        }
+        // Normalize to 0-0.8s spread
+        for (let i = 0; i < bodies.length; i++) {
+          releaseDelays[i] = (releaseDelays[i] / maxDist) * 0.8;
         }
       }
     },
