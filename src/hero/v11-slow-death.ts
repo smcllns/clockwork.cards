@@ -178,8 +178,8 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
     const body = world.createRigidBody(
       RAPIER.RigidBodyDesc.dynamic()
         .setTranslation(cx, cy, 0)
-        .setLinearDamping(0.05)
-        .setAngularDamping(0.05)
+        .setLinearDamping(3)
+        .setAngularDamping(3)
         .setCanSleep(false)
     );
 
@@ -299,7 +299,7 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
         for (let i = 0; i < bodies.length; i++) {
           const pos = bodies[i].translation();
           const orig = origins[i];
-          bodies[i].setLinvel({ x: (orig.x - pos.x) * 20, y: (orig.y - pos.y) * 20, z: -pos.z * 20 }, true);
+          bodies[i].setLinvel({ x: (orig.x - pos.x) * 50, y: (orig.y - pos.y) * 50, z: -pos.z * 50 }, true);
         }
       }
 
