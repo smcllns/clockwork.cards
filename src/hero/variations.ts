@@ -187,8 +187,8 @@ export function createBalls(
     const body = world.createRigidBody(
       RAPIER.RigidBodyDesc.dynamic()
         .setTranslation(ball.x, ball.y, 0)
-        .setLinearDamping(3)
-        .setAngularDamping(3)
+        .setLinearDamping(0.05)
+        .setAngularDamping(0.05)
         .setCanSleep(false)
     );
     world.createCollider(

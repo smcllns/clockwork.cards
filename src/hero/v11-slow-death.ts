@@ -107,7 +107,7 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
   let frame = 0;
   const startTime = performance.now();
 
-  const { scene, camera, renderer, composer, bloomPass, w, h } = setupScene(container, { antialias: false, shadows: true });
+  const { scene, camera, renderer, composer, bloomPass, w, h } = setupScene(container, { antialias: true, shadows: true });
   renderer.setClearColor(0xf5f5f0);
 
   // Perf: cap pixel ratio at 1 (skip retina rendering)
@@ -119,15 +119,7 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
   const specs = getBirthdaySpecs(name, dob);
   const { balls, maxW, totalH } = layoutBalls(specs);
 
-  // Split: date line (last spec) → compound letters, rest → individual balls
-  const dateSpec = specs[specs.length - 1];
-  const charPixelCounts = countGlyphPixels(dateSpec.text);
-  const datePixelTotal = charPixelCounts.reduce((s, c) => s + c, 0);
-  const mainCount = balls.length - datePixelTotal;
-  const mainBalls = balls.slice(0, mainCount);
-
-  // Create individual balls for main text lines
-  const { bodies: mainBodies, meshes } = createBalls(balls, world, scene);
+  const { bodies, meshes } = createBalls(balls, world, scene);
 
   const aspect = w / h;
   const camDist = fitCamera(camera, maxW, totalH, aspect);
@@ -158,63 +150,10 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
   const lowPolyGeo = new THREE.SphereGeometry(BALL_RADIUS_FACTOR, 8, 6);
   for (const mesh of meshes) mesh.geometry = lowPolyGeo;
 
-  // Compound letters for date line: remove individual bodies, create one body per character
-  const compBodies: RAPIER.RigidBody[] = [];
-  const compGroups: THREE.Group[] = [];
-  const compOrigins: { x: number; y: number; z: number }[] = [];
-  let dateOffset = mainCount;
-  for (const count of charPixelCounts) {
-    const groupMeshes = meshes.slice(dateOffset, dateOffset + count);
-    const groupBalls = balls.slice(dateOffset, dateOffset + count);
-    const cx = groupBalls.reduce((s, b) => s + b.x, 0) / groupBalls.length;
-    const cy = groupBalls.reduce((s, b) => s + b.y, 0) / groupBalls.length;
-
-    // Remove individual bodies for these balls
-    for (let i = dateOffset; i < dateOffset + count; i++) {
-      world.removeRigidBody(mainBodies[i]);
-    }
-
-    // One compound body per letter
-    const body = world.createRigidBody(
-      RAPIER.RigidBodyDesc.dynamic()
-        .setTranslation(cx, cy, 0)
-        .setLinearDamping(3)
-        .setAngularDamping(3)
-        .setCanSleep(false)
-    );
-
-    const group = new THREE.Group();
-    group.position.set(cx, cy, 0);
-    for (let i = 0; i < groupMeshes.length; i++) {
-      const localX = groupBalls[i].x - cx;
-      const localY = groupBalls[i].y - cy;
-      const radius = BALL_RADIUS_FACTOR * groupBalls[i].scale;
-      world.createCollider(
-        RAPIER.ColliderDesc.ball(radius)
-          .setTranslation(localX, localY, 0)
-          .setRestitution(0.7).setFriction(0.2),
-        body,
-      );
-      scene.remove(groupMeshes[i]);
-      groupMeshes[i].position.set(localX, localY, 0);
-      group.add(groupMeshes[i]);
-    }
-    scene.add(group);
-    compBodies.push(body);
-    compGroups.push(group);
-    compOrigins.push({ x: cx, y: cy, z: 0 });
-    dateOffset += count;
-  }
-
-  // Unified body arrays: individual main balls + compound letters
-  const bodies = [...mainBodies.slice(0, mainCount), ...compBodies];
-  const origins = [
-    ...mainBodies.slice(0, mainCount).map(b => {
-      const t = b.translation();
-      return { x: t.x, y: t.y, z: t.z };
-    }),
-    ...compOrigins,
-  ];
+  const origins = bodies.map(b => {
+    const t = b.translation();
+    return { x: t.x, y: t.y, z: t.z };
+  });
 
   // Perf: simple materials for off mode (Lambert instead of Physical)
   const simpleMats = balls.map(b =>
@@ -299,27 +238,17 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
         for (let i = 0; i < bodies.length; i++) {
           const pos = bodies[i].translation();
           const orig = origins[i];
-          bodies[i].setLinvel({ x: (orig.x - pos.x) * 50, y: (orig.y - pos.y) * 50, z: -pos.z * 50 }, true);
+          bodies[i].setLinvel({ x: (orig.x - pos.x) * 20, y: (orig.y - pos.y) * 20, z: -pos.z * 20 }, true);
         }
       }
 
       world.step();
     }
     _spinQuat.setFromAxisAngle(_yAxis, spinAngle);
-    // Individual balls: position only
-    for (let i = 0; i < mainCount; i++) {
+    for (let i = 0; i < bodies.length; i++) {
       const pos = bodies[i].translation();
       _vec3.set(pos.x, pos.y, pos.z).applyQuaternion(_spinQuat);
       meshes[i].position.copy(_vec3);
-    }
-    // Compound letters: position + rotation
-    for (let i = 0; i < compGroups.length; i++) {
-      const body = compBodies[i];
-      const pos = body.translation();
-      const rot = body.rotation();
-      _vec3.set(pos.x, pos.y, pos.z).applyQuaternion(_spinQuat);
-      compGroups[i].position.copy(_vec3);
-      compGroups[i].quaternion.set(rot.x, rot.y, rot.z, rot.w);
     }
 
     if (mode === "on") {
