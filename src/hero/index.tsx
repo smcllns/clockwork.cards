@@ -113,7 +113,7 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
   const isV9 = variation === 9;
 
   return (
-    <div className="h-dvh relative">
+    <div className="h-[90dvh] relative w-screen -ml-[calc((100vw-100%)/2)]">
       <section
         ref={containerRef}
         className="h-full overflow-hidden"
