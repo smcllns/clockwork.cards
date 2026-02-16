@@ -89,59 +89,52 @@ function FlipCard({ ageYears }: { ageYears: number }) {
   const [flipped, setFlipped] = useState(false);
   const toggle = useCallback(() => setFlipped(f => !f), []);
 
-  return (
-    <div
-      className="mb-10 cursor-pointer"
-      style={{ perspective: "800px" }}
-      onClick={toggle}
-    >
-      <div
-        style={{
-          position: "relative",
-          transition: "transform 0.6s",
-          transformStyle: "preserve-3d",
-          transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)",
-        }}
-      >
-        {/* Front: Base 2 */}
-        <div
-          className="rounded-xl border p-5 space-y-3"
-          style={{ ...css.card, backfaceVisibility: "hidden" }}
-          data-card
-        >
-          <p className="text-xs uppercase tracking-widest font-semibold" style={css.secondary}>
-            Base 2 — tap to flip
-          </p>
-          <p style={css.primary}>
-            In base 2, there are only two numbers: <strong>0</strong> and <strong>1</strong>.
-          </p>
-          <p style={css.secondary}>
-            1001 means: 1 eight, 0 fours, 0 twos, and 1 one.
-          </p>
-          <p className="pt-2" style={css.formula} data-stat>
-            1001₂ = (1×2³) + (0×2²) + (0×2¹) + (1×2⁰) = 8 + 0 + 0 + 1 = {ageYears}
-          </p>
-        </div>
+  const face = (visible: boolean): React.CSSProperties => ({
+    ...css.card,
+    transition: "opacity 0.2s ease, transform 0.2s ease",
+    opacity: visible ? 1 : 0,
+    transform: visible ? "scale(1)" : "scale(0.97)",
+    pointerEvents: visible ? "auto" : "none",
+  });
 
-        {/* Back: Base 10 */}
-        <div
-          className="rounded-xl border p-5 space-y-3 absolute inset-0"
-          style={{ ...css.card, backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
-          data-card
-        >
-          <p className="text-xs uppercase tracking-widest font-semibold" style={css.secondary}>
-            Base 10 — tap to flip
-          </p>
-          <p style={css.primary}>
-            In base 10, there are 10 numbers: 0 – 9.
-          </p>
-          <p style={css.secondary}>
-            {ageYears} is … {ageYears}. But to write it the same way: 0 hundreds, 0 tens, {ageYears} ones.
-          </p>
-          <p className="pt-2" style={css.formula} data-stat>
-            {ageYears}₁₀ = (0×10²) + (0×10¹) + ({ageYears}×10⁰) = 0 + 0 + {ageYears} = {ageYears}
-          </p>
-        </div>
+  return (
+    <div className="mb-10 cursor-pointer relative" onClick={toggle}>
+      <div
+        className="rounded-xl border p-5 space-y-3"
+        style={face(!flipped)}
+        data-card
+      >
+        <p className="text-xs uppercase tracking-widest font-semibold" style={css.secondary}>
+          Base 2 — tap to flip
+        </p>
+        <p style={css.primary}>
+          In base 2, there are only two numbers: <strong>0</strong> and <strong>1</strong>.
+        </p>
+        <p style={css.secondary}>
+          1001 means: 1 eight, 0 fours, 0 twos, and 1 one.
+        </p>
+        <p className="pt-2" style={css.formula} data-stat>
+          1001₂ = (1×2³) + (0×2²) + (0×2¹) + (1×2⁰) = 8 + 0 + 0 + 1 = {ageYears}
+        </p>
+      </div>
+
+      <div
+        className="rounded-xl border p-5 space-y-3 absolute inset-0"
+        style={face(flipped)}
+        data-card
+      >
+        <p className="text-xs uppercase tracking-widest font-semibold" style={css.secondary}>
+          Base 10 — tap to flip
+        </p>
+        <p style={css.primary}>
+          In base 10, there are 10 numbers: 0 – 9.
+        </p>
+        <p style={css.secondary}>
+          {ageYears} is … {ageYears}. But to write it the same way: 0 hundreds, 0 tens, {ageYears} ones.
+        </p>
+        <p className="pt-2" style={css.formula} data-stat>
+          {ageYears}₁₀ = (0×10²) + (0×10¹) + ({ageYears}×10⁰) = 0 + 0 + {ageYears} = {ageYears}
+        </p>
       </div>
     </div>
   );
