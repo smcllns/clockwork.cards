@@ -1,6 +1,6 @@
 import { createRoot } from "react-dom/client";
 import Hero from "./hero";
-import Main from "./main";
+import CuratedMain from "./main/CuratedMain";
 import Footer from "./footer";
 
 const params = new URLSearchParams(window.location.search);
@@ -10,7 +10,7 @@ function App() {
   return (
     <div>
       <Hero name={name} dob={dob} />
-      <Main name={name} dob={dob} />
+      <CuratedMain name={name} dob={dob} />
       <Footer />
     </div>
   );

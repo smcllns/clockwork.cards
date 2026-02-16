@@ -1,40 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import RAPIER from "@dimforge/rapier3d-compat";
+import { initV11 } from "./v11-slow-death";
 
 type HeroMode = "off" | "on" | "broken";
 type VariationHandle = { setMode: (m: HeroMode) => void; dispose: () => void };
-
-const VARIATION_NAMES = [
-  "Holographic Grid",
-  "Digital Rain",
-  "Blueprint Builder",
-  "Particle Nebula",
-  "Neon Circuits",
-  "Dying Lights",
-  "Glass Floor",
-  "Neon Letters",
-  "Two Buttons",
-  "Glass Box",
-  "Slow Death",
-  "Short Circuit",
-];
-
-const TOTAL_VARIATIONS = 12;
-
-function getVariation(): number {
-  const v = new URLSearchParams(window.location.search).get("v");
-  if (v) {
-    const n = parseInt(v, 10);
-    if (n >= 1 && n <= TOTAL_VARIATIONS) return n;
-  }
-  return 1;
-}
 
 export default function Hero({ name, dob }: { name: string; dob: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<VariationHandle | null>(null);
   const [mode, setMode] = useState<HeroMode>("off");
-  const [variation, setVariation] = useState(getVariation);
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -48,28 +22,9 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
     handleRef.current = null;
     setReady(false);
 
-    RAPIER.init().then(async () => {
+    RAPIER.init().then(() => {
       if (disposed) return;
-
-      let initFn: (container: HTMLElement, name: string, dob: string) => VariationHandle;
-      switch (variation) {
-        case 1: initFn = (await import("./v1-holographic-grid")).initV1; break;
-        case 2: initFn = (await import("./v2-digital-rain")).initV2; break;
-        case 3: initFn = (await import("./v3-blueprint")).initV3; break;
-        case 4: initFn = (await import("./v4-particle-nebula")).initV4; break;
-        case 5: initFn = (await import("./v5-neon-circuits")).initV5; break;
-        case 6: initFn = (await import("./v6-dying-lights")).initV6; break;
-        case 7: initFn = (await import("./v7-glass-floor")).initV7; break;
-        case 8: initFn = (await import("./v8-neon-letters")).initV8; break;
-        case 9: initFn = (await import("./v9-two-buttons")).initV9; break;
-        case 10: initFn = (await import("./v7b-glass-box")).initV7b; break;
-        case 11: initFn = (await import("./v11-slow-death")).initV11; break;
-        case 12: initFn = (await import("./v12-short-circuit")).initV12; break;
-        default: initFn = (await import("./v1-holographic-grid")).initV1; break;
-      }
-
-      if (disposed) return;
-      const handle = initFn(container, name, dob);
+      const handle = initV11(container, name, dob);
       handleRef.current = handle;
       setReady(true);
     });
@@ -79,7 +34,7 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
       handleRef.current?.dispose();
       handleRef.current = null;
     };
-  }, [variation, name, dob]);
+  }, [name, dob]);
 
   useEffect(() => {
     if (ready && handleRef.current) {
@@ -101,15 +56,6 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
       document.documentElement.classList.add("shiny");
     }
     setMode("broken");
-  }
-
-  function switchVariation(v: number) {
-    setMode("off");
-    document.documentElement.classList.remove("shiny");
-    setVariation(v);
-    const url = new URL(window.location.href);
-    url.searchParams.set("v", String(v));
-    window.history.replaceState({}, "", url.toString());
   }
 
   const shinyOn = mode === "on" || mode === "broken";
@@ -136,38 +82,7 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
         </span>
       </nav>
 
-      {/* Dev: variation switcher (temporary — will be removed when we go V11-only) */}
-      <div className="absolute bottom-4 left-4 z-10 flex flex-wrap gap-1 max-w-48">
-        {Array.from({ length: TOTAL_VARIATIONS }, (_, i) => i + 1).map(v => (
-          <button
-            key={v}
-            onClick={() => switchVariation(v)}
-            title={VARIATION_NAMES[v - 1]}
-            className="w-6 h-6 rounded-full text-[10px] font-bold cursor-pointer"
-            style={{
-              background: v === variation
-                ? (mode === "off" ? "#18181b" : "#00ffff")
-                : (mode === "off" ? "rgba(228,228,231,0.7)" : "rgba(26,26,46,0.7)"),
-              color: v === variation
-                ? (mode === "off" ? "#fff" : "#000")
-                : (mode === "off" ? "#71717a" : "#555"),
-              border: "none",
-              transition: "all 0.3s",
-            }}
-          >
-            {v}
-          </button>
-        ))}
-      </div>
-
-      {/* 🚨 CHAOS TOGGLE — The fire alarm.
-       * Character: A warning panel that says "do not touch." Hazard-striped,
-       * industrial, clearly dangerous. The forbidden switch that adults would
-       * say no to — which is exactly why a kid wants to flip it.
-       * Behavior: One-shot only. Once flipped, it's over. The balls fall, the
-       * lights die, and there's no going back. The panel goes dead.
-       * Position: Absolute within the hero section. Scrolls away — you leave
-       * the scene of the crime behind. */}
+      {/* 🚨 CHAOS TOGGLE */}
       <div
         className="absolute top-3 z-10"
         style={{ right: 92 }}
@@ -235,12 +150,7 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
         </div>
       </div>
 
-      {/* ⚡ SHINY TOGGLE — The room's power switch.
-       * Character: A clean wall panel labeled "SHINY." Warm, inviting — the main
-       * light switch that transforms the whole page from daylight to neon cyberpunk.
-       * It glows when on, calling you to flip it. The on-switch for the party.
-       * Behavior: Togglable on/off freely. Locks on once chaos triggers.
-       * Position: Fixed top-right. Always accessible while scrolling the page. */}
+      {/* ⚡ SHINY TOGGLE */}
       <div className="fixed top-3 right-3 z-50">
         <div
           className={`select-none flex flex-col items-center gap-1.5 px-3 py-2 rounded-lg transition-all duration-300 ${

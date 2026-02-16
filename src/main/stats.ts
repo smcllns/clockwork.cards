@@ -1,5 +1,3 @@
-import { useState, useEffect } from "react";
-
 // ── Constants ──────────────────────────────────────────────────────
 const MS_PER_SEC = 1000;
 const MS_PER_MIN = MS_PER_SEC * 60;
@@ -187,18 +185,6 @@ export function computeStats(dob: string, config: StatsConfig, now: number): Sta
     waterPoolPercent,
     poolYearsRemaining,
   };
-}
-
-// ── React hook ─────────────────────────────────────────────────────
-export function useStats(dob: string, config: StatsConfig = DEFAULT_CONFIG): Stats {
-  const [now, setNow] = useState(Date.now());
-
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
-  }, []);
-
-  return computeStats(dob, config, now);
 }
 
 // ── Formatting helpers ─────────────────────────────────────────────
