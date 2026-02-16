@@ -115,7 +115,7 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
   const shinyOn = mode === "on" || mode === "broken";
 
   return (
-    <div className="h-[90dvh] relative w-screen -ml-[calc((100vw-100%)/2)]">
+    <div className="h-[90dvh] relative snap-section">
       <section
         ref={containerRef}
         className="h-full overflow-hidden"

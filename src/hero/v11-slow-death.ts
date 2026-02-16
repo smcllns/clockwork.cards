@@ -198,18 +198,22 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
   const _spinQuat = new THREE.Quaternion();
   const _vec3 = new THREE.Vector3();
 
-  let dragActive = false;
+  let spinActive = false;
   let lastX = 0;
-  function onPointerDown(e: PointerEvent) { dragActive = true; lastX = e.clientX; }
+  function onPointerDown(e: PointerEvent) { spinActive = true; lastX = e.clientX; }
   function onPointerMove(e: PointerEvent) {
-    if (!dragActive) return;
-    spinAngle += (e.clientX - lastX) * 0.01;
+    if (!spinActive) return;
+    // Only spin when not grabbing balls (grab takes priority)
+    if (grabbed.length === 0) {
+      spinAngle += (e.clientX - lastX) * 0.01;
+    }
     lastX = e.clientX;
   }
-  function onPointerUp() { dragActive = false; }
+  function onPointerUp() { spinActive = false; }
   container.addEventListener("pointerdown", onPointerDown);
   container.addEventListener("pointermove", onPointerMove);
-  container.addEventListener("pointerup", onPointerUp);
+  // Bind up to window so it fires even if pointer leaves container
+  window.addEventListener("pointerup", onPointerUp);
 
   let visible = true;
   const observer = new IntersectionObserver(([entry]) => {
@@ -226,7 +230,7 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
     const elapsed = (performance.now() - startTime) / 1000;
 
     // Perf: skip physics when anchored and settled
-    let needsPhysics = mode === "broken" || grabbed.length > 0 || dragActive;
+    let needsPhysics = mode === "broken" || grabbed.length > 0 || spinActive;
     if (!needsPhysics && settleFrames > 0) {
       settleFrames--;
       needsPhysics = true;
@@ -494,7 +498,7 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
       observer.disconnect();
       container.removeEventListener("pointerdown", onPointerDown);
       container.removeEventListener("pointermove", onPointerMove);
-      container.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointerup", onPointerUp);
       composer.dispose();
       renderer.dispose();
       if (renderer.domElement.parentNode) container.removeChild(renderer.domElement);

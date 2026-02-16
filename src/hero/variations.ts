@@ -256,8 +256,13 @@ export function setupGrabHandlers(
     return { x: t.clientX - r.left, y: t.clientY - r.top };
   }
 
+  function canvasPos(e: MouseEvent): { x: number; y: number } {
+    const r = canvas.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+
   const onMouseDown = (e: MouseEvent) => startGrab(e.offsetX, e.offsetY);
-  const onMouseMove = (e: MouseEvent) => { if (grabbed.length) moveGrab(e.offsetX, e.offsetY); };
+  const onMouseMove = (e: MouseEvent) => { if (grabbed.length) { const p = canvasPos(e); moveGrab(p.x, p.y); } };
   const onTouchStart = (e: TouchEvent) => {
     const p = touchPos(e);
     if (startGrab(p.x, p.y)) e.preventDefault();
@@ -270,18 +275,18 @@ export function setupGrabHandlers(
   };
 
   canvas.addEventListener("mousedown", onMouseDown);
-  canvas.addEventListener("mousemove", onMouseMove);
+  window.addEventListener("mousemove", onMouseMove);
   window.addEventListener("mouseup", endGrab);
   canvas.addEventListener("touchstart", onTouchStart, { passive: false });
-  canvas.addEventListener("touchmove", onTouchMove, { passive: false });
+  window.addEventListener("touchmove", onTouchMove, { passive: false });
   window.addEventListener("touchend", endGrab);
 
   const cleanup = () => {
     canvas.removeEventListener("mousedown", onMouseDown);
-    canvas.removeEventListener("mousemove", onMouseMove);
+    window.removeEventListener("mousemove", onMouseMove);
     window.removeEventListener("mouseup", endGrab);
     canvas.removeEventListener("touchstart", onTouchStart);
-    canvas.removeEventListener("touchmove", onTouchMove);
+    window.removeEventListener("touchmove", onTouchMove);
     window.removeEventListener("touchend", endGrab);
   };
 

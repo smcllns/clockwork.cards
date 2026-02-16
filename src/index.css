@@ -4,6 +4,14 @@ html, body {
   overflow-x: hidden;
 }
 
+html {
+  scroll-snap-type: y proximity;
+}
+
+.snap-section {
+  scroll-snap-align: start;
+}
+
 body {
   font-family: var(--font-display);
   -webkit-font-smoothing: antialiased;
