@@ -51,6 +51,11 @@ body {
   }
 }
 
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
 @keyframes glow-border-pink {
   0%, 100% { border-color: rgba(255, 45, 85, 0.5); }
   33% { border-color: rgba(255, 0, 150, 0.6); }
