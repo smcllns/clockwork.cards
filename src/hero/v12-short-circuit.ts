@@ -128,6 +128,7 @@ export function initV12(container: HTMLElement, name: string, dob: string) {
   for (let i = 0; i < meshes.length; i++) meshes[i].material = simpleMats[i];
 
   const { grabbed, target, cleanup: grabCleanup } = setupGrabHandlers(renderer.domElement, camera, bodies, w, h);
+  let wasGrabbing = false;
 
   const colorIndices = balls.map(b => b.colorIndex);
   const phases = new Float32Array(meshes.length);
@@ -178,7 +179,11 @@ export function initV12(container: HTMLElement, name: string, dob: string) {
     if (!visible || disposed) { frame = 0; return; }
     const elapsed = (performance.now() - startTime) / 1000;
 
-    let needsPhysics = mode === "broken" || grabbed.length > 0 || dragActive;
+    const isGrabbing = grabbed.length > 0;
+    if (wasGrabbing && !isGrabbing) settleFrames = 120;
+    wasGrabbing = isGrabbing;
+
+    let needsPhysics = mode === "broken" || isGrabbing || dragActive;
     if (!needsPhysics && settleFrames > 0) {
       settleFrames--;
       needsPhysics = true;
