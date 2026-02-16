@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "bun ./index.html",
     "build": "bun run build.ts",
-    "test": "bun test"
+    "test": "bun test",
+    "deploy": "bun run build && wrangler pages deploy dist"
   },
   "dependencies": {
     "@dimforge/rapier3d-compat": "^0.19.3",
@@ -24,6 +25,7 @@
     "@types/three": "^0.182.0",
     "bun-plugin-tailwind": "latest",
     "tailwindcss": "^4.0.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "wrangler": "^4.65.0"
   }
 }
