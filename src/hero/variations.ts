@@ -271,18 +271,18 @@ export function setupGrabHandlers(
 
   canvas.addEventListener("mousedown", onMouseDown);
   canvas.addEventListener("mousemove", onMouseMove);
-  canvas.addEventListener("mouseup", endGrab);
+  window.addEventListener("mouseup", endGrab);
   canvas.addEventListener("touchstart", onTouchStart, { passive: false });
   canvas.addEventListener("touchmove", onTouchMove, { passive: false });
-  canvas.addEventListener("touchend", endGrab);
+  window.addEventListener("touchend", endGrab);
 
   const cleanup = () => {
     canvas.removeEventListener("mousedown", onMouseDown);
     canvas.removeEventListener("mousemove", onMouseMove);
-    canvas.removeEventListener("mouseup", endGrab);
+    window.removeEventListener("mouseup", endGrab);
     canvas.removeEventListener("touchstart", onTouchStart);
     canvas.removeEventListener("touchmove", onTouchMove);
-    canvas.removeEventListener("touchend", endGrab);
+    window.removeEventListener("touchend", endGrab);
   };
 
   return { grabbed, target, cleanup };

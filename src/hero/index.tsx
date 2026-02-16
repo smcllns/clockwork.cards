@@ -112,7 +112,7 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
     window.history.replaceState({}, "", url.toString());
   }
 
-  const isV9 = variation === 9;
+  const shinyOn = mode === "on" || mode === "broken";
 
   return (
     <div className="h-[90dvh] relative w-screen -ml-[calc((100vw-100%)/2)]">
@@ -136,18 +136,18 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
         </span>
       </nav>
 
-      {/* Variation switcher */}
-      <div className="absolute top-4 right-4 z-10 flex gap-1">
+      {/* Dev: variation switcher (temporary — will be removed when we go V11-only) */}
+      <div className="absolute bottom-4 left-4 z-10 flex flex-wrap gap-1 max-w-48">
         {Array.from({ length: TOTAL_VARIATIONS }, (_, i) => i + 1).map(v => (
           <button
             key={v}
             onClick={() => switchVariation(v)}
             title={VARIATION_NAMES[v - 1]}
-            className="w-7 h-7 rounded-full text-xs font-bold cursor-pointer"
+            className="w-6 h-6 rounded-full text-[10px] font-bold cursor-pointer"
             style={{
               background: v === variation
                 ? (mode === "off" ? "#18181b" : "#00ffff")
-                : (mode === "off" ? "#e4e4e7" : "#1a1a2e"),
+                : (mode === "off" ? "rgba(228,228,231,0.7)" : "rgba(26,26,46,0.7)"),
               color: v === variation
                 ? (mode === "off" ? "#fff" : "#000")
                 : (mode === "off" ? "#71717a" : "#555"),
@@ -160,201 +160,151 @@ export default function Hero({ name, dob }: { name: string; dob: string }) {
         ))}
       </div>
 
-      {/* Variation label */}
+      {/* 🚨 CHAOS TOGGLE — The fire alarm.
+       * Character: A warning panel that says "do not touch." Hazard-striped,
+       * industrial, clearly dangerous. The forbidden switch that adults would
+       * say no to — which is exactly why a kid wants to flip it.
+       * Behavior: One-shot only. Once flipped, it's over. The balls fall, the
+       * lights die, and there's no going back. The panel goes dead.
+       * Position: Absolute within the hero section. Scrolls away — you leave
+       * the scene of the crime behind. */}
       <div
-        className="absolute top-14 right-4 z-10 text-xs"
-        style={{
-          color: mode === "off" ? "#a1a1aa" : "#555577",
-          fontFamily: "'Space Mono', monospace",
-          transition: "color 0.5s",
-        }}
+        className="absolute top-3 z-10"
+        style={{ right: 92 }}
       >
-        V{variation}: {VARIATION_NAMES[variation - 1]}
-      </div>
-
-      {/* V9: Two-button layout */}
-      {isV9 ? (
-        <V9Buttons mode={mode} toggleShiny={toggleShiny} breakGlass={breakGlass} />
-      ) : (
-        /* Default bottom buttons */
-        <div className="absolute bottom-6 left-6 right-6 z-10 flex items-end justify-between">
-          <button
-            onClick={toggleShiny}
-            disabled={mode === "broken"}
-            className="cursor-pointer disabled:cursor-default"
-            style={{
-              fontFamily: "'Space Mono', monospace",
-              fontSize: "0.75rem",
-              padding: "6px 14px",
-              borderRadius: "6px",
-              border: mode === "on"
-                ? "1px solid rgba(0,255,255,0.4)"
-                : "1px solid #d4d4d8",
-              background: mode === "on"
-                ? "rgba(0,255,255,0.1)"
-                : mode === "broken" ? "#e4e4e7" : "#fff",
-              color: mode === "on"
-                ? "#00ffff"
-                : mode === "broken" ? "#a1a1aa" : "#18181b",
-              boxShadow: mode === "on"
-                ? "0 0 12px rgba(0,255,255,0.2)"
-                : "0 1px 3px rgba(0,0,0,0.1)",
-              transition: "all 0.3s",
-              opacity: mode === "broken" ? 0.4 : 1,
-            }}
-          >
-            {mode === "on" ? "SHINY: ON" : "SHINY: OFF"}
-          </button>
-
-          <div className="flex flex-col items-center gap-1.5">
-            <button
-              onClick={mode !== "broken" ? breakGlass : undefined}
-              className={`relative w-10 h-10 rounded-full ${
-                mode === "broken"
-                  ? "cursor-default scale-90"
-                  : "cursor-pointer hover:scale-105 active:scale-95"
-              }`}
-              style={{
-                background: mode === "broken"
-                  ? "radial-gradient(circle at 40% 35%, #666, #333)"
-                  : "radial-gradient(circle at 40% 35%, #ff4444, #cc0000)",
-                boxShadow: mode === "broken"
-                  ? "0 2px 8px rgba(0,0,0,0.2), inset 0 -2px 4px rgba(0,0,0,0.3)"
-                  : "0 0 12px rgba(255,0,0,0.4), 0 0 24px rgba(255,0,0,0.2), 0 4px 8px rgba(0,0,0,0.3), inset 0 -3px 6px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,100,100,0.3)",
-                border: mode === "broken" ? "3px solid #555" : "3px solid #990000",
-                transition: "transform 0.3s, box-shadow 0.3s",
-              }}
-            />
-            <span
-              className="text-center leading-tight max-w-24"
-              style={{
-                fontFamily: "'Caveat', 'Segoe Script', cursive",
-                color: mode === "broken" ? "#777" : (mode === "off" ? "#18181b" : "#e2e2ff"),
-                opacity: mode === "broken" ? 0.4 : 0.7,
-                fontSize: "0.95rem",
-                transition: "color 0.5s, opacity 0.3s",
-              }}
-            >
-              {mode === "broken" ? "Oops..." : "Break glass"}
-            </span>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function V9Buttons({
-  mode,
-  toggleShiny,
-  breakGlass,
-}: {
-  mode: HeroMode;
-  toggleShiny: () => void;
-  breakGlass: () => void;
-}) {
-  return (
-    <>
-      {/* "Press this button" — centered, big, inviting CTA */}
-      <div className="absolute bottom-24 left-0 right-0 z-10 flex justify-center">
-        <button
-          onClick={toggleShiny}
-          disabled={mode === "broken"}
-          className="cursor-pointer disabled:cursor-default group"
-          style={{
-            fontFamily: "'Space Grotesk', system-ui, sans-serif",
-            fontSize: mode === "on" ? "1rem" : "1.15rem",
-            fontWeight: 600,
-            padding: mode === "on" ? "12px 32px" : "16px 48px",
-            borderRadius: "60px",
-            border: mode === "on"
-              ? "2px solid rgba(0,255,255,0.5)"
-              : mode === "broken"
-                ? "2px solid #333"
-                : "2px solid #18181b",
-            background: mode === "on"
-              ? "linear-gradient(135deg, rgba(0,255,255,0.15), rgba(0,200,255,0.1))"
-              : mode === "broken"
-                ? "#222"
-                : "linear-gradient(135deg, #18181b, #27272a)",
-            color: mode === "on"
-              ? "#00ffff"
-              : mode === "broken"
-                ? "#555"
-                : "#fff",
-            boxShadow: mode === "on"
-              ? "0 0 30px rgba(0,255,255,0.3), 0 0 60px rgba(0,255,255,0.1), inset 0 1px 0 rgba(255,255,255,0.1)"
-              : mode === "broken"
-                ? "none"
-                : "0 4px 20px rgba(0,0,0,0.3), 0 8px 40px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.1)",
-            transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
-            letterSpacing: "0.05em",
-            opacity: mode === "broken" ? 0.3 : 1,
-            transform: mode === "broken" ? "scale(0.9)" : undefined,
-          }}
-        >
-          {mode === "on" ? "✨ It's on!" : mode === "broken" ? "..." : "Press this button"}
-        </button>
-      </div>
-
-      {/* "Never press this button" — bottom-right, smaller, dangerous */}
-      <div className="absolute bottom-6 right-6 z-10">
-        <button
-          onClick={mode !== "broken" ? breakGlass : undefined}
-          className={`group ${
-            mode === "broken"
-              ? "cursor-default"
-              : "cursor-pointer"
-          }`}
-          style={{
-            fontFamily: "'Space Mono', monospace",
-            fontSize: "0.7rem",
-            fontWeight: 400,
-            padding: "8px 16px",
-            borderRadius: "8px",
-            border: mode === "broken"
-              ? "1px solid #333"
-              : "1px solid rgba(255,0,0,0.3)",
-            background: mode === "broken"
-              ? "rgba(30,30,30,0.8)"
-              : "rgba(40,0,0,0.6)",
-            color: mode === "broken"
-              ? "#444"
-              : "#ff4444",
-            boxShadow: mode === "broken"
-              ? "none"
-              : "0 0 8px rgba(255,0,0,0.15), 0 0 20px rgba(255,0,0,0.05)",
-            transition: "all 0.3s",
-            textTransform: "uppercase",
-            letterSpacing: "0.1em",
-            opacity: mode === "broken" ? 0.3 : 0.8,
-            backdropFilter: "blur(4px)",
-          }}
-        >
-          {mode === "broken" ? "too late" : "Never press this button"}
-        </button>
-      </div>
-
-      {/* Scroll hint — only when shiny is on */}
-      {mode === "on" && (
         <div
-          className="absolute bottom-8 left-0 right-0 z-10 flex justify-center pointer-events-none"
+          className="select-none flex flex-col items-center gap-1.5 px-3 py-2 rounded-lg transition-all duration-500"
           style={{
-            animation: "pulse 2s ease-in-out infinite",
+            backgroundColor: mode === "broken"
+              ? "rgba(41,37,36,0.85)"
+              : mode === "off" ? "rgba(255,255,255,0.85)" : "rgba(30,10,10,0.85)",
+            backdropFilter: "blur(8px)",
+            border: mode === "broken"
+              ? "1px solid #44403c"
+              : mode === "off" ? "1px solid #e7e5e4" : "1px solid rgba(153,27,27,0.5)",
+            boxShadow: mode === "broken"
+              ? "0 2px 8px rgba(0,0,0,0.3)"
+              : "0 2px 12px rgba(0,0,0,0.15)",
           }}
         >
           <span
             style={{
-              fontFamily: "'Space Grotesk', system-ui, sans-serif",
-              fontSize: "0.7rem",
-              color: "rgba(255,255,255,0.3)",
-              letterSpacing: "0.15em",
+              fontFamily: "'Space Mono', monospace",
+              fontSize: "0.55rem",
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase" as const,
+              color: mode === "broken"
+                ? "#57534e"
+                : mode === "off" ? "#dc2626" : "#fca5a5",
+              transition: "color 0.5s",
+            }}
+          >🚫 Do not touch</span>
+          <button
+            onClick={mode !== "broken" ? breakGlass : undefined}
+            className={`relative flex-shrink-0 transition-all duration-300 ${
+              mode === "broken" ? "cursor-default" : "cursor-pointer"
+            }`}
+            style={{
+              width: 44,
+              height: 24,
+              borderRadius: 12,
+              backgroundColor: mode === "broken"
+                ? "#292524"
+                : mode === "off" ? "#78716c" : "#57534e",
+              boxShadow: mode === "broken"
+                ? "inset 0 1px 3px rgba(0,0,0,0.4)"
+                : "inset 0 1px 3px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.1)",
+              border: mode === "broken"
+                ? "1px solid #44403c"
+                : "1px solid #a8a29e",
+              transition: "all 0.5s",
             }}
           >
-            SCROLL DOWN
-          </span>
+            <div
+              className="absolute top-[2px] rounded-full shadow-md transition-all duration-500"
+              style={{
+                width: 18,
+                height: 18,
+                left: mode === "broken" ? 23 : 2,
+                backgroundColor: mode === "broken" ? "#57534e" : "#e7e5e4",
+                boxShadow: "0 1px 2px rgba(0,0,0,0.2)",
+              }}
+            />
+          </button>
         </div>
-      )}
-    </>
+      </div>
+
+      {/* ⚡ SHINY TOGGLE — The room's power switch.
+       * Character: A clean wall panel labeled "SHINY." Warm, inviting — the main
+       * light switch that transforms the whole page from daylight to neon cyberpunk.
+       * It glows when on, calling you to flip it. The on-switch for the party.
+       * Behavior: Togglable on/off freely. Locks on once chaos triggers.
+       * Position: Fixed top-right. Always accessible while scrolling the page. */}
+      <div className="fixed top-3 right-3 z-50">
+        <div
+          className={`select-none flex flex-col items-center gap-1.5 px-3 py-2 rounded-lg transition-all duration-300 ${
+            mode === "broken" ? "opacity-50" : ""
+          }`}
+          style={{
+            backgroundColor: shinyOn
+              ? "rgba(30,20,0,0.85)"
+              : "rgba(255,255,255,0.85)",
+            backdropFilter: "blur(8px)",
+            border: shinyOn
+              ? "1px solid rgba(217,119,6,0.4)"
+              : "1px solid #e7e5e4",
+            boxShadow: shinyOn
+              ? "0 0 16px rgba(245,158,11,0.3), 0 2px 8px rgba(0,0,0,0.2)"
+              : "0 2px 8px rgba(0,0,0,0.08)",
+            transition: "all 0.3s",
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "'Space Mono', monospace",
+              fontSize: "0.55rem",
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase" as const,
+              color: shinyOn ? "#f59e0b" : "#d97706",
+              transition: "color 0.3s",
+            }}
+          >✨ Shiny</span>
+          <button
+            onClick={toggleShiny}
+            disabled={mode === "broken"}
+            className={`relative transition-all duration-300 ${
+              mode === "broken" ? "cursor-default" : "cursor-pointer"
+            }`}
+            style={{
+              width: 44,
+              height: 24,
+              borderRadius: 12,
+              backgroundColor: shinyOn ? "#f59e0b" : "#fbbf24",
+              boxShadow: shinyOn
+                ? "0 0 10px rgba(245,158,11,0.5), inset 0 1px 2px rgba(255,255,255,0.2)"
+                : "0 0 6px rgba(251,191,36,0.4), inset 0 1px 2px rgba(255,255,255,0.15)",
+              border: shinyOn
+                ? "1px solid #d97706"
+                : "1px solid #f59e0b",
+              transition: "all 0.3s",
+            }}
+          >
+            <div
+              className="absolute top-[2px] rounded-full bg-white transition-all duration-300"
+              style={{
+                width: 18,
+                height: 18,
+                left: shinyOn ? 23 : 2,
+                boxShadow: shinyOn
+                  ? "0 1px 4px rgba(0,0,0,0.2), 0 0 6px rgba(245,158,11,0.3)"
+                  : "0 1px 3px rgba(0,0,0,0.2)",
+              }}
+            />
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
