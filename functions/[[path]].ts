@@ -1,6 +1,7 @@
 interface Env {
   KV: KVNamespace;
   ASSETS: Fetcher;
+  POLAR_WEBHOOK_SECRET: string;
 }
 
 interface CardConfig {
@@ -13,6 +14,8 @@ interface CardConfig {
   theme?: string;
   ownerEmail?: string;
   createdAt?: string;
+  polarCustomerId?: string;
+  polarOrderId?: string;
 }
 
 const RESERVED = new Set([
@@ -90,7 +93,15 @@ export const onRequest: PagesFunction<Env> = async (context) => {
     .transform(asset);
 };
 
-async function handleAPI(path: string, context: { env: Env }): Promise<Response> {
+async function handleAPI(
+  path: string,
+  context: { request: Request; env: Env }
+): Promise<Response> {
+  // POST /api/webhook — Polar webhook
+  if (path === "api/webhook" && context.request.method === "POST") {
+    return handleWebhook(context.request, context.env);
+  }
+
   // GET /api/check/<name>
   if (path.startsWith("api/check/")) {
     const name = decodeURIComponent(path.slice("api/check/".length)).toLowerCase();
@@ -110,6 +121,114 @@ async function handleAPI(path: string, context: { env: Env }): Promise<Response>
   }
 
   return json({ error: "not_found" }, 404);
+}
+
+// — Polar Webhook Handler —
+
+async function handleWebhook(request: Request, env: Env): Promise<Response> {
+  const body = await request.text();
+
+  const valid = await verifyWebhookSignature(
+    body,
+    request.headers,
+    env.POLAR_WEBHOOK_SECRET
+  );
+  if (!valid) {
+    return json({ error: "invalid_signature" }, 401);
+  }
+
+  const event = JSON.parse(body);
+
+  if (event.type !== "order.paid") {
+    return json({ ok: true, skipped: event.type });
+  }
+
+  const order = event.data;
+  const metadata = order.metadata ?? {};
+  const cardName = (metadata.cardName ?? "").toLowerCase();
+  const dob = metadata.dob ?? "";
+  const displayName = metadata.displayName ?? cardName;
+
+  if (!cardName || !dob) {
+    return json({ error: "missing_metadata", metadata }, 400);
+  }
+
+  if (!NAME_PATTERN.test(cardName)) {
+    return json({ error: "invalid_card_name", cardName }, 400);
+  }
+
+  // Don't overwrite existing cards
+  const existing = await env.KV.get(`cards:${cardName}`);
+  if (existing) {
+    return json({ error: "card_already_exists", cardName }, 409);
+  }
+
+  const config: CardConfig = {
+    name: cardName,
+    displayName,
+    dob,
+    tier: "standard",
+    ownerEmail: order.customer?.email ?? order.customer_email ?? "",
+    createdAt: new Date().toISOString(),
+    polarCustomerId: order.customer?.id ?? "",
+    polarOrderId: order.id ?? "",
+  };
+
+  await env.KV.put(`cards:${cardName}`, JSON.stringify(config));
+
+  return json({ ok: true, card: cardName });
+}
+
+// Standard Webhooks (Svix) signature verification
+async function verifyWebhookSignature(
+  body: string,
+  headers: Headers,
+  secret: string
+): Promise<boolean> {
+  const msgId = headers.get("webhook-id");
+  const timestamp = headers.get("webhook-timestamp");
+  const signature = headers.get("webhook-signature");
+
+  if (!msgId || !timestamp || !signature) return false;
+
+  // Reject timestamps older than 5 minutes
+  const now = Math.floor(Date.now() / 1000);
+  const ts = parseInt(timestamp, 10);
+  if (Math.abs(now - ts) > 300) return false;
+
+  // Secret is "whsec_" prefix + base64-encoded key
+  const secretBytes = base64Decode(secret.replace(/^whsec_/, ""));
+
+  const toSign = `${msgId}.${timestamp}.${body}`;
+  const key = await crypto.subtle.importKey(
+    "raw",
+    secretBytes,
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(toSign));
+  const expected = base64Encode(new Uint8Array(sig));
+
+  // Signature header can contain multiple signatures: "v1,<sig1> v1,<sig2>"
+  const signatures = signature.split(" ");
+  return signatures.some((s) => {
+    const [, val] = s.split(",", 2);
+    return val === expected;
+  });
+}
+
+function base64Decode(str: string): Uint8Array {
+  const binary = atob(str);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+
+function base64Encode(bytes: Uint8Array): string {
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary);
 }
 
 function notFoundHTML(name: string): string {
