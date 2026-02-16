@@ -8,7 +8,7 @@ const name = params.get("name") ?? process.env.DEFAULT_NAME ?? "Oscar";
 const dob = params.get("dob") ?? process.env.DEFAULT_DOB ?? "2017-02-20";
 function App() {
   return (
-    <div className="max-w-[1024px] mx-auto">
+    <div>
       <Hero name={name} dob={dob} />
       <Main name={name} dob={dob} />
       <Footer />
