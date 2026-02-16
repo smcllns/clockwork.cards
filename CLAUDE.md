@@ -16,6 +16,7 @@ Digital birthday card for a specific kid. Live-updating stats about time alive, 
 ## Commands
 - `bun run dev` — dev server on :3000 with HMR
 - `bun run build` — production build to `dist/`
+- `bun run deploy` — build + deploy to Cloudflare Pages
 
 ## URL Parameters
 - `?name=Oscar` — display name (default from env: "Birthday Star")
