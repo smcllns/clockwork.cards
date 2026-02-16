@@ -80,16 +80,19 @@ export function getBirthdaySpecs(name: string, dob: string): LineSpec[] {
 }
 
 // Shared scene setup
-export function setupScene(container: HTMLElement) {
+export type SceneOpts = { antialias?: boolean; shadows?: boolean };
+export function setupScene(container: HTMLElement, opts?: SceneOpts) {
+  const aa = opts?.antialias ?? true;
+  const shadows = opts?.shadows ?? true;
   const w = container.clientWidth;
   const h = container.clientHeight;
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(VFOV, w / h, 0.1, 200);
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  const renderer = new THREE.WebGLRenderer({ antialias: aa });
   renderer.setClearColor(0xffffff);
   renderer.setSize(w, h);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.enabled = shadows;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.0;
