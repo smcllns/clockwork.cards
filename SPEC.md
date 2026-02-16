@@ -8,7 +8,7 @@ Bun (runtime/bundler/dev), React 19, Tailwind v4 (`bun-plugin-tailwind`), Three.
 
 ## Architecture
 ```
-index.html → src/index.tsx → Hero + CuratedMain + Footer
+index.html → src/index.tsx → Hero + Cards + Footer
 ```
 URL params: `?name=`, `?dob=` (defaults from `.env` via Bun env inlining). Single-page, no routing.
 
@@ -55,7 +55,7 @@ Device priority: iPad Mini (744px) > iPhone (390px) > Desktop (max-width contain
 **Visual layers:** Circuit board background (20 random polylines + endpoint dots + 6 chip rectangles). 5 LED indicators top-left. All dim in off mode, glow in on mode, spark+die in broken mode.
 
 ## Main — 6 Curated Slides
-Stats engine: `computeStats(dob, config, now)` → pure function, all metrics derived from DOB + configurable params (yogurt grams/day, steps/day, brush minutes, etc.). `config` state in CuratedMain, `now` ticks every 1s via setInterval.
+Stats engine: `computeStats(dob, config, now)` → pure function, all metrics derived from DOB + configurable params (yogurt grams/day, steps/day, brush minutes, etc.). `config` state in Cards, `now` ticks every 1s via setInterval.
 
 **Slide 1 (Time):** Big number + unit pills (yrs/mo/wks/days/hrs/min/sec). Seconds tick live.
 **Slide 2 (Space):** Miles/km through space. Earth orbital speed × hours alive. Light speed comparison.
@@ -76,18 +76,18 @@ Brain bento cards override: pink neon glow (neon-pulse-pink, glow-border-pink) i
 
 Theme transitions scoped to body/section/footer/[data-card] for scroll perf.
 
-## Key Files (post-simplification)
+## Key Files
 ```
-src/index.tsx          — App root, URL params, renders Hero + CuratedMain + Footer
-src/hero/index.tsx     — React wrapper. RAPIER.init(), mode state, shiny/chaos toggles
+src/index.tsx          — App shell, page chrome, mode state, renders Hero + Cards + Footer
+src/theme.css          — CSS custom properties for light/shiny, animations, transitions
+src/footer.tsx         — © line
+src/hero/index.tsx     — Pure scene component (name, dob, mode props). RAPIER.init()
 src/hero/scene.ts      — initScene(): Three.js + Rapier setup, animation loop, setMode/dispose
 src/hero/shared.ts     — layoutBalls, getBirthdaySpecs, setupScene, fitCamera, addWalls, createBalls, setupGrabHandlers
 src/hero/font.ts       — 5x7 bitmap font A-Z 0-9. FONT record, CHAR_W/H/GAP, LINE_GAP, SPACE_W
 src/hero/colors.ts     — LIGHT (10 greyscale hex) and SHINY (10 neon hex) palettes
-src/main/CuratedMain   — 6 slides, stats config state, all slide components
-src/main/stats.ts      — computeStats() pure function, formatting helpers (fmt, fmtBig, fmtYears, hippoHeadline)
-src/main/Controls.tsx   — InlineStepper, InlineSlider, InlinePills, BlockControl, BlockSlider, BlockStepper
-src/footer/index.tsx   — © line
-src/footer/theme.css   — CSS custom properties for light/shiny, animations, transitions
+src/cards/index.tsx    — 6 slides, stats config state, all slide components
+src/cards/stats.ts     — computeStats() pure function, formatting helpers (fmt, fmtBig, fmtYears, hippoHeadline)
+src/cards/controls.tsx — InlineStepper, InlineSlider, InlinePills, BlockControl, BlockSlider, BlockStepper
 src/index.css          — Scroll snap, brain bento responsive, pink glow overrides
 ```
