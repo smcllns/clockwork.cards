@@ -239,8 +239,9 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
       {/* ──────────────────────────────────────────────────────────
           4. YOUR LIFE IN NUMBERS (V6 style — narrative + controls)
           ────────────────────────────────────────────────────────── */}
-      <div className="px-6 py-16 max-w-2xl mx-auto relative snap-section" style={{ minHeight: "100dvh" }}>
+      <div className="flex items-center justify-center px-6 relative snap-section" style={{ minHeight: "100dvh" }}>
         <div className="absolute top-4 right-6"><IdTag id="4" /></div>
+        <div className="max-w-2xl w-full py-16">
         <h3
           className="text-sm font-semibold uppercase tracking-[0.15em] mb-10 pb-3 border-b"
           style={css.sectionHead}
@@ -288,13 +289,15 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
             times per day on average, you've pooped around <N>{fmt(s.totalPoops)} times</N> so far.
           </p>
         </article>
+        </div>
       </div>
 
       {/* ──────────────────────────────────────────────────────────
           5. YOUR BRAIN & BODY (V7 style — rich bento)
           ────────────────────────────────────────────────────────── */}
-      <div className="px-6 py-16 relative snap-section" style={{ minHeight: "100dvh", background: "var(--bg-secondary)" }}>
+      <div className="flex items-center justify-center px-6 relative snap-section" style={{ minHeight: "100dvh", background: "var(--bg-secondary)" }}>
         <div className="absolute top-4 right-6"><IdTag id="5" /></div>
+        <div className="w-full py-16">
         <h3
           className="text-sm font-semibold uppercase tracking-[0.15em] mb-8 pb-3 border-b max-w-2xl mx-auto"
           style={css.sectionHead}
@@ -343,13 +346,15 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
             );
           })}
         </div>
+        </div>
       </div>
 
       {/* ──────────────────────────────────────────────────────────
           6. BINARY / BASE 2 — step-by-step lesson + closing
           ────────────────────────────────────────────────────────── */}
-      <div className="px-6 py-16 max-w-2xl mx-auto relative snap-section" style={{ minHeight: "100dvh", background: "var(--bg-primary)" }}>
+      <div className="flex items-center justify-center px-6 relative snap-section" style={{ minHeight: "100dvh", background: "var(--bg-primary)" }}>
         <div className="absolute top-4 right-6"><IdTag id="6" /></div>
+        <div className="max-w-2xl w-full py-16">
         <h3
           className="text-sm font-semibold uppercase tracking-[0.15em] mb-10 pb-3 border-b"
           style={css.sectionHead}
@@ -386,6 +391,7 @@ export default function CuratedMain({ name, dob }: { name: string; dob: string }
             We love you, we love your mind,<br />
             happy 1001st birthday {name}.
           </p>
+        </div>
         </div>
       </div>
 
@@ -434,4 +440,5 @@ function brainTiles(s: Stats) {
     },
   ];
 }
+
 
