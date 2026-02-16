@@ -103,31 +103,3 @@ footer,
     0 0 20px rgba(0, 255, 255, 0.4);
 }
 
-/* Dot grid background for shiny mode */
-.shiny [data-dot-grid] {
-  background-image: radial-gradient(circle, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 24px 24px;
-}
-
-/* CRT scanline + vignette overlay (combined ::after) */
-[data-shiny-overlay]::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 5;
-  opacity: 0;
-  transition: opacity 0.5s ease;
-  background:
-    repeating-linear-gradient(
-      transparent,
-      transparent 2px,
-      rgba(0, 0, 0, 0.04) 2px,
-      rgba(0, 0, 0, 0.04) 4px
-    ),
-    radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.4) 100%);
-}
-
-.shiny [data-shiny-overlay]::after {
-  opacity: 1;
-}
