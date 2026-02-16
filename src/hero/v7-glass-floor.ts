@@ -2,12 +2,12 @@
 // Same dying lightbulb effect as V6 but:
 // - Canvas spans full viewport width (no side cropping)
 // - Clear glass floor — balls never clipped at bottom
-// - Walls at viewport edges so balls bounce within visible browser area
+// - Physics world sized to container (same scale as V6), camera widened for viewport
 
 import {
   THREE, RAPIER, LIGHT, SHINY,
   HeroMode, layoutBalls, getBirthdaySpecs,
-  setupScene, fitCamera,
+  fitCamera, addWalls,
   VFOV, BALL_RADIUS_FACTOR,
 } from "./variations";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
@@ -38,27 +38,22 @@ function createCircuitPaths(visW: number, visH: number, scene: THREE.Scene) {
   return group;
 }
 
-// Glass floor plane — semi-transparent to show depth
 function createGlassFloor(visW: number, floorY: number, scene: THREE.Scene) {
-  const geo = new THREE.PlaneGeometry(visW * 2, 0.05);
-  const mat = new THREE.MeshPhysicalMaterial({
-    color: 0xffffff,
+  // Simple transparent plane — no transmission (expensive)
+  const geo = new THREE.PlaneGeometry(visW * 2, 0.03);
+  const mat = new THREE.MeshBasicMaterial({
+    color: 0xaabbcc,
     transparent: true,
-    opacity: 0.08,
-    roughness: 0.1,
-    metalness: 0.1,
-    transmission: 0.9,
-    thickness: 0.05,
+    opacity: 0.06,
   });
   const floor = new THREE.Mesh(geo, mat);
-  floor.position.set(0, floorY, 0);
+  floor.position.set(0, floorY, 0.1);
   scene.add(floor);
 
-  // Subtle edge glow
   const edgeMat = new THREE.LineBasicMaterial({ color: 0x335577, transparent: true, opacity: 0.2 });
   const edgePts = [
-    new THREE.Vector3(-visW, floorY, 0),
-    new THREE.Vector3(visW, floorY, 0),
+    new THREE.Vector3(-visW, floorY, 0.1),
+    new THREE.Vector3(visW, floorY, 0.1),
   ];
   scene.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(edgePts), edgeMat));
 
@@ -71,20 +66,20 @@ export function initV7(container: HTMLElement, name: string, dob: string) {
   let frame = 0;
   const startTime = performance.now();
 
-  // Use full viewport dimensions, not container
   const vpW = window.innerWidth;
   const vpH = window.innerHeight;
+  const containerW = container.clientWidth;
+  const containerH = container.clientHeight;
 
   const scene = new THREE.Scene();
+  // Camera uses viewport aspect for rendering, but we'll fit text to container aspect
   const camera = new THREE.PerspectiveCamera(VFOV, vpW / vpH, 0.1, 200);
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
   renderer.setClearColor(0xf5f5f0);
   renderer.setSize(vpW, vpH);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.shadowMap.enabled = true;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
 
-  // Full viewport positioning
   renderer.domElement.style.position = "fixed";
   renderer.domElement.style.left = "0";
   renderer.domElement.style.top = "0";
@@ -97,7 +92,6 @@ export function initV7(container: HTMLElement, name: string, dob: string) {
   scene.add(new THREE.HemisphereLight(0xfff5e6, 0xe8f0ff, 0.4));
   const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
   dirLight.position.set(10, 20, 15);
-  dirLight.castShadow = true;
   scene.add(dirLight);
 
   const composer = new EffectComposer(renderer);
@@ -140,29 +134,29 @@ export function initV7(container: HTMLElement, name: string, dob: string) {
     colorIndices.push(ball.colorIndex);
   }
 
-  const aspect = vpW / vpH;
-  const camDist = fitCamera(camera, maxW, totalH, aspect);
+  // Fit camera to CONTAINER aspect (same physics scale as V6), then widen for viewport
+  const containerAspect = containerW / containerH;
+  const camDist = fitCamera(camera, maxW, totalH, containerAspect);
+  // Now override aspect to viewport (wider view, same distance = no side cropping)
+  camera.aspect = vpW / vpH;
+  camera.updateProjectionMatrix();
 
-  // Compute visible bounds at z=0
+  // Visible bounds at the camera's actual viewport aspect
   const vRad = (VFOV * Math.PI) / 180;
   const visH = 2 * camDist * Math.tan(vRad / 2);
-  const visW = visH * aspect;
+  const visW = visH * (vpW / vpH);
 
-  // Floor positioned at bottom of visible area with small margin
-  const floorY = -visH / 2 + 0.5;
+  // Floor at same position as V6 would have it (container-based visible height)
+  const containerVisH = 2 * camDist * Math.tan(vRad / 2);
+  const floorY = -containerVisH / 2 + 0.5;
 
-  // Walls at full viewport edges — no cropping
+  // Walls at full viewport edges
   const wallThickness = 1;
   const wallData: [number, number, number, number, number, number][] = [
-    // Floor — at visible bottom edge
     [0, floorY - wallThickness, 0, visW / 2 + 2, wallThickness, visW / 2],
-    // Ceiling
     [0, visH / 2 + wallThickness + 1, 0, visW / 2 + 2, wallThickness, visW / 2],
-    // Left wall at viewport edge
     [-visW / 2 - wallThickness, 0, 0, wallThickness, visH, visW / 2],
-    // Right wall at viewport edge
     [visW / 2 + wallThickness, 0, 0, wallThickness, visH, visW / 2],
-    // Back/front
     [0, 0, -visW / 2, visW / 2, visH, wallThickness],
     [0, 0, visW / 2, visW / 2, visH, wallThickness],
   ];
@@ -215,7 +209,6 @@ export function initV7(container: HTMLElement, name: string, dob: string) {
 
   let breakTime = 0;
 
-  // Resize handler
   function onResize() {
     const w = window.innerWidth;
     const h = window.innerHeight;
@@ -258,8 +251,7 @@ export function initV7(container: HTMLElement, name: string, dob: string) {
         const mat = meshes[i].material as THREE.MeshPhysicalMaterial;
         mat.emissiveIntensity = 0.4 + 0.2 * Math.sin(elapsed * 1.5 + phases[i]);
       }
-      // Glass floor glow in on mode
-      (glassFloor.mesh.material as THREE.MeshPhysicalMaterial).opacity = 0.12;
+      (glassFloor.mesh.material as THREE.MeshBasicMaterial).opacity = 0.1;
       glassFloor.edgeMat.opacity = 0.35;
       glassFloor.edgeMat.color.setHex(0x00ffaa);
     }
@@ -276,12 +268,10 @@ export function initV7(container: HTMLElement, name: string, dob: string) {
         }
       });
 
-      // Glass floor flickers
-      (glassFloor.mesh.material as THREE.MeshPhysicalMaterial).opacity = t < 2 ? 0.1 * (Math.random() > 0.5 ? 1 : 0) : 0.02;
+      (glassFloor.mesh.material as THREE.MeshBasicMaterial).opacity = t < 2 ? 0.08 * (Math.random() > 0.5 ? 1 : 0) : 0.02;
       glassFloor.edgeMat.color.setHex(t < 1 ? 0xff4400 : 0x220000);
       glassFloor.edgeMat.opacity = Math.max(0, 0.3 - t * 0.06);
 
-      // Per-ball dying lightbulb
       for (let i = 0; i < meshes.length; i++) {
         const mat = meshes[i].material as THREE.MeshPhysicalMaterial;
         const ballT = t / deathTimes[i];
@@ -346,7 +336,7 @@ export function initV7(container: HTMLElement, name: string, dob: string) {
             (child.material as THREE.LineBasicMaterial).opacity = 0.12;
           }
         });
-        (glassFloor.mesh.material as THREE.MeshPhysicalMaterial).opacity = 0.06;
+        (glassFloor.mesh.material as THREE.MeshBasicMaterial).opacity = 0.04;
         glassFloor.edgeMat.color.setHex(0x335577);
         glassFloor.edgeMat.opacity = 0.15;
       } else if (newMode === "broken") {
