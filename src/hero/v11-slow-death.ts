@@ -7,7 +7,7 @@ import {
   THREE, RAPIER, LIGHT, SHINY,
   HeroMode, layoutBalls, getBirthdaySpecs,
   setupScene, fitCamera, addWalls, createBalls, setupGrabHandlers,
-  VFOV,
+  VFOV, BALL_RADIUS_FACTOR,
 } from "./variations";
 
 function createCircuitPaths(visW: number, visH: number, scene: THREE.Scene) {
@@ -93,6 +93,11 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
   const { scene, camera, renderer, composer, bloomPass, w, h } = setupScene(container);
   renderer.setClearColor(0xf5f5f0);
 
+  // Perf: cap pixel ratio at 1 (skip retina rendering)
+  renderer.setPixelRatio(1);
+  renderer.setSize(w, h);
+  composer.setSize(w, h);
+
   const world = new RAPIER.World({ x: 0, y: 0, z: 0 });
   const specs = getBirthdaySpecs(name, dob);
   const { balls, maxW, totalH } = layoutBalls(specs);
@@ -121,6 +126,18 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
     RAPIER.ColliderDesc.cuboid(half, 1, half).setRestitution(0.6).setFriction(0.2),
     raisedFloor,
   );
+
+  // Perf: lower-poly spheres (8x6 vs 16x12)
+  const lowPolyGeo = new THREE.SphereGeometry(BALL_RADIUS_FACTOR, 8, 6);
+  for (const mesh of meshes) mesh.geometry = lowPolyGeo;
+
+  // Perf: simple materials for off mode (Lambert instead of Physical)
+  const simpleMats = balls.map(b =>
+    new THREE.MeshLambertMaterial({ color: LIGHT.hex[b.colorIndex] })
+  );
+  const physicalMats = meshes.map(m => m.material as THREE.MeshPhysicalMaterial);
+  // Start in off mode with simple materials
+  for (let i = 0; i < meshes.length; i++) meshes[i].material = simpleMats[i];
 
   const { grabbed, target, cleanup: grabCleanup } = setupGrabHandlers(renderer.domElement, camera, bodies, w, h);
 
@@ -177,26 +194,36 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
   observer.observe(container);
 
   let breakTime = 0;
+  let settleFrames = 120; // frames of physics to run after changes
 
   function animate() {
     if (!visible || disposed) { frame = 0; return; }
     const elapsed = (performance.now() - startTime) / 1000;
 
-    for (const body of grabbed) {
-      const pos = body.translation();
-      body.setLinvel({ x: (target.x - pos.x) * 12, y: (target.y - pos.y) * 12, z: 0 }, true);
-      body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+    // Perf: skip physics when anchored and settled
+    let needsPhysics = mode === "broken" || grabbed.length > 0 || dragActive;
+    if (!needsPhysics && settleFrames > 0) {
+      settleFrames--;
+      needsPhysics = true;
     }
 
-    if (mode !== "broken" && grabbed.length === 0) {
-      for (let i = 0; i < bodies.length; i++) {
-        const pos = bodies[i].translation();
-        const orig = origins[i];
-        bodies[i].setLinvel({ x: (orig.x - pos.x) * 20, y: (orig.y - pos.y) * 20, z: -pos.z * 20 }, true);
+    if (needsPhysics) {
+      for (const body of grabbed) {
+        const pos = body.translation();
+        body.setLinvel({ x: (target.x - pos.x) * 12, y: (target.y - pos.y) * 12, z: 0 }, true);
+        body.setAngvel({ x: 0, y: 0, z: 0 }, true);
       }
-    }
 
-    world.step();
+      if (mode !== "broken" && grabbed.length === 0) {
+        for (let i = 0; i < bodies.length; i++) {
+          const pos = bodies[i].translation();
+          const orig = origins[i];
+          bodies[i].setLinvel({ x: (orig.x - pos.x) * 20, y: (orig.y - pos.y) * 20, z: -pos.z * 20 }, true);
+        }
+      }
+
+      world.step();
+    }
     _spinQuat.setFromAxisAngle(_yAxis, spinAngle);
     for (let i = 0; i < bodies.length; i++) {
       const pos = bodies[i].translation();
@@ -304,7 +331,12 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
       }
     }
 
-    composer.render();
+    // Perf: skip bloom/composer in off mode
+    if (mode === "off") {
+      renderer.render(scene, camera);
+    } else {
+      composer.render();
+    }
     frame = requestAnimationFrame(animate);
   }
 
@@ -313,13 +345,15 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
   return {
     setMode(newMode: HeroMode) {
       mode = newMode;
+      settleFrames = 120;
       if (newMode === "on") {
         renderer.setClearColor(0x080c10);
         bloomPass.strength = 0.7;
         bloomPass.radius = 0.3;
         bloomPass.threshold = 0.25;
         for (let i = 0; i < meshes.length; i++) {
-          const mat = meshes[i].material as THREE.MeshPhysicalMaterial;
+          meshes[i].material = physicalMats[i];
+          const mat = physicalMats[i];
           const hex = SHINY.hex[colorIndices[i]];
           mat.color.setHex(hex);
           mat.emissive.setHex(hex);
@@ -332,13 +366,8 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
         renderer.setClearColor(0xf5f5f0);
         bloomPass.strength = 0;
         for (let i = 0; i < meshes.length; i++) {
-          const mat = meshes[i].material as THREE.MeshPhysicalMaterial;
-          mat.color.setHex(LIGHT.hex[colorIndices[i]]);
-          mat.emissive.setHex(0x000000);
-          mat.emissiveIntensity = 0;
-          mat.roughness = 0.4;
-          mat.metalness = 0.15;
-          mat.clearcoat = 0.3;
+          meshes[i].material = simpleMats[i];
+          simpleMats[i].color.setHex(LIGHT.hex[colorIndices[i]]);
         }
         circuitGroup.children.forEach((child) => {
           if (child instanceof THREE.Line) {
@@ -368,7 +397,8 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
         }
 
         for (let i = 0; i < meshes.length; i++) {
-          const mat = meshes[i].material as THREE.MeshPhysicalMaterial;
+          meshes[i].material = physicalMats[i];
+          const mat = physicalMats[i];
           mat.color.setHex(0xffaa44);
           mat.emissive.setHex(0xff8833);
           mat.emissiveIntensity = 1.2;
