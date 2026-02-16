@@ -49,7 +49,7 @@ index.html → src/index.tsx
 
 ### Content iterations
 - [x] `content/a.md`, `content/b.md`, `content/c.md`, `content/x.md`, `content/z.md`
-- [ ] Rename `content/d-FINAL-CANDIDATE.md` → `content/content.md`
+- [x] Rename `content/d-FINAL-CANDIDATE.md` → `content/content-directional.md`
 
 ### Playwright debug artifacts
 - [x] `.playwright-mcp/` — delete entire dir, add to .gitignore
