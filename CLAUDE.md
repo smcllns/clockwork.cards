@@ -11,36 +11,43 @@ Digital birthday card for a specific kid. Live-updating stats about time alive, 
 - **Bun** — runtime, bundler, dev server, package manager
 - **React 19** — UI
 - **Tailwind v4** — styling via `bun-plugin-tailwind`
-- **Zustand** — state (when needed)
+- **Zustand 5** — state (installed, not yet used — local state sufficient so far)
+- **Three.js + Rapier** — 3D physics hero
 
 ## Commands
 - `bun run dev` — dev server on :3000 with HMR
 - `bun run build` — production build to `dist/`
 - `bun run deploy` — build + deploy to Cloudflare Pages
+- `bun test` — run tests (37 tests, stats computation + formatting)
 
 ## URL Parameters
-- `?name=Oscar` — display name (default from env: "Birthday Star")
-- `?dob=2017-02-20` — date of birth, YYYY-MM-DD (default from env)
-- `?sex=m` — m, f, or neutral (default from env: neutral)
+- `?name=Oscar` — display name
+- `?dob=2017-02-20` — date of birth, YYYY-MM-DD
 
 Defaults live in `.env` as `DEFAULT_NAME`, `DEFAULT_DOB`, `DEFAULT_SEX`. Bun inlines `process.env.DEFAULT_*` at build time via `bunfig.toml` `env` config.
 
 ## Project Structure
 ```
-index.html          # Entry point (Bun serves this directly)
-bunfig.toml         # Bun config (Tailwind plugin, env inlining)
-.env                # Default URL param values (gitignored)
 src/
-├── index.tsx        # App entry, URL param parsing, render
-├── index.css        # Tailwind import + custom styles
-└── (components added incrementally)
+├── index.tsx       # App shell, page chrome, mode state
+├── index.css       # Tailwind + scroll snap + responsive overrides
+├── theme.css       # CSS custom properties (light + shiny themes)
+├── footer.tsx      # Copyright
+├── hero/           # 3D physics birthday text (Three.js + Rapier)
+│   ├── index.tsx   # Pure scene component (name, dob, mode props)
+│   ├── scene.ts    # Three.js + Rapier setup, animation loop, modes
+│   ├── font.ts     # 5×7 bitmap font engine
+│   ├── colors.ts   # Light + neon palettes
+│   └── shared.ts   # Layout specs, shared types
+└── cards/          # Stat card slides
+    ├── index.tsx   # 6 full-viewport slides, local config/tick state
+    ├── controls.tsx # Inline steppers, sliders, pills
+    ├── stats.ts    # Pure computation: DOB + config → all metrics
+    └── stats.test.ts
 ```
 
-## Current Milestone: First Card MVP
-Hero banner (name, age) + 3-5 live-updating stat cards. Minimal/clean design — white space, typography-focused, let the numbers speak. Built for a real kid's birthday with real DOB.
-
-## Design Direction
-Minimal and clean. No dark themes or heavy decoration. Typography and numbers are the star. Color used sparingly for emphasis.
-
-## Screenshots
-Save all screenshots to `screenshots/`. Keep them out of the repo root.
+## Architecture Notes
+- `index.tsx` owns page-level state (hero mode, shiny/chaos toggles). Cards own their own config state locally.
+- Hero is a pure component — receives `{ name, dob, mode }`, renders a canvas, no UI chrome.
+- `.llm/` is gitignored (plans, config, learnings stay local). Notes moved to `docs/`.
+- Screenshots saved to `screenshots/` (gitignored).
