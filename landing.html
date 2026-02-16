@@ -719,19 +719,14 @@
       e.preventDefault();
       if (!nameAvailable || !birthDate) return;
 
-      // Polar checkout URL — replace PRODUCT_ID with real Polar product
       const dob = dobInput.value;
       const params = new URLSearchParams({
         'metadata[cardName]': currentName,
         'metadata[dob]': dob,
+        'metadata[displayName]': currentName.charAt(0).toUpperCase() + currentName.slice(1),
         'success_url': `https://clockwork.cards/${currentName}?welcome=true`,
       });
-      // TODO: Replace with real Polar checkout link
-      const checkoutUrl = `https://buy.polar.sh/PRODUCT_ID?${params}`;
-
-      // For now, show a note that Polar isn't configured yet
-      alert(`Checkout not configured yet.\n\nWould redirect to Polar with:\n• Card: clockwork.cards/${currentName}\n• DOB: ${dob}`);
-      // window.location.href = checkoutUrl;
+      window.location.href = `https://buy.polar.sh/polar_cl_e4UijEKyYPBWwsVHxdg6jJt1t3tOqiHi5CtRI3itZ5L?${params}`;
     });
   </script>
 </body>
