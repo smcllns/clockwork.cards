@@ -1,11 +1,11 @@
 import { Slide, Headline, Body, css } from "../components/slide";
 import { FlipCard } from "../components/flip-card";
 import { useNow } from "../components/useNow";
-import { preciseAge } from "../utils";
+import { getAge } from "../utils";
 
 export default function BinaryCard({ dob, name }: { dob: string; name: string }) {
   const now = useNow();
-  const ageYears = Math.floor(preciseAge(new Date(dob), now));
+  const ageYears = Math.floor(getAge(new Date(dob), now));
 
   return (
     <Slide id="6">

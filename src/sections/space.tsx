@@ -3,7 +3,7 @@ import { Slide, KeyMetric, Unit, Headline, Body } from "../components/slide";
 import { InlinePills } from "../components/controls";
 import { useNow } from "../components/useNow";
 import { KM_PER_MILE, EARTH_ORBITAL_MPH, LIGHT_SPEED_MPH, MS_PER_HOUR } from "../constants";
-import { preciseAge, fmtBig } from "../utils";
+import { getAge, fmtBig } from "../utils";
 
 export default function SpaceCard({ dob, name }: { dob: string; name: string }) {
   const [unit, setUnit] = useState<"miles" | "km">("miles");
@@ -12,7 +12,7 @@ export default function SpaceCard({ dob, name }: { dob: string; name: string }) 
   const hoursAlive = (now - new Date(dob).getTime()) / MS_PER_HOUR;
   const milesInSpace = hoursAlive * EARTH_ORBITAL_MPH;
   const lightSpeedHours = milesInSpace / LIGHT_SPEED_MPH;
-  const lapsAroundSun = preciseAge(new Date(dob), now);
+  const lapsAroundSun = getAge(new Date(dob), now);
 
   const k = unit === "km" ? KM_PER_MILE : 1;
   const unitLabel = unit === "km" ? "kph" : "mph";

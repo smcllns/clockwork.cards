@@ -8,7 +8,7 @@ function hippoHeadline(yogurtKg: number): string {
   const ratio = yogurtKg / 40;
   if (ratio < 0.9) return `That's about ${Math.round(ratio * 100)}% the weight of a baby hippo.`;
   if (ratio < 1.15) return "About the weight of a baby hippo.";
-  return `That's about ${(ratio).toFixed(1)}× the weight of a baby hippo.`;
+  return `That's about ${(ratio).toFixed(1)} times the weight of a baby hippo.`;
 }
 
 export default function YogurtCard({ dob, name }: { dob: string; name: string }) {
@@ -28,7 +28,7 @@ export default function YogurtCard({ dob, name }: { dob: string; name: string })
         <InlineSlider value={gramsPerDay} min={10} max={150} step={10} onChange={setGramsPerDay} />{" "}
         grams of yogurt every day since age{" "}
         <InlineStepper value={startAge} min={1} max={7} step={1} onChange={setStartAge} />{" "}
-        , that's {Math.floor(yogurtKg).toLocaleString()} kg of creamy, tangy fuel. Baby hippos weigh about 40 kg at birth.
+        , that's {Math.floor(yogurtKg).toLocaleString()} kg of creamy, protein-rich fuel.
       </Body>
     </Slide>
   );

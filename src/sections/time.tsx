@@ -3,7 +3,7 @@ import { Slide, KeyMetric, Title, Unit } from "../components/slide";
 import { InlineDropdown } from "../components/controls";
 import { useNow } from "../components/useNow";
 import { MS_PER_SEC, MS_PER_MIN, MS_PER_HOUR, MS_PER_DAY, DAYS_PER_YEAR } from "../constants";
-import { preciseAge, fmt, fmtYears } from "../utils";
+import { getAge, fmt, fmtYears } from "../utils";
 
 const TIME_UNITS = [
   { value: "years", label: "years" },
@@ -24,7 +24,7 @@ export default function TimeCard({ dob, name }: { dob: string; name: string }) {
   const daysAlive = msAlive / MS_PER_DAY;
 
   const values: Record<TimeUnit, number> = {
-    years: preciseAge(new Date(dob), now),
+    years: getAge(new Date(dob), now),
     months: Math.floor(daysAlive / (DAYS_PER_YEAR / 12)),
     weeks: Math.floor(daysAlive / 7),
     days: Math.floor(daysAlive),
