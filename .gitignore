@@ -9,3 +9,4 @@ dist
 .llm
 screenshots
 .vercel
+.wrangler/
