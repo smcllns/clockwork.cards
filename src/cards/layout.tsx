@@ -49,6 +49,10 @@ export function SlideUnit({ children }: { children: React.ReactNode }) {
   return <p className="text-lg font-medium mb-6" style={css.secondary}>{children}</p>;
 }
 
+export function SlideTitle({ children }: { children: React.ReactNode }) {
+  return <p className="text-4xl sm:text-5xl font-light mb-6" style={css.primary}>{children}</p>;
+}
+
 export function SlideHeadline({ children }: { children: React.ReactNode }) {
   return <p className="text-xl font-semibold mb-4" style={css.primary}>{children}</p>;
 }

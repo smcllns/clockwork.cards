@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Slide, css } from "./layout";
+import { Slide, SlideTitle, SlideHeadline, css } from "./layout";
 import { fmt, fmtYears } from "./stats";
 
 const MS_PER_SEC = 1000;
@@ -64,7 +64,7 @@ export default function TimeTableCard({ dob, name }: { dob: string; name: string
 
   return (
     <Slide id="1">
-      <p className="text-xl font-semibold mb-6" style={css.primary}>As of right now, {name} is...</p>
+      <SlideHeadline>Precisely, {name} is...</SlideHeadline>
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <tbody>
           {rows.map(({ key, label, format }) => (

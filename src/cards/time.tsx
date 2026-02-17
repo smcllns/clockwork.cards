@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Slide, BigNum, SlideUnit, SlideHeadline, SlideBody } from "./layout";
+import { Slide, BigNum, SlideTitle, SlideUnit } from "./layout";
 import { InlineDropdown } from "./controls";
 import { fmt, fmtYears } from "./stats";
 
@@ -71,16 +71,9 @@ export default function TimeCard({ dob, name }: { dob: string; name: string }) {
 
   return (
     <Slide id="1">
-      <span className="text-4xl block mb-4">{name} is ...</span>
+      <SlideTitle>{name} is ...</SlideTitle>
       <BigNum>{timeUnit === "years" ? fmtYears(values[timeUnit]) : fmt(values[timeUnit])}</BigNum>
-      {/* <SlideUnit>{timeUnit} old</SlideUnit> */}
-      <SlideHeadline><InlineDropdown options={TIME_UNITS} value={timeUnit} onChange={setTimeUnit} /> old right now</SlideHeadline>
-      {/* <SlideBody>
-        That's {fmtYears(t.yearsAlive)} years, {fmt(t.monthsAlive)} months, {fmt(t.weeksAlive)} weeks, {fmt(t.daysAlive)} days,{" "}
-        {fmt(t.hoursAlive)} hours, {fmt(t.minutesAlive)} minutes,
-        or {fmt(t.secondsAlive)} seconds — every single one of them yours.
-      </SlideBody> */}
-        
+      <SlideUnit><InlineDropdown options={TIME_UNITS} value={timeUnit} onChange={setTimeUnit} /> old, right now</SlideUnit>        
     </Slide>
   );
 }
