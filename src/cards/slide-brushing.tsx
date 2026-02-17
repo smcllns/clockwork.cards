@@ -6,7 +6,7 @@ import { MS_PER_DAY } from "../constants";
 
 const BLINKS_PER_DAY = 15_000;
 const BRUSH_STROKES_PER_MIN = 170;
-import { daysSinceAge, fmtBig } from "../utils";
+import { daysSinceAge } from "../utils";
 
 export default function BrushingCard({ dob }: { dob: string }) {
   const [minutes, setMinutes] = useState(2);
@@ -29,10 +29,10 @@ export default function BrushingCard({ dob }: { dob: string }) {
         <InlineStepper value={startAge} min={1} max={5} step={1}
           onChange={setStartAge} />{" "}
         , you've spent over <N>{brushingDays.toFixed(1)} solid days</N> brushing,
-        and done over <N>{fmtBig(brushStrokes)} brush strokes</N>!
+        and done over <N>{(brushStrokes / 1e6).toFixed(1)} million brush strokes</N>!
       </Narrative>
       <Body>
-        Think that's a lot? You've blinked about {fmtBig(totalBlinks)} times so far.
+        Think that's a lot? You've blinked about {(totalBlinks / 1e6).toFixed(1)} million times so far.
       </Body>
     </Slide>
   );

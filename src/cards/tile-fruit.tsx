@@ -1,7 +1,6 @@
 import { Tile } from "../components/tiles";
 import { useNow } from "../components/useNow";
 import { MS_PER_DAY } from "../constants";
-import { fmt } from "../utils";
 
 export default function FruitTile({ dob }: { dob: string }) {
   const now = useNow();
@@ -11,7 +10,7 @@ export default function FruitTile({ dob }: { dob: string }) {
   return (
     <Tile
       id="5c" span={3} emoji="🥦"
-      value={fmt(fruitServings)}
+      value={fruitServings.toLocaleString()}
       unit="cell repair kits"
       headline="Delivered by fruits & veggies"
       body="Every time you eat fruits and vegetables, you're getting vitamins that help protect your cells. Your body does the hard work — your job is to keep sending supplies."

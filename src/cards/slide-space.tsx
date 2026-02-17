@@ -3,7 +3,7 @@ import { Slide, KeyMetric, Unit, Headline, Body } from "../components/slide";
 import { InlinePills } from "../components/controls";
 import { useNow } from "../components/useNow";
 import { KM_PER_MILE, EARTH_ORBITAL_MPH, LIGHT_SPEED_MPH, MS_PER_HOUR } from "../constants";
-import { getAge, fmtBig } from "../utils";
+import { getAge } from "../utils";
 
 export default function SpaceCard({ dob, name }: { dob: string; name: string }) {
   const [unit, setUnit] = useState<"miles" | "km">("miles");
@@ -20,7 +20,7 @@ export default function SpaceCard({ dob, name }: { dob: string; name: string }) 
   return (
     <Slide alt id="2">
       <Headline>🚀 {name} has flown around the sun {lapsAroundSun.toFixed(3)} times, or ...</Headline>
-      <KeyMetric>{fmtBig(milesInSpace * k)}</KeyMetric>
+      <KeyMetric>{(milesInSpace * k / 1e9).toFixed(1)} billion</KeyMetric>
       <Unit>
         <InlinePills
           options={[

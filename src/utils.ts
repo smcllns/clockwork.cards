@@ -26,20 +26,3 @@ export function getAge(dob: Date, now: number, decimals?: number): number {
   const f = 10 ** decimals;
   return Math.round(precise * f) / f;
 }
-
-// Formatting
-export function fmt(n: number): string {
-  return Math.floor(n).toLocaleString();
-}
-
-export function fmtBig(n: number): string {
-  if (n >= 1e9) return `${(n / 1e9).toFixed(1)} billion`;
-  if (n >= 1e6) return `${(n / 1e6).toFixed(1)} million`;
-  return fmt(n);
-}
-
-
-export function fmtYears(n: number): string {
-  if (Math.abs(n - Math.round(n)) < 0.001) return Math.round(n).toLocaleString();
-  return n.toFixed(3);
-}
