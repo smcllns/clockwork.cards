@@ -169,8 +169,22 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
   // Start in off mode with simple materials
   for (let i = 0; i < meshes.length; i++) meshes[i].material = simpleMats[i];
 
-  const { grabbed, target, cleanup: grabCleanup } = setupGrabHandlers(renderer.domElement, camera, bodies, w, h);
+  const { grabbed, target, size: grabSize, cleanup: grabCleanup } = setupGrabHandlers(renderer.domElement, camera, bodies, w, h);
   let wasGrabbing = false;
+
+  function onResize() {
+    const nw = container.clientWidth;
+    const nh = container.clientHeight;
+    if (nw === 0 || nh === 0) return;
+    camera.aspect = nw / nh;
+    camera.updateProjectionMatrix();
+    renderer.setSize(nw, nh);
+    composer.setSize(nw, nh);
+    grabSize.w = nw;
+    grabSize.h = nh;
+    settleFrames = 30;
+  }
+  window.addEventListener("resize", onResize);
 
   const colorIndices = balls.map(b => b.colorIndex);
   const phases = new Float32Array(meshes.length);
@@ -470,6 +484,7 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
     dispose() {
       disposed = true;
       cancelAnimationFrame(frame);
+      window.removeEventListener("resize", onResize);
       grabCleanup();
       observer.disconnect();
       composer.dispose();

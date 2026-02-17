@@ -53,10 +53,10 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
 
       <div
         className="absolute bottom-4 left-4 z-10"
-        style={{ opacity: shiny ? 1 : 0 }}
+        style={{ opacity: shiny ? 1 : 0, pointerEvents: shiny ? "auto" : "none", transition: "opacity 0.5s" }}
       >
         <div
-          className="select-none flex flex-col items-center gap-1.5 px-3 py-2 rounded-lg"
+          className="select-none flex flex-col items-center gap-1.5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg"
           style={{
             backgroundColor: chaos ? "rgba(41,37,36,0.85)" : "rgba(10,10,15,0.75)",
             backdropFilter: "blur(8px)",
@@ -78,9 +78,9 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
             onClick={!chaos ? () => setChaos(true) : undefined}
             className={`relative flex-shrink-0 ${!chaos ? "cursor-pointer" : "cursor-default"}`}
             style={{
-              width: 44,
-              height: 24,
-              borderRadius: 12,
+              width: 36,
+              height: 20,
+              borderRadius: 10,
               backgroundColor: chaos ? "#292524" : "#57534e",
               boxShadow: chaos
                 ? "inset 0 1px 3px rgba(0,0,0,0.4)"
@@ -91,9 +91,9 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
             <div
               className="absolute top-[2px] rounded-full"
               style={{
-                width: 18,
-                height: 18,
-                left: chaos ? 23 : 2,
+                width: 14,
+                height: 14,
+                left: chaos ? 19 : 2,
                 backgroundColor: chaos ? "#57534e" : "#e7e5e4",
                 boxShadow: "0 1px 2px rgba(0,0,0,0.2)",
               }}

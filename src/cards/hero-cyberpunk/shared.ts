@@ -210,16 +210,17 @@ export function setupGrabHandlers(
   bodies: RAPIER.RigidBody[],
   w: number,
   h: number,
-): { grabbed: RAPIER.RigidBody[]; target: { x: number; y: number }; cleanup: () => void } {
+): { grabbed: RAPIER.RigidBody[]; target: { x: number; y: number }; size: { w: number; h: number }; cleanup: () => void } {
   const grabbed: RAPIER.RigidBody[] = [];
   const target = { x: 0, y: 0 };
+  const size = { w, h };
   const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
   const hitPoint = new THREE.Vector3();
 
   function screenToWorld(mx: number, my: number) {
-    pointer.set((mx / w) * 2 - 1, -(my / h) * 2 + 1);
+    pointer.set((mx / size.w) * 2 - 1, -(my / size.h) * 2 + 1);
     raycaster.setFromCamera(pointer, camera);
     raycaster.ray.intersectPlane(plane, hitPoint);
     return { x: hitPoint.x, y: hitPoint.y };
@@ -290,7 +291,7 @@ export function setupGrabHandlers(
     window.removeEventListener("touchend", endGrab);
   };
 
-  return { grabbed, target, cleanup };
+  return { grabbed, target, size, cleanup };
 }
 
 // Shared re-exports

@@ -28,12 +28,9 @@ export function Unit({ children, className }: Props) {
   return <p className={`text-lg font-medium mb-6 ${className ?? ""}`} style={css.secondary}>{children}</p>;
 }
 
-export function Title({ children, className }: Props) {
-  return <p className={`text-4xl sm:text-5xl font-light mb-6 ${className ?? ""}`} style={css.primary}>{children}</p>;
-}
-
-export function Headline({ children, className }: Props) {
-  return <p className={`text-xl font-semibold mb-6 ${className ?? ""}`} style={css.primary}>{children}</p>;
+export function Headline({ children, lg, className }: Props & { lg?: boolean }) {
+  const base = lg ? "text-4xl sm:text-5xl font-light mb-6" : "text-xl font-semibold mb-6";
+  return <p className={`${base} ${className ?? ""}`} style={css.primary}>{children}</p>;
 }
 
 export function Body({ children, className }: Props) {

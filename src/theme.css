@@ -43,44 +43,45 @@ footer,
     0 0 60px rgba(139, 92, 246, 0.1);
 }
 
-@keyframes neon-pulse {
-  0%, 100% {
-    box-shadow:
-      0 0 12px rgba(0, 255, 255, 0.3),
-      0 0 24px rgba(139, 92, 246, 0.15),
-      inset 0 0 20px rgba(0, 255, 255, 0.05);
-  }
-  50% {
-    box-shadow:
-      0 0 24px rgba(0, 255, 255, 0.5),
-      0 0 48px rgba(139, 92, 246, 0.3),
-      0 0 80px rgba(236, 72, 153, 0.15),
-      inset 0 0 30px rgba(0, 255, 255, 0.08);
-  }
-}
-
-@keyframes glow-border {
-  0%, 100% { border-color: rgba(0, 255, 255, 0.35); }
-  33% { border-color: rgba(191, 90, 242, 0.45); }
-  66% { border-color: rgba(255, 45, 85, 0.35); }
+@keyframes toggle-hint {
+  0%, 100% { box-shadow: 0 0 8px rgba(217, 119, 6, 0.08); }
+  50% { box-shadow: 0 0 14px rgba(217, 119, 6, 0.2); }
 }
 
 .shiny [data-card] {
-  animation:
-    neon-pulse 3s ease-in-out infinite,
-    glow-border 6s ease-in-out infinite;
-  border-color: rgba(0, 255, 255, 0.35);
-  background: linear-gradient(135deg, rgba(22, 22, 42, 0.95), rgba(10, 10, 30, 0.95)) !important;
+  background: linear-gradient(135deg, #16162a, #1a1035) !important;
+  border-width: 1.5px;
+  border-style: solid;
 }
 
-.shiny [data-card] > div > div {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+.shiny [data-card]:nth-child(6n+1) {
+  border-color: #00ffff;
+  box-shadow: 0 0 16px rgba(0, 255, 255, 0.35), inset 0 0 24px rgba(0, 255, 255, 0.06);
+}
+.shiny [data-card]:nth-child(6n+2) {
+  border-color: #ff00ff;
+  box-shadow: 0 0 16px rgba(255, 0, 255, 0.35), inset 0 0 24px rgba(255, 0, 255, 0.06);
+}
+.shiny [data-card]:nth-child(6n+3) {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 16px rgba(139, 92, 246, 0.35), inset 0 0 24px rgba(139, 92, 246, 0.06);
+}
+.shiny [data-card]:nth-child(6n+4) {
+  border-color: #00ff88;
+  box-shadow: 0 0 16px rgba(0, 255, 136, 0.35), inset 0 0 24px rgba(0, 255, 136, 0.06);
+}
+.shiny [data-card]:nth-child(6n+5) {
+  border-color: #ff2d55;
+  box-shadow: 0 0 16px rgba(255, 45, 85, 0.35), inset 0 0 24px rgba(255, 45, 85, 0.06);
+}
+.shiny [data-card]:nth-child(6n+6) {
+  border-color: #ff8a00;
+  box-shadow: 0 0 16px rgba(255, 138, 0, 0.35), inset 0 0 24px rgba(255, 138, 0, 0.06);
 }
 
 .shiny [data-stat] {
   text-shadow:
-    0 0 10px #00ffff,
-    0 0 20px rgba(0, 255, 255, 0.4);
+    0 0 12px #00ffff,
+    0 0 28px rgba(0, 255, 255, 0.5);
 }
 

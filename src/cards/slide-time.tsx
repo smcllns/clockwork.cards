@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Slide, KeyMetric, Title, Unit } from "../components/slide";
+import { Slide, KeyMetric, Headline, Unit } from "../components/slide";
 import { InlineDropdown } from "../components/controls";
 import { useNow } from "../components/useNow";
 import { getAge } from "../utils";
@@ -26,7 +26,7 @@ export default function TimeCard({ dob, name }: { dob: string; name: string }) {
 
   return (
     <Slide id="1">
-      <Title>{name} is ...</Title>
+      <Headline lg>{name} is ...</Headline>
       <KeyMetric>
         {timeUnit === "years"
           ? values[timeUnit].toFixed(3)
