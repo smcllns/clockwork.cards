@@ -8,7 +8,7 @@ export function daysSinceAge(dob: Date, age: number, now: number): number {
 }
 
 // Precise fractional years alive (e.g. 8.992), accounting for calendar year lengths
-export function preciseAge(dob: Date, now: number): number {
+export function getAge(dob: Date, now: number, decimals?: number): number {
   const nowDate = new Date(now);
   let age = nowDate.getFullYear() - dob.getFullYear();
   const monthDiff = nowDate.getMonth() - dob.getMonth();
@@ -20,7 +20,11 @@ export function preciseAge(dob: Date, now: number): number {
   const nextBirthday = new Date(dob);
   nextBirthday.setFullYear(dob.getFullYear() + age + 1);
   const yearMs = nextBirthday.getTime() - lastBirthday.getTime();
-  return age + (now - lastBirthday.getTime()) / yearMs;
+  const precise = age + (now - lastBirthday.getTime()) / yearMs;
+  if (decimals === undefined) return precise;
+  if (decimals === 0) return Math.floor(precise);
+  const f = 10 ** decimals;
+  return Math.round(precise * f) / f;
 }
 
 // Formatting

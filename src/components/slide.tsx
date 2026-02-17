@@ -8,6 +8,8 @@ export const css = {
   formula: { fontFamily: "var(--font-stat)", color: "var(--text-accent)", fontSize: "1.1rem" } as const,
 };
 
+type Props = { children: React.ReactNode; className?: string };
+
 export function IdTag({ id }: { id: string }) {
   return (
     <span
@@ -19,10 +21,10 @@ export function IdTag({ id }: { id: string }) {
   );
 }
 
-export function Slide({ children, alt, id }: { children: React.ReactNode; alt?: boolean; id: string }) {
+export function Slide({ children, alt, id, className }: Props & { alt?: boolean; id: string }) {
   return (
     <div
-      className="flex items-center justify-center px-6 relative snap-section"
+      className={`flex items-center justify-center px-6 relative snap-section ${className ?? ""}`}
       style={{ minHeight: "100dvh", background: alt ? "var(--bg-secondary)" : "var(--bg-primary)" }}
     >
       <div className="absolute top-4 right-6"><IdTag id={id} /></div>
@@ -31,9 +33,9 @@ export function Slide({ children, alt, id }: { children: React.ReactNode; alt?: 
   );
 }
 
-export function KeyMetric({ children }: { children: React.ReactNode }) {
+export function KeyMetric({ children, className }: Props) {
   return (
-    <div className="mb-1">
+    <div className={`mb-1 ${className ?? ""}`}>
       <span
         className="font-bold leading-none"
         style={{ fontFamily: "var(--font-stat)", color: "var(--text-primary)", fontSize: "clamp(3rem, 10vw, 5rem)" }}
@@ -45,36 +47,34 @@ export function KeyMetric({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function Unit({ children }: { children: React.ReactNode }) {
-  return <p className="text-lg font-medium mb-6" style={css.secondary}>{children}</p>;
+export function Unit({ children, className }: Props) {
+  return <p className={`text-lg font-medium mb-6 ${className ?? ""}`} style={css.secondary}>{children}</p>;
 }
 
-export function Title({ children }: { children: React.ReactNode }) {
-  return <p className="text-4xl sm:text-5xl font-light mb-6" style={css.primary}>{children}</p>;
+export function Title({ children, className }: Props) {
+  return <p className={`text-4xl sm:text-5xl font-light mb-6 ${className ?? ""}`} style={css.primary}>{children}</p>;
 }
 
-export function Headline({ children }: { children: React.ReactNode }) {
-  return <p className="text-xl font-semibold mb-6" style={css.primary}>{children}</p>;
+export function Headline({ children, className }: Props) {
+  return <p className={`text-xl font-semibold mb-6 ${className ?? ""}`} style={css.primary}>{children}</p>;
 }
 
-export function Body({ children }: { children: React.ReactNode }) {
-  return <p className="text-lg leading-loose mb-8" style={css.secondary}>{children}</p>;
+export function Body({ children, className }: Props) {
+  return <p className={`text-lg leading-loose mb-8 ${className ?? ""}`} style={css.secondary}>{children}</p>;
 }
 
-export function Narrative({ children, sm }: { children: React.ReactNode; sm?: boolean }) {
+export function Narrative({ children, sm, className }: Props & { sm?: boolean }) {
+  const base = sm ? "text-2xl sm:text-3xl font-medium mb-12" : "text-xl sm:text-2xl leading-relaxed mb-12";
   return (
-    <p
-      className={sm ? "text-2xl sm:text-3xl font-medium mb-12" : "text-xl sm:text-2xl leading-relaxed mb-12"}
-      style={css.primary}
-    >
+    <p className={`${base} ${className ?? ""}`} style={css.primary}>
       {children}
     </p>
   );
 }
 
-export function N({ children }: { children: React.ReactNode }) {
+export function N({ children, className }: Props) {
   return (
-    <span className="font-bold" style={{ fontFamily: "var(--font-stat)", color: "var(--text-primary)" }} data-stat>
+    <span className={`font-bold ${className ?? ""}`} style={{ fontFamily: "var(--font-stat)", color: "var(--text-primary)" }} data-stat>
       {children}
     </span>
   );
