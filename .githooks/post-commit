@@ -1,0 +1,6 @@
+#!/bin/bash
+echo ""
+echo "📓 JOURNAL REMINDER: Update JOURNAL.md with what you just committed."
+echo "   - What did you build/fix?"
+echo "   - Any spec ambiguity, gaps, or deviations?"
+echo ""

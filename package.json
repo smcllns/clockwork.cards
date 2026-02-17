@@ -1,0 +1,28 @@
+{
+  "name": "clockwork-cards",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "lsof -ti :3000 | xargs kill -9 2>/dev/null; bun ./index.html",
+    "check": "tsc",
+    "build": "tsc && bun run build.ts",
+    "test": "bun test",
+    "deploy": "tsc && bun run build.ts && wrangler pages deploy dist"
+  },
+  "dependencies": {
+    "@dimforge/rapier3d-compat": "^0.19.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "three": "^0.182.0"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@types/three": "^0.182.0",
+    "bun-plugin-tailwind": "latest",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.0.0",
+    "wrangler": "^4.65.0"
+  }
+}
