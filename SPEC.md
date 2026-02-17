@@ -1,93 +1,120 @@
 # Clockwork Cards — Golden Spec
-<!-- 92 lines spec → 2,525 lines source. 1:27 ratio. -->
+<!-- ~116 lines spec -->
 
 Digital birthday card for Oscar (DOB 2017-02-20). Live-updating stats about time alive, space travel, body facts. Numbers are the star. Designed for a kid who loves math.
 
 ## Stack
-Bun (runtime/bundler/dev), React 19, Tailwind v4 (`bun-plugin-tailwind`), Three.js + Rapier 3D physics. Deploy: Cloudflare Pages via Wrangler. Fonts: Space Grotesk (display), Space Mono (stats in shiny mode).
+Bun (runtime/bundler/dev), React 19, Tailwind v4 (`bun-plugin-tailwind`), Three.js + Rapier 3D physics. Deploy: Cloudflare Pages via Wrangler. Font: Space Grotesk (display + stats in both themes).
 
 ## Architecture
 ```
-index.html → src/index.tsx → Hero + Cards + Footer
+index.html → src/index.tsx → Nav + Hero + Slides + TileContainer + Footer
 ```
 URL params: `?name=`, `?dob=` (defaults from `.env` via Bun env inlining). Single-page, no routing.
+
+`index.tsx` owns only `shiny` state. Every card is self-contained: owns its own state, does math inline, imports shared primitives from `components/` and lookup facts from `constants.ts`.
 
 ## Layout
 ```
 ┌───────────────────────────┐
-│ nav: clockwork.cards/name │  ← inside hero, not sticky
-│                           │
-│     HERO (90dvh)          │  ← Three.js canvas, full-bleed
-│                           │
-│  [🚫 chaos]   [✨ shiny] │  ← chaos: absolute in hero; shiny: fixed top-right
+│ NAV: clockwork.cards/name │  ← fixed top, cyberpunk toggle
 ├───────────────────────────┤
-│  SLIDE 1: Time    (100dvh)│
-│  SLIDE 2: Space   (100dvh)│  ← 6 full-viewport snap slides
-│  SLIDE 3: Yogurt  (100dvh)│
-│  SLIDE 4: Life #s (100dvh)│
-│  SLIDE 5: Brain   (100dvh)│
-│  SLIDE 6: Binary  (100dvh)│
+│     HERO (90dvh)          │  ← Three.js canvas, chaos toggle bottom-left
+├───────────────────────────┤
+│  SLIDE: Time       (100dvh)│
+│  SLIDE: Time Table (100dvh)│
+│  SLIDE: Space      (100dvh)│  7 snap slides + 1 tile grid section
+│  SLIDE: Yogurt     (100dvh)│
+│  SLIDE: Steps      (100dvh)│
+│  SLIDE: Brushing   (100dvh)│
+│  SLIDE: Poops      (100dvh)│
+│  TILES: Brain&Body (100dvh)│  ← bento grid (6 tiles)
 ├───────────────────────────┤
 │  FOOTER: © 2026           │
 └───────────────────────────┘
 ```
-Scroll-snap: `y proximity` on html. Each slide is `snap-section` (scroll-snap-align: start).
+Scroll-snap: `y mandatory` on html. Each section is `snap-section` (scroll-snap-align: start).
 
-Device priority: iPad Mini (744px) > iPhone (390px) > Desktop (max-width contained). Breakpoint: 768px for brain bento grid collapse.
+Device priority: iPad Mini (744px) > iPhone (390px) > Desktop (max-width contained). Breakpoint: 640px (sm:).
+
+## Component Hierarchy
+
+`Section` (section.tsx) is the shared snap-scrolling wrapper. Both `Slide` and `TileContainer` use Section — neither depends on the other.
+
+`Slide` wraps children in centered `max-w-xl`. Cards compose freely with `Headline`, `KeyMetric`, `Body`, `Narrative`, `N`, etc.
+
+`Tile` accepts data props (`emoji`, `value`, `unit`, `headline`, `body: ReactNode`) or `children`. `TileContainer` wraps tiles in a 5-column bento grid. Tiles declare span via `span` prop → CSS `--span` variable.
 
 ## Hero — 3D Physics Birthday Text
-**What it shows:** "9 / HAPPY / BIRTHDAY / OSCAR / FEBRUARY 20 2017" as spheres arranged in a 5x7 bitmap font grid. Each character = cluster of spheres at pixel positions. Multi-scale: age digits 2.5x, words 1.4x, date 0.45x.
+**What it shows:** "9 / HAPPY / BIRTHDAY / OSCAR / FEBRUARY 20 2017" as spheres arranged in a 5x7 bitmap font grid. Multi-scale: age digits 2.5x, words 1.4x, date 0.45x.
 
-**Tech:** Three.js scene + Rapier WASM physics world. Spheres are dynamic rigid bodies with ball colliders, spring-anchored to origin positions (velocity = (origin - pos) * 20). Walls form a cube around the visible area. Front glass wall at z=3 prevents perspective blowup. Raised floor prevents bottom-edge clipping.
+**Tech:** Three.js scene + Rapier WASM physics. Spheres spring-anchored to origin (velocity steering, stiffness 20). Drag spins scene around Y. Grab near balls to throw (multi-grab, radius 3).
 
-**Three modes:**
-- **off:** White bg (#f5f5f0), greyscale Lambert materials, no bloom. Renderer.render() directly (skip composer for perf).
-- **on:** Dark bg (#080c10), neon MeshPhysicalMaterial (emissive, metalness 0.6, clearcoat 0.5). Bloom pass active. Circuit paths glow, flow dots animate, LEDs pulse.
-- **broken:** One-shot chaos. Gravity -80y. Staggered release from random impact point (0-0.8s spread). Balls hit ground → spark color. Then per-ball dying lightbulb flicker (death times: 80% 5-60s, 15% 60-180s, 5% 180-6000s). Circuits spark then die. LEDs die sequentially. Bloom tracks max survivor intensity.
+**Four modes** (derived from `shiny × chaos`):
+- **off:** Greyscale Lambert, no bloom, direct render. Faint circuit-board decorations.
+- **on:** Dark bg, neon MeshPhysicalMaterial (emissive, metalness 0.6, clearcoat 0.5). Bloom pass. Circuits animate, LEDs pulse.
+- **broken:** Gravity -80y. Staggered radial release (0-0.8s). Balls spark → dying lightbulb flicker. Death times heavy-tailed (80% 5-60s, 15% 60-180s, 5% 180-6000s). Bloom tracks max survivor.
+- **broken-off:** Broken mode with off-mode materials.
 
-**Interaction:**
-- Drag horizontally → spin entire scene around Y axis (spinAngle += deltaX * 0.01, applied as quaternion to all mesh positions).
-- Touch/click near balls → multi-grab (radius 3 world units). Grabbed balls follow pointer via velocity steering (force 12).
-- IntersectionObserver pauses animation when hero scrolls off-screen.
+**Perf:** Pixel ratio 1. Low-poly spheres (8x6). Lambert in off mode. canSleep(false). IntersectionObserver pauses when offscreen.
 
-**Perf choices:** Pixel ratio capped at 1. Low-poly spheres (8x6). Lambert materials in off mode. Bloom skipped in off mode. canSleep(false) on all bodies (prevents physics stalls).
+## Toggles — Reverse Psychology UX
+Top-right: "✨ Cyberpunk" in gold. Toggles off↔on.
 
-**Visual layers:** Circuit board background (20 random polylines + endpoint dots + 6 chip rectangles). 5 LED indicators top-left. All dim in off mode, glow in on mode, spark+die in broken mode.
+Bottom-left of hero (visible only when shiny on): "🚫 Do not touch" in red. One press → broken permanently. Toggle goes dead.
 
-## Main — 6 Curated Slides
-Stats engine: `computeStats(dob, config, now)` → pure function, all metrics derived from DOB + configurable params (yogurt grams/day, steps/day, brush minutes, etc.). `config` state in Cards, `now` ticks every 1s via setInterval.
+## Cards
 
-**Slide 1 (Time):** Big number + unit pills (yrs/mo/wks/days/hrs/min/sec). Seconds tick live.
-**Slide 2 (Space):** Miles/km through space. Earth orbital speed × hours alive. Light speed comparison.
-**Slide 3 (Yogurt):** Kg eaten. Configurable grams/day + start age. Baby hippo weight comparison.
-**Slide 4 (Your Life):** Narrative paragraphs with inline controls. Steps, brushing, blinks, hair length, poops. V6-style: stats embedded in prose, controls inline.
-**Slide 5 (Brain & Body):** Bento grid (5-col, brick pattern 3/2 alternating). Sleep, heartbeats, fruit, hugs, lungs, water. Pink neon glow in shiny mode.
-**Slide 6 (Binary):** Base-2 explanation. FlipCard: crossfade between base-2 and base-10 representations. Closing message: "happy 1001st birthday."
+**Slide cards** (full-viewport snap sections):
+- **Time** — Big number + unit dropdown (years through seconds). Years show 3 decimal places.
+- **Time Table** — All time units displayed simultaneously in a table.
+- **Space** — Miles/km through space (67,000 mph × hours alive). Light-speed comparison. InlinePills toggle.
+- **Yogurt** — Kg eaten since configurable age. Baby hippo comparison. InlineSlider + InlineStepper.
+- **Steps** — Steps walked. InlineSlider for steps/day, InlineStepper for start age.
+- **Brushing** — Brush time + strokes + blinks. Two InlineSteppers.
+- **Poops** — Poop count. InlineStepper for frequency.
 
-**Controls:** Inline (in prose): InlineStepper (‹ val ›), InlineSlider (range + readout), InlinePills (segmented toggle). Block (standalone): BlockControl (label + child), BlockSlider, BlockStepper. All use CSS custom properties for theming.
+**Tile cards** (bento grid, 5-col brick pattern on sm:, 1-col mobile):
+- **Sleep** — Sleep years. Stepper: hrs/night (default 10, range 7-13).
+- **Heartbeats** — Total beats. 80 BPM (medical fact, not adjustable).
+- **Fruit** — Servings count. Stepper: servings/day (default 3, range 1-8).
+- **Hugs** — Hug count. Stepper: hugs/day (default 2, range 1-10).
+- **Lungs** — Extra air liters. Stepper: hrs hard play/day (default 1, range 1-4).
+- **Water** — Liters + Olympic pool %. Stepper: glasses/day (default 6, range 2-12).
+
+## Inline Controls
+Not form fields. Steppers (`‹ value ›`) and sliders appear *inside sentences*, styled as accent-colored chips with `color-mix()` backgrounds. All kid-specific assumptions exposed as interactive controls.
 
 ## Theming
-CSS custom properties on `:root` / `:root.shiny`. Toggle via `document.documentElement.classList.toggle("shiny")` from hero component.
+CSS custom properties on `:root` / `:root.shiny`. One classList toggle on `<html>`.
 
-**Light:** White backgrounds, greyscale text, blue accent (#3b82f6), Space Grotesk for stats.
-**Shiny:** Dark backgrounds (#0a0a0f), cyan/purple/pink accents, cyan text-accent (#00ffff), Space Mono for stats, neon-pulse + glow-border animations on cards, text-shadow glow on headings and stat numbers.
+Light: white bg, greyscale text, blue accent (#3b82f6), Space Grotesk.
+Shiny: dark bg (#0a0a0f), cyan accent (#00ffff), neon-pulse + glow-border keyframes on `[data-card]`, text-shadow glow on `[data-stat]`.
 
-Brain bento cards override: pink neon glow (neon-pulse-pink, glow-border-pink) instead of default cyan.
+Transitions scoped to body/section/footer/`[data-card]` for scroll perf.
 
-Theme transitions scoped to body/section/footer/[data-card] for scroll perf.
+## What Belongs Where
+**constants.ts:** Lookup facts (orbital speed, BPM, pool liters). NOT unit conversions, NOT kid-specific habits.
+
+**utils.ts:** `getAge()` + `daysSinceAge()` only — tricky calendar math.
+
+**Inline in cards:** All formatting, all simple math. Each card is a complete story.
 
 ## Key Files
 ```
-src/index.tsx          — App shell, page chrome, mode state, renders Hero + Cards + Footer
-src/theme.css          — CSS custom properties for light/shiny, animations, transitions
-src/footer.tsx         — © line
-src/hero/index.tsx     — Pure scene component (name, dob, mode props). RAPIER.init()
-src/hero/scene.ts      — initScene(): Three.js + Rapier setup, animation loop, setMode/dispose
-src/hero/shared.ts     — layoutBalls, getBirthdaySpecs, setupScene, fitCamera, addWalls, createBalls, setupGrabHandlers
-src/hero/font.ts       — 5x7 bitmap font A-Z 0-9. FONT record, CHAR_W/H/GAP, LINE_GAP, SPACE_W
-src/hero/colors.ts     — LIGHT (10 greyscale hex) and SHINY (10 neon hex) palettes
-src/cards/index.tsx    — 6 slides, stats config state, all slide components
-src/cards/stats.ts     — computeStats() pure function, formatting helpers (fmt, fmtBig, fmtYears, hippoHeadline)
-src/cards/controls.tsx — InlineStepper, InlineSlider, InlinePills, BlockControl, BlockSlider, BlockStepper
-src/index.css          — Scroll snap, brain bento responsive, pink glow overrides
+src/index.tsx              — App shell, shiny state, section order
+src/theme.css              — CSS custom properties, animations
+src/index.css              — Scroll snap, tile grid responsive
+src/constants.ts           — 6 lookup constants (space, body, food)
+src/utils.ts               — 2 functions (getAge, daysSinceAge)
+src/components/section.tsx — Section, IdTag, css (shared by slide + tile)
+src/components/slide.tsx   — Slide, KeyMetric, Title, Headline, Body, Narrative, Unit, N
+src/components/tile.tsx    — TileContainer, Tile
+src/components/controls.tsx — InlineStepper, InlineSlider, InlineDropdown, InlinePills
+src/components/useNow.ts   — 1-second tick hook
+src/components/nav.tsx     — Fixed nav bar
+src/components/footer.tsx  — © line
+src/cards/hero-cyberpunk/  — Three.js + Rapier 3D scene (5 files)
+src/cards/slide-*.tsx      — 7 full-viewport snap slides
+src/cards/tile-*.tsx       — 6 bento grid tiles
 ```
