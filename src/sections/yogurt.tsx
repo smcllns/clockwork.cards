@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Slide, KeyMetric, Unit, Headline, Body } from "../components/slide";
-import { BlockControl, BlockSlider, BlockStepper } from "../components/controls";
+import { InlineSlider, InlineStepper } from "../components/controls";
 import { useNow } from "../components/useNow";
 import { daysSinceAge } from "../utils";
 
@@ -20,24 +20,16 @@ export default function YogurtCard({ dob, name }: { dob: string; name: string })
 
   return (
     <Slide id="3">
-      <span className="text-4xl block mb-4">🥄</span>
-      <KeyMetric>{Math.floor(yogurtKg).toLocaleString()} kg</KeyMetric>
-      <Unit>of yogurt</Unit>
+      <Headline>{name} has eaten around ...</Headline>
+      <KeyMetric>{Math.floor(yogurtKg).toLocaleString()} kg of yogurt</KeyMetric>
       <Headline>{hippoHeadline(yogurtKg)}</Headline>
       <Body>
-        If you've eaten yogurt every day since you were little, that's {Math.floor(yogurtKg).toLocaleString()} kg of
-        creamy, tangy fuel. Baby hippos weigh about 40 kg at birth.
+        If {name} has eaten{" "}
+        <InlineSlider value={gramsPerDay} min={10} max={150} step={10} onChange={setGramsPerDay} />{" "}
+        grams of yogurt every day since age{" "}
+        <InlineStepper value={startAge} min={1} max={7} step={1} onChange={setStartAge} />{" "}
+        , that's {Math.floor(yogurtKg).toLocaleString()} kg of creamy, tangy fuel. Baby hippos weigh about 40 kg at birth.
       </Body>
-      <div className="space-y-3">
-        <BlockControl label="Grams per day">
-          <BlockSlider value={gramsPerDay} min={10} max={150} step={10} unit="g"
-            onChange={setGramsPerDay} />
-        </BlockControl>
-        <BlockControl label="Since age">
-          <BlockStepper value={startAge} min={1} max={7} step={1}
-            onChange={setStartAge} />
-        </BlockControl>
-      </div>
     </Slide>
   );
 }

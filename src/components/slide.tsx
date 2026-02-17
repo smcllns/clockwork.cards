@@ -33,7 +33,7 @@ export function Slide({ children, alt, id }: { children: React.ReactNode; alt?: 
 
 export function KeyMetric({ children }: { children: React.ReactNode }) {
   return (
-    <div className="mb-2">
+    <div className="mb-1">
       <span
         className="font-bold leading-none"
         style={{ fontFamily: "var(--font-stat)", color: "var(--text-primary)", fontSize: "clamp(3rem, 10vw, 5rem)" }}
@@ -54,11 +54,11 @@ export function Title({ children }: { children: React.ReactNode }) {
 }
 
 export function Headline({ children }: { children: React.ReactNode }) {
-  return <p className="text-xl font-semibold mb-4" style={css.primary}>{children}</p>;
+  return <p className="text-xl font-semibold mb-6" style={css.primary}>{children}</p>;
 }
 
 export function Body({ children }: { children: React.ReactNode }) {
-  return <p className="text-base leading-relaxed mb-8" style={css.secondary}>{children}</p>;
+  return <p className="text-lg leading-loose mb-8" style={css.secondary}>{children}</p>;
 }
 
 export function Narrative({ children, sm }: { children: React.ReactNode; sm?: boolean }) {

@@ -33,7 +33,7 @@
   --accent-1: #00ffff;
   --accent-2: #bf5af2;
   --accent-3: #ff2d55;
-  --font-stat: var(--font-mono);
+  --font-stat: var(--font-display);
 }
 
 /* Theme transitions — scoped to key containers to preserve scroll perf */
