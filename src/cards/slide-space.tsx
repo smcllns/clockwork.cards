@@ -19,7 +19,7 @@ export default function SpaceCard({ dob, name }: { dob: string; name: string }) 
 
   return (
     <Slide alt id="2">
-      <Headline>🚀 {name} has flown around the sun {lapsAroundSun.toFixed(3)} times, or ...</Headline>
+      <Headline>🚀 {name} has flown ...</Headline>
       <KeyMetric>{(milesInSpace * k / 1e9).toFixed(1)} billion</KeyMetric>
       <Unit>
         <InlinePills
@@ -33,10 +33,10 @@ export default function SpaceCard({ dob, name }: { dob: string; name: string }) 
       </Unit>
       <Headline>You're not just a kid, you're an interstellar traveler!</Headline>
       <Body>
-        Because Earth is flying through our solar system at {Math.round(EARTH_ORBITAL_MPH * k).toLocaleString()} {unitLabel}, so you've been going that speed for {lapsAroundSun.toFixed(3)} years!
+        Because Earth is flying through our solar system at {Math.round(EARTH_ORBITAL_MPH * k).toLocaleString()} {unitLabel} and {name} has been going that speed for {lapsAroundSun.toFixed(3)} years!
       </Body>
       <Body>
-        But also, let's be real, light would still whoop you in a race. Traveling at {Math.round(LIGHT_SPEED_MPH * k).toLocaleString()} {unitLabel}, a beam of light would cover that same distance in just {lightSpeedHours.toFixed(1)} hours.
+        But also, let's be real, light would still whoop {name} in a race. Traveling at {Math.round(LIGHT_SPEED_MPH * k).toLocaleString()} {unitLabel}, a beam of light would cover that same distance in just {lightSpeedHours.toFixed(1)} hours.
       </Body>
     </Slide>
   );

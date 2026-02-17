@@ -1,11 +1,14 @@
-import { Tile } from "../components/tiles";
+import { useState } from "react";
+import { Tile } from "../components/tile";
+import { InlineStepper } from "../components/controls";
 import { useNow } from "../components/useNow";
 
 
 export default function FruitTile({ dob }: { dob: string }) {
+  const [servingsPerDay, setServingsPerDay] = useState(3);
   const now = useNow();
   const daysAlive = Math.floor((now - new Date(dob).getTime()) / 86_400_000);
-  const fruitServings = daysAlive * 3;
+  const fruitServings = daysAlive * servingsPerDay;
 
   return (
     <Tile
@@ -13,7 +16,9 @@ export default function FruitTile({ dob }: { dob: string }) {
       value={fruitServings.toLocaleString()}
       unit="cell repair kits"
       headline="Delivered by fruits & veggies"
-      body="Every time you eat fruits and vegetables, you're getting vitamins that help protect your cells. Your body does the hard work — your job is to keep sending supplies."
+      body={<>Every time you eat fruits and vegetables, you're getting vitamins that help protect your cells. At{" "}
+        <InlineStepper value={servingsPerDay} min={1} max={8} step={1} onChange={setServingsPerDay} />{" "}
+        servings a day, your body has had plenty of supplies to work with.</>}
     />
   );
 }

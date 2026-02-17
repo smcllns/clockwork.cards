@@ -1,16 +1,17 @@
-import { Tile } from "../components/tiles";
+import { useState } from "react";
+import { Tile } from "../components/tile";
+import { InlineStepper } from "../components/controls";
 import { useNow } from "../components/useNow";
 import { OLYMPIC_POOL_LITERS, GLASS_ML } from "../constants";
 
-const GLASSES_PER_DAY = 6;
-const LITERS_PER_DAY = (GLASSES_PER_DAY * GLASS_ML) / 1000;
-
 export default function WaterTile({ dob }: { dob: string }) {
+  const [glassesPerDay, setGlassesPerDay] = useState(6);
   const now = useNow();
   const daysAlive = Math.floor((now - new Date(dob).getTime()) / 86_400_000);
-  const waterLiters = daysAlive * LITERS_PER_DAY;
+  const litersPerDay = (glassesPerDay * GLASS_ML) / 1000;
+  const waterLiters = daysAlive * litersPerDay;
   const waterPoolPercent = (waterLiters / OLYMPIC_POOL_LITERS) * 100;
-  const poolYearsRemaining = (OLYMPIC_POOL_LITERS - waterLiters) / LITERS_PER_DAY / 365.25;
+  const poolYearsRemaining = (OLYMPIC_POOL_LITERS - waterLiters) / litersPerDay / 365.25;
 
   return (
     <Tile
@@ -18,7 +19,9 @@ export default function WaterTile({ dob }: { dob: string }) {
       value={`${Math.floor(waterLiters).toLocaleString()} L`}
       unit="of water"
       headline={`${waterPoolPercent.toFixed(1)}% of an Olympic pool`}
-      body={`An Olympic swimming pool holds 2.5 million liters. At this rate, it would take you about ${Math.floor(poolYearsRemaining).toLocaleString()} more years to drink the rest.`}
+      body={<>An Olympic swimming pool holds 2.5 million liters. At{" "}
+        <InlineStepper value={glassesPerDay} min={2} max={12} step={1} onChange={setGlassesPerDay} />{" "}
+        glasses a day, it would take about {Math.floor(poolYearsRemaining).toLocaleString()} more years to drink the rest.</>}
     />
   );
 }

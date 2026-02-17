@@ -1,4 +1,4 @@
-import { css, Section, IdTag } from "./slide";
+import { css, Section, IdTag } from "./section";
 
 type Props = { children: React.ReactNode; className?: string };
 
@@ -25,7 +25,7 @@ type TileProps = {
   span: number;
   className?: string;
 } & (
-  | { emoji: string; value: string; unit: string; headline: string; body: string; children?: never }
+  | { emoji: string; value: string; unit: string; headline: string; body: React.ReactNode; children?: never }
   | { emoji?: never; value?: never; unit?: never; headline?: never; body?: never; children: React.ReactNode }
 );
 

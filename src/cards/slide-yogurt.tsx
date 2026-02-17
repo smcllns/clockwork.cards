@@ -22,7 +22,7 @@ export default function YogurtCard({ dob, name }: { dob: string; name: string })
 
   return (
     <Slide id="3">
-      <Headline>{name} has eaten around ...</Headline>
+      <Headline>{name} has eaten ...</Headline>
       <KeyMetric>{display.toLocaleString()}</KeyMetric>
       <Unit>
         <InlinePills
@@ -36,11 +36,9 @@ export default function YogurtCard({ dob, name }: { dob: string; name: string })
       </Unit>
       <Headline>{hippoHeadline(yogurtKg)}</Headline>
       <Body>
-        If {name} has eaten{" "}
+        Assuming {name} eats{" "}
         <InlineSlider value={gramsPerDay} min={10} max={150} step={10} onChange={setGramsPerDay} />{" "}
-        grams of yogurt every day since age{" "}
-        <InlineStepper value={startAge} min={1} max={7} step={1} onChange={setStartAge} />{" "}
-        , that's {display.toLocaleString()} {unit} of creamy, protein-rich fuel.
+        grams of yogurt every day, since age <InlineStepper value={startAge} min={1} max={7} step={1} onChange={setStartAge} />
       </Body>
     </Slide>
   );

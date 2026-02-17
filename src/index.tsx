@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
-import Nav from "./cards/slide-nav";
-import HeroCyberpunk from "./cards/slide-hero-cyberpunk";
+import Nav from "./components/nav";
+import HeroCyberpunk from "./cards/hero-cyberpunk";
 import TimeCard from "./cards/slide-time";
 import TimeTableCard from "./cards/slide-time-table";
 import SpaceCard from "./cards/slide-space";
@@ -9,14 +9,14 @@ import YogurtCard from "./cards/slide-yogurt";
 import StepsCard from "./cards/slide-steps";
 import BrushingCard from "./cards/slide-brushing";
 import PoopsCard from "./cards/slide-poops";
-import { TileContainer } from "./components/tiles";
+import { TileContainer } from "./components/tile";
 import SleepTile from "./cards/tile-sleep";
 import HeartbeatsTile from "./cards/tile-heartbeats";
 import FruitTile from "./cards/tile-fruit";
 import HugsTile from "./cards/tile-hugs";
 import LungsTile from "./cards/tile-lungs";
 import WaterTile from "./cards/tile-water";
-import Footer from "./cards/slide-footer";
+import Footer from "./components/footer";
 
 const params = new URLSearchParams(window.location.search);
 const name = params.get("name") ?? process.env.DEFAULT_NAME ?? "Oscar";
