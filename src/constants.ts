@@ -12,8 +12,6 @@ export const LIGHT_SPEED_MPH = 669_600_000;
 
 // Body
 export const AVG_CHILD_BPM = 80;
-export const BLINKS_PER_DAY = 15_000;
-export const BRUSH_STROKES_PER_MIN = 170;
 export const HARD_PLAY_LITERS_PER_MIN = 50;
 
 // Food & drink

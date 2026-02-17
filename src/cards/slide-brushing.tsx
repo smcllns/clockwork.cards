@@ -2,7 +2,10 @@ import { useState } from "react";
 import { Slide, Narrative, Body, N } from "../components/slide";
 import { InlineStepper } from "../components/controls";
 import { useNow } from "../components/useNow";
-import { MS_PER_DAY, BLINKS_PER_DAY, BRUSH_STROKES_PER_MIN } from "../constants";
+import { MS_PER_DAY } from "../constants";
+
+const BLINKS_PER_DAY = 15_000;
+const BRUSH_STROKES_PER_MIN = 170;
 import { daysSinceAge, fmtBig } from "../utils";
 
 export default function BrushingCard({ dob }: { dob: string }) {

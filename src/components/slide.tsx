@@ -4,8 +4,6 @@ export const css = {
   primary: { color: "var(--text-primary)" } as const,
   secondary: { color: "var(--text-secondary)" } as const,
   sectionHead: { color: "var(--text-secondary)", borderColor: "var(--border-color)" } as const,
-  card: { background: "var(--bg-card)", borderColor: "var(--border-color)" } as const,
-  formula: { fontFamily: "var(--font-stat)", color: "var(--text-accent)", fontSize: "1.1rem" } as const,
 };
 
 type Props = { children: React.ReactNode; className?: string };
@@ -94,7 +92,16 @@ export function TileContainer({ children, id, title, className }: Props & { id: 
   );
 }
 
-export function Tile({ children, id, span, className }: Props & { id: string; span: number }) {
+type TileProps = {
+  id: string;
+  span: number;
+  className?: string;
+} & (
+  | { emoji: string; value: string; unit: string; headline: string; body: string; children?: never }
+  | { emoji?: never; value?: never; unit?: never; headline?: never; body?: never; children: React.ReactNode }
+);
+
+export function Tile({ id, span, className, children, emoji, value, unit, headline, body }: TileProps) {
   return (
     <div
       className={`rounded-2xl border p-6 flex flex-col gap-3 relative ${className ?? ""}`}
@@ -107,7 +114,25 @@ export function Tile({ children, id, span, className }: Props & { id: string; sp
       data-card
     >
       <div className="absolute top-3 right-3"><IdTag id={id} /></div>
-      {children}
+      {children ?? (
+        <>
+          <div className="flex items-start gap-3">
+            <span className="text-2xl shrink-0 mt-1">{emoji}</span>
+            <div>
+              <div className="flex items-baseline gap-2 flex-wrap">
+                <span
+                  className="font-bold"
+                  style={{ fontFamily: "var(--font-stat)", color: "var(--text-primary)", fontSize: "1.75rem", lineHeight: 1.1 }}
+                  data-stat
+                >{value}</span>
+                <span className="text-sm" style={css.secondary}>{unit}</span>
+              </div>
+              <p className="text-sm font-semibold mt-1" style={css.primary}>{headline}</p>
+            </div>
+          </div>
+          <p className="text-sm leading-relaxed" style={{ ...css.secondary, paddingLeft: "44px" }}>{body}</p>
+        </>
+      )}
     </div>
   );
 }
