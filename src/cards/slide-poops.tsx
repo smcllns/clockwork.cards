@@ -17,7 +17,7 @@ export default function PoopsCard({ dob }: { dob: string }) {
         Everyone poops. At{" "}
         <InlineStepper value={perDay} min={0.5} max={4} step={0.5} decimals={1}
           onChange={setPerDay} />{" "}
-        times a day, by the time you're <N>{age}</N> years old, you'll have done around{" "}
+        poops a day, by the time you're <N>{age}</N> years old, you'll have done around{" "}
         <N>{Math.floor(daysAlive * perDay).toLocaleString()} poops</N>. That's a lot of flushes.
       </Narrative>
     </Slide>

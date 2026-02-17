@@ -55,7 +55,7 @@ export default function PoopsPhoto({ dob, shiny }: { dob: string; shiny: boolean
         <p className="text-base leading-relaxed text-white/60">
           Everyone poops. At{" "}
           <InlineStepper value={perDay} min={0.5} max={4} step={0.5} decimals={1} onChange={setPerDay} />{" "}
-          times a day, by age {age} that's a lot of flushes.
+          poops a day, by the time you're {age} years old, you'll have done around {totalPoops.toLocaleString()} poops. Maybe even a cyberpunk poop.
         </p>
       </div>
     </div>
