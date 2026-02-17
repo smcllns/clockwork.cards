@@ -1,4 +1,4 @@
-import { Tile } from "../components/slide";
+import { Tile } from "../components/tiles";
 import { useNow } from "../components/useNow";
 import { MS_PER_DAY, HARD_PLAY_LITERS_PER_MIN } from "../constants";
 import { fmtBig } from "../utils";

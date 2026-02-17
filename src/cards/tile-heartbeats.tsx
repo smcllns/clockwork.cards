@@ -1,4 +1,4 @@
-import { Tile } from "../components/slide";
+import { Tile } from "../components/tiles";
 import { useNow } from "../components/useNow";
 import { AVG_CHILD_BPM } from "../constants";
 import { fmt, fmtBig } from "../utils";
