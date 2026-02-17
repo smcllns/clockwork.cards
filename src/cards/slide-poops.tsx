@@ -4,7 +4,7 @@ import { InlineStepper } from "../components/controls";
 import { useNow } from "../components/useNow";
 import { MS_PER_DAY } from "../constants";
 
-export default function PoopsCard({ dob }: { dob: string; name: string }) {
+export default function PoopsCard({ dob }: { dob: string }) {
   const [perDay, setPerDay] = useState(1.5);
   const now = useNow();
   const daysAlive = Math.floor((now - new Date(dob).getTime()) / MS_PER_DAY);

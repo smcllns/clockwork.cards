@@ -38,9 +38,6 @@ export function fmtBig(n: number): string {
   return fmt(n);
 }
 
-export function fmtDecimal(n: number, decimals = 1): string {
-  return n.toFixed(decimals);
-}
 
 export function fmtYears(n: number): string {
   if (Math.abs(n - Math.round(n)) < 0.001) return Math.round(n).toLocaleString();
