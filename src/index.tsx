@@ -13,6 +13,7 @@ import StepsCard from "./cards/slide-steps";
 import BrushingCard from "./cards/slide-brushing";
 import PoopsCard from "./cards/slide-poops";
 import SleepPhoto from "./cards/photo-sleep";
+import SleepPhotoAlt from "./cards/photo-sleep-alt";
 import WaterPhoto from "./cards/photo-water";
 import PoopsPhoto from "./cards/photo-poops";
 import { TileContainer } from "./components/tile";
@@ -55,6 +56,7 @@ function App() {
           <LungsTile dob={dob} name={name} />
         </TileContainer>
         <SleepPhoto dob={dob} name={name} shiny={shiny} />
+        <SleepPhotoAlt dob={dob} name={name} shiny={shiny} />
         <BrushingCard dob={dob} name={name} />
         <WaterPhoto dob={dob} name={name} shiny={shiny} />
         <HairCard dob={dob} name={name} />

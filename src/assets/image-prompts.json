@@ -1,0 +1,72 @@
+{
+  "photo-time.png": {
+    "model": "gemini-3-pro-image-preview",
+    "cost_usd": 0.240,
+    "prompt": "A cute Pixar-style 3D animated boy with messy blonde hair and big blue eyes, excitedly kicking a soccer ball into a goal net. He wears a light blue jersey, dark blue shorts, and blue socks with cleats. Dynamic action pose mid-kick with the ball flying with motion blur. Warm golden hour stadium lighting with lens flares, green grass field. Claymation-like soft rounded 3D render style. Warm peach tones."
+  },
+  "photo-time-shiny.png": {
+    "model": "gemini-3-pro-image-preview",
+    "cost_usd": 0.240,
+    "prompt": "A cute Pixar-style 3D animated boy with slicked-back blonde hair, kicking a glowing neon soccer ball into a neon-outlined goal frame. Cyberpunk rave aesthetic — dark background, cyan and magenta neon lights, volumetric fog, reflective floor. The boy wears a futuristic cyan and dark jersey with neon trim. Dramatic floating action pose. Neon light trails follow the ball. Dark moody atmosphere with vibrant cyan and magenta color palette."
+  },
+  "photo-space.png": {
+    "model": "gemini-2.5-flash-image",
+    "cost_usd": 0.039,
+    "prompt": "Planet Earth viewed from space, photorealistic render. Beautiful blue planet with white cloud swirls, green continents visible (Americas facing). A thin glowing orbital trail ring circles the planet. Sunrise glow on the right edge of the planet with warm orange light. Deep dark space background. Cinematic space photography style, highly detailed."
+  },
+  "photo-space-shiny.png": {
+    "model": "gemini-2.5-flash-image",
+    "cost_usd": 0.039,
+    "prompt": "Planet Earth at night viewed from space, showing glowing city lights on continents. Multiple neon orbital rings circle the planet in cyan, magenta, purple, and green colors. Cyberpunk aesthetic — the planet's outline glows with cyan neon edges, continent borders traced in neon blue lines. Deep black space with stars. Dramatic neon color palette, futuristic feel."
+  },
+  "photo-yogurt.png": {
+    "model": "gemini-2.5-flash-image",
+    "cost_usd": 0.039,
+    "prompt": "A cute Pixar-style 3D claymation baby hippo sitting down, happily eating yogurt with yogurt dripping and smeared all over its mouth and chin. The hippo is grey-purple with a round pink belly, small pink ears, and big happy black eyes. A small tipped-over blue yogurt cup with a spoon lies beside it on the ground. Warm peach solid background. Soft rounded clay-like 3D render, warm lighting."
+  },
+  "photo-yogurt-shiny.png": {
+    "model": "gemini-2.5-flash-image",
+    "cost_usd": 0.039,
+    "prompt": "A cute Pixar-style 3D claymation baby hippo sitting down, eating yogurt messily with yogurt around its mouth. Grey-purple hippo with pink belly and big dark eyes. Cyberpunk rave aesthetic — dark black background, diagonal cyan and magenta neon light bars behind, volumetric fog swirling in cyan and magenta. The hippo is lit by the neon glow. A tipped-over blue yogurt cup with spoon beside it on a reflective dark surface. Dramatic neon lighting."
+  },
+  "photo-sleep.png": {
+    "model": "gemini-3-pro-image-preview",
+    "cost_usd": 0.240,
+    "prompt": "A cute Pixar-style 3D claymation anthropomorphic pink brain character with round glasses, standing on a rolling library ladder in a cozy warm library. The brain has a warm, cheerful smile and bright sparkling eyes — looking happy, intellectually curious, and content like a bookworm who loves their job. Detailed wooden bookshelves filled with colorful pastel books, warm table lamps glowing, filing cabinets with rolled scrolls on the floor. Warm peach and amber tones, soft inviting lighting. The brain has small arms and legs. Claymation soft rounded 3D render style. Pleasant, wholesome, joyful mood."
+  },
+  "photo-sleep-shiny.png": {
+    "model": "gemini-3-pro-image-preview",
+    "cost_usd": 0.240,
+    "prompt": "A cute Pixar-style 3D claymation anthropomorphic pink brain character wearing sunglasses and headphones, dancing joyfully at a cyberpunk rave with a huge happy grin. The brain has small arms and legs and is striking a fun dance pose with one arm raised. Dark background with a disco ball, cyan and magenta laser beams, neon light rings on the reflective floor. Bookshelves and filing cabinets visible in the background outlined in purple neon. Volumetric fog in cyan and magenta. The brain looks ecstatic and energetic, having the time of its life."
+  },
+  "photo-sleep-alt.png": {
+    "model": "gemini-2.5-flash-image",
+    "cost_usd": 0.039,
+    "prompt": "A cute anthropomorphic pink brain character with round glasses, cheerfully organizing books in a sunlit cozy library during the day. The brain has a warm happy smile and bright eyes, looking intellectually engaged and content — a hardworking bookworm who loves sorting knowledge. Studio Ghibli anime style with soft hand-painted watercolor textures, warm sunlight streaming through windows, tall wooden bookshelves filled with colorful books. The brain is on a rolling ladder reaching up to shelve a book, smiling warmly. Soft peach, cream, and golden tones. The brain has small arms and legs. Wholesome, joyful, studious atmosphere like a scene from a Miyazaki film."
+  },
+  "photo-sleep-shiny-alt.png": {
+    "model": "gemini-2.5-flash-image",
+    "cost_usd": 0.039,
+    "prompt": "The same cute anthropomorphic pink brain character from Studio Ghibli anime, organizing books in a library that has been transformed into a cyberpunk rave party. Neon lights in cyan, magenta and purple strung between the wooden bookshelves, a disco ball hanging from the ceiling casting light patterns, laser beams cutting through atmospheric haze. The brain is dancing joyfully while simultaneously shelving books, wearing tiny headphones on its head. Studio Ghibli hand-painted watercolor animation style but with vibrant neon colors and dramatic dark lighting. Dark moody background with glowing neon accents illuminating the library shelves. The brain has small arms and legs and looks ecstatic."
+  },
+  "photo-water.png": {
+    "model": "gemini-2.5-flash-image",
+    "cost_usd": 0.039,
+    "prompt": "A miniature isometric 3D claymation swimming pool with lane dividers, viewed from above at an angle. The pool has turquoise water with white lane rope floats. Rounded peach-colored pool edges with small metal ladders. Tiny starting blocks at one end. A glass of water with a lemon slice and straw sits on the pool deck beside the pool. Warm peach and cream background and pool deck. Soft claymation Pixar style, miniature tilt-shift feel."
+  },
+  "photo-water-shiny.png": {
+    "model": "gemini-2.5-flash-image",
+    "cost_usd": 0.039,
+    "prompt": "A miniature isometric swimming pool with lane dividers, viewed from above at an angle. Cyberpunk rave aesthetic — the pool has glowing turquoise neon water, neon-lit lane dividers. The pool sits on a dark reflective platform. Surrounded by neon light bars and glowing cyberpunk signs in cyan, magenta, and purple. Volumetric fog swirling around. A glass of water sits on the pool edge glowing in the neon light. Dark moody atmosphere with dramatic neon lighting. 3D render style."
+  },
+  "photo-poops.png": {
+    "model": "gemini-3-pro-image-preview",
+    "cost_usd": 0.240,
+    "prompt": "A cute Pixar-style 3D claymation poop emoji character standing upright with a friendly smile. Classic swirl poop shape in brown with a smooth clay-like texture. Big round brown eyes with white reflections, gentle smile. Wearing a tiny white chef hat on top. The character has small stubby arms at its sides and short legs. Warm yellow-peach gradient background. Soft warm lighting, adorable wholesome feel. Rounded soft 3D claymation render style."
+  },
+  "photo-poops-shiny.png": {
+    "model": "gemini-3-pro-image-preview",
+    "cost_usd": 0.240,
+    "prompt": "A cute Pixar-style 3D claymation poop emoji character standing on a dark reflective surface with a confident smirk. Classic swirl poop shape in brown, glowing cyan neon outline around the entire body. Big round eyes with glowing purple-blue irises. Small arms and legs. Cyberpunk rave aesthetic — dark background with neon signs in cyan and magenta, volumetric purple and cyan fog swirling around. Dramatic neon rim lighting. The character looks cool and self-assured."
+  }
+}
