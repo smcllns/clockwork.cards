@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { computeStats, DEFAULT_CONFIG, type StatsConfig, type Stats, fmt, fmtBig, fmtDecimal, fmtYears, hippoHeadline } from "./stats";
 import { InlineStepper, InlineSlider, BlockControl, BlockSlider, BlockStepper } from "./controls";
 import { Slide, BigNum, SlideUnit, SlideHeadline, SlideBody, N, IdTag, css } from "./layout";
-import TimeCard from "./time-table";
+import TimeCard from "./time";
+import TimeTableCard from "./time-table";
 import SpaceCard from "./space";
 
 // ── Flippable binary/base-10 card ─────────────────────────────────
@@ -79,9 +80,9 @@ export default function Cards({ name, dob }: { name: string; dob: string }) {
 
       {/* 1. TIME */}
       <TimeCard dob={dob} name={name} />
-
+      <TimeTableCard dob={dob} name={name} />
       {/* 2. SPACE */}
-      <SpaceCard dob={dob} />
+      <SpaceCard dob={dob} name={name} />
 
       {/* 3. YOGURT */}
       <Slide id="3">

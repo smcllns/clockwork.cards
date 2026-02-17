@@ -38,7 +38,7 @@ function computeSpace(dob: string, now: number) {
   return { milesInSpace, lightSpeedHours, lapsAroundSun };
 }
 
-export default function SpaceCard({ dob }: { dob: string }) {
+export default function SpaceCard({ dob, name }: { dob: string; name: string }) {
   const [spaceUnit, setSpaceUnit] = useState<SpaceUnit>("miles");
   const [now, setNow] = useState(Date.now());
 
@@ -55,16 +55,17 @@ export default function SpaceCard({ dob }: { dob: string }) {
 
   return (
     <Slide alt id="2">
-      <span className="text-4xl block mb-4">🚀</span>
+      <SlideHeadline>🚀 {name} has flown around the sun {fmtYears(s.lapsAroundSun)} times, or ...</SlideHeadline>
       <BigNum>{fmtBig(spaceVal)}</BigNum>
       <SlideUnit>
         <InlinePills options={UNIT_OPTIONS} value={spaceUnit} onChange={setSpaceUnit} />{" "}through space
       </SlideUnit>
-      <SlideHeadline>You're an interstellar traveler.</SlideHeadline>
+      <SlideHeadline>He's not just a kid, he's an interstellar traveler!</SlideHeadline>
       <SlideBody>
-        {fmtYears(s.lapsAroundSun)} laps around the sun. Earth moves at {speedLabel(EARTH_ORBITAL_MPH)} — you're not just a kid,
-        you're an interstellar traveler. Though let's be real, light would still whoop you in a race:
-        at {speedLabel(LIGHT_SPEED_MPH)}, it would cover that distance in just {fmtDecimal(s.lightSpeedHours)} hours.
+        Because Earth is flying through out solar system at {speedLabel(EARTH_ORBITAL_MPH)}, so you've been going that speed for {fmtYears(s.lapsAroundSun)} years!
+      </SlideBody>
+      <SlideBody>
+        But also, let's be real, light would still whoop you in a race. Traveling at {speedLabel(LIGHT_SPEED_MPH)}, a beam of light would cover that same distance in just {fmtDecimal(s.lightSpeedHours)} hours.
       </SlideBody>
     </Slide>
   );
