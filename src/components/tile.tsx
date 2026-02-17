@@ -7,7 +7,7 @@ export function TileContainer({ children, id, title, className }: Props & { id: 
     <Section id={id} bg="secondary" className={className}>
       <div className="w-full py-16">
         <h3
-          className="text-sm font-semibold uppercase tracking-[0.15em] mb-8 pb-3 border-b max-w-2xl mx-auto"
+          className="text-sm font-semibold uppercase tracking-[0.15em] mb-8 pb-3 border-b max-w-[900px] mx-auto"
           style={css.sectionHead}
         >
           {title}
@@ -22,23 +22,21 @@ export function TileContainer({ children, id, title, className }: Props & { id: 
 
 type TileProps = {
   id: string;
-  span: number;
   className?: string;
 } & (
   | { emoji: string; value: string; unit: string; headline: string; body: React.ReactNode; children?: never }
   | { emoji?: never; value?: never; unit?: never; headline?: never; body?: never; children: React.ReactNode }
 );
 
-export function Tile({ id, span, className, children, emoji, value, unit, headline, body }: TileProps) {
+export function Tile({ id, className, children, emoji, value, unit, headline, body }: TileProps) {
   return (
     <div
       className={`rounded-2xl border p-6 flex flex-col gap-3 relative ${className ?? ""}`}
       style={{
-        "--span": `span ${span}`,
         background: "var(--bg-card)",
         borderColor: "var(--border-color)",
         boxShadow: "var(--shadow-sm)",
-      } as React.CSSProperties}
+      }}
       data-card
     >
       <div className="absolute top-3 right-3"><IdTag id={id} /></div>

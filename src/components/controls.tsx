@@ -21,7 +21,7 @@ const chipBase: CSSProperties = {
   lineHeight: 1.4,
   background: "color-mix(in srgb, var(--text-accent) 12%, transparent)",
   border: "1px solid color-mix(in srgb, var(--text-accent) 25%, transparent)",
-  transition: "background 0.2s",
+  transition: "color 0.4s, background 0.4s, border-color 0.4s",
 };
 
 const btnBase: CSSProperties = {
@@ -39,6 +39,7 @@ const btnBase: CSSProperties = {
   cursor: "pointer",
   lineHeight: 1,
   padding: 0,
+  position: "relative" as const,
   transition: "background 0.15s",
 };
 
@@ -89,7 +90,7 @@ export function InlineDropdown<T extends string>({ options, value, onChange }: D
     typeof opt === "string" ? { value: opt, label: opt } : opt
   );
   return (
-    <span style={{ ...chipBase, padding: "1px 6px" }}>
+    <span style={{ ...chipBase, padding: "1px 6px", position: "relative" }}>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value as T)}
@@ -104,16 +105,19 @@ export function InlineDropdown<T extends string>({ options, value, onChange }: D
           fontSize: "inherit",
           cursor: "pointer",
           padding: "1px 16px 1px 4px",
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E")`,
-          backgroundRepeat: "no-repeat",
-          backgroundPosition: "right 2px center",
-          backgroundSize: "10px 6px",
         }}
       >
         {normalized.map((opt) => (
           <option key={opt.value} value={opt.value}>{opt.label}</option>
         ))}
       </select>
+      <svg
+        width="10" height="6"
+        viewBox="0 0 10 6"
+        style={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", pointerEvents: "none", fill: "var(--text-accent)" }}
+      >
+        <path d="M0 0l5 6 5-6z" />
+      </svg>
     </span>
   );
 }
@@ -175,7 +179,7 @@ export function InlineSlider({ value, min, max, step, unit, decimals = 0, onChan
         onChange={(e) => onChange(Number(e.target.value))}
         onClick={(e) => e.stopPropagation()}
         style={{
-          width: "80px",
+          width: "min(120px, 30vw)",
           height: "4px",
           accentColor: "var(--text-accent)",
           cursor: "pointer",

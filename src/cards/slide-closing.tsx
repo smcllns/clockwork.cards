@@ -60,10 +60,10 @@ export default function ClosingCard({ dob, name }: { dob: string; name: string }
         </p>
 
         <div className="space-y-1 mb-6">
-          <p className="text-sm font-mono" style={{ color: BASE10 }}>
+          <p className="text-sm" style={{ color: BASE10, fontFamily: "var(--font-stat)", fontVariantNumeric: "tabular-nums" }}>
             {expandBase(age, 10, 3)}
           </p>
-          <p className="text-sm font-mono" style={{ color: BASE2 }}>
+          <p className="text-sm" style={{ color: BASE2, fontFamily: "var(--font-stat)", fontVariantNumeric: "tabular-nums" }}>
             {expandBase(age, 2)}
           </p>
         </div>

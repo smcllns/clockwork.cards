@@ -15,7 +15,7 @@ export default function WaterTile({ dob, name }: { dob: string; name: string }) 
 
   return (
     <Tile
-      id="5f" span={2} emoji="💧"
+      id="5f" emoji="💧"
       value={`${Math.floor(waterLiters).toLocaleString()} L`}
       unit="of water"
       headline={`${waterPoolPercent.toFixed(1)}% of an Olympic pool`}

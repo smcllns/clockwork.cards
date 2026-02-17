@@ -12,7 +12,7 @@ export default function FruitTile({ dob, name }: { dob: string; name: string }) 
 
   return (
     <Tile
-      id="5c" span={3} emoji="🥦"
+      id="5c" emoji="🥦"
       value={fruitServings.toLocaleString()}
       unit="cell repair kits"
       headline="Delivered by fruits & veggies"

@@ -13,7 +13,7 @@ export default function SleepTile({ dob, name }: { dob: string; name: string }) 
 
   return (
     <Tile
-      id="5a" span={3} emoji="🧠"
+      id="5a" emoji="🧠"
       value={`${sleepYears.toFixed(3)} years`}
       unit="of brain filing time"
       headline={`${sleepHours.toLocaleString()} hours of sleep so far`}

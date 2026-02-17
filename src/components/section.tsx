@@ -23,7 +23,7 @@ export function Section({ children, id, bg = "primary", className }: Props & { i
       className={`flex items-center justify-center px-6 relative snap-section ${className ?? ""}`}
       style={{ minHeight: "100dvh", background: bg === "secondary" ? "var(--bg-secondary)" : "var(--bg-primary)" }}
     >
-      <div className="absolute top-4 right-6"><IdTag id={id} /></div>
+      <div className="absolute top-14 right-6"><IdTag id={id} /></div>
       {children}
     </div>
   );

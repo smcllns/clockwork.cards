@@ -2,7 +2,7 @@ import { useState } from "react";
 import { InlineDropdown } from "../components/controls";
 import { useNow } from "../components/useNow";
 import { getAge } from "../utils";
-import { IdTag } from "../components/section";
+import { PhotoSlide } from "../components/photo-slide";
 import imgLight from "../assets/photo-time.png";
 import imgShiny from "../assets/photo-time-shiny.png";
 
@@ -27,47 +27,28 @@ export default function TimePhoto({ dob, name, shiny }: { dob: string; name: str
   };
 
   return (
-    <div
-      className="relative snap-section flex flex-col justify-end overflow-hidden"
-      style={{ minHeight: "100dvh" }}
+    <PhotoSlide
+      id="1"
+      imgLight={imgLight}
+      imgShiny={imgShiny}
+      shiny={shiny}
+      gradient="linear-gradient(to bottom, transparent 25%, rgba(0,0,0,0.6) 65%, rgba(0,0,0,0.9) 100%)"
     >
-      <img
-        src={imgLight}
-        alt=""
-        className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
-        style={{ opacity: shiny ? 0 : 1 }}
-      />
-      <img
-        src={imgShiny}
-        alt=""
-        className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
-        style={{ opacity: shiny ? 1 : 0 }}
-      />
-      <div
-        className="absolute inset-0"
-        style={{
-          background: "linear-gradient(to bottom, transparent 25%, rgba(0,0,0,0.6) 65%, rgba(0,0,0,0.9) 100%)",
-        }}
-      />
-      <div className="absolute top-4 right-6 z-10"><IdTag id="1" /></div>
-
-      <div className="relative z-10 px-6 pb-12 pt-8 max-w-xl mx-auto w-full">
-        <p className="text-lg font-medium mb-1 text-white/70">{name} is ...</p>
-        <div className="mb-1">
-          <span
-            className="font-bold leading-none text-white"
-            style={{ fontFamily: "var(--font-stat)", fontSize: "clamp(3rem, 10vw, 5rem)" }}
-            data-stat
-          >
-            {timeUnit === "years"
-              ? values[timeUnit].toFixed(3)
-              : Math.floor(values[timeUnit]).toLocaleString()}
-          </span>
-        </div>
-        <p className="text-lg font-medium mb-5 text-white/70">
-          <InlineDropdown options={TIME_UNITS} value={timeUnit} onChange={setTimeUnit} /> old, right now
-        </p>
+      <p className="text-lg font-medium mb-1 text-white/70">{name} is ...</p>
+      <div className="mb-1">
+        <span
+          className="font-bold leading-none text-white"
+          style={{ fontFamily: "var(--font-stat)", fontSize: "clamp(3rem, 10vw, 5rem)" }}
+          data-stat
+        >
+          {timeUnit === "years"
+            ? values[timeUnit].toFixed(3)
+            : Math.floor(values[timeUnit]).toLocaleString()}
+        </span>
       </div>
-    </div>
+      <p className="text-lg font-medium mb-5 text-white/70">
+        <InlineDropdown options={TIME_UNITS} value={timeUnit} onChange={setTimeUnit} /> old, right now
+      </p>
+    </PhotoSlide>
   );
 }

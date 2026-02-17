@@ -20,11 +20,13 @@ import HeartbeatsTile from "./cards/tile-heartbeats";
 import FruitTile from "./cards/tile-fruit";
 import HugsTile from "./cards/tile-hugs";
 import LungsTile from "./cards/tile-lungs";
+import HairCard from "./cards/slide-hair";
 import ClosingCard from "./cards/slide-closing";
 import Footer from "./components/footer";
 
 const params = new URLSearchParams(window.location.search);
-const name = params.get("name") ?? process.env.DEFAULT_NAME ?? "Oscar";
+const rawName = params.get("name") ?? process.env.DEFAULT_NAME ?? "Oscar";
+const name = rawName.charAt(0).toUpperCase() + rawName.slice(1);
 const dob = params.get("dob") ?? process.env.DEFAULT_DOB ?? "2017-02-20";
 
 function App() {
@@ -46,7 +48,7 @@ function App() {
         <SpacePhoto dob={dob} name={name} shiny={shiny} />
         <StepsCard dob={dob} name={name} />
         <YogurtPhoto dob={dob} name={name} shiny={shiny} />
-        <TileContainer id="5" title={`${name}'s brain &amp; body`}>
+        <TileContainer id="5" title={`${name}'s brain & body`}>
           <HeartbeatsTile dob={dob} name={name} />
           <FruitTile dob={dob} name={name} />
           <HugsTile dob={dob} name={name} />
@@ -55,6 +57,7 @@ function App() {
         <SleepPhoto dob={dob} name={name} shiny={shiny} />
         <BrushingCard dob={dob} name={name} />
         <WaterPhoto dob={dob} name={name} shiny={shiny} />
+        <HairCard dob={dob} name={name} />
         <PoopsPhoto dob={dob} shiny={shiny} />
         <ClosingCard dob={dob} name={name} />
       </section>

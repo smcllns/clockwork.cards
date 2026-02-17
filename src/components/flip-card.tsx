@@ -27,14 +27,14 @@ export function FlipCard({ front, back, frontColor = "var(--text-secondary)", ba
           style={{ ...base, borderColor: frontColor, background: `color-mix(in srgb, ${frontColor} 6%, transparent)` }}
         >
           {front}
-          <p className="text-[10px] uppercase tracking-widest pt-1" style={{ color: frontColor, opacity: 0.7 }}>{frontHint}</p>
+          <p className="text-xs uppercase tracking-widest pt-1" style={{ color: frontColor, opacity: 0.7 }}>{frontHint}</p>
         </div>
         <div
           className="rounded-xl border p-5 space-y-2 absolute inset-0"
           style={{ ...base, transform: "rotateY(180deg)", borderColor: backColor, background: `color-mix(in srgb, ${backColor} 6%, transparent)` }}
         >
           {back}
-          <p className="text-[10px] uppercase tracking-widest pt-1" style={{ color: backColor, opacity: 0.7 }}>{backHint}</p>
+          <p className="text-xs uppercase tracking-widest pt-1" style={{ color: backColor, opacity: 0.7 }}>{backHint}</p>
         </div>
       </div>
     </div>

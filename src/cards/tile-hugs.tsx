@@ -12,7 +12,7 @@ export default function HugsTile({ dob, name }: { dob: string; name: string }) {
 
   return (
     <Tile
-      id="5d" span={2} emoji="🤗"
+      id="5d" emoji="🤗"
       value={totalHugs.toLocaleString()}
       unit="hugs"
       headline="Moments of connection"

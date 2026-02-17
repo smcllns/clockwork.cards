@@ -12,7 +12,7 @@ export default function LungsTile({ dob, name }: { dob: string; name: string }) 
 
   return (
     <Tile
-      id="5e" span={3} emoji="💪"
+      id="5e" emoji="💪"
       value={`${(lungExtraLiters / 1e6).toFixed(1)} million`}
       unit="extra liters of air"
       headline={`${name}'s lungs are getting seriously strong`}

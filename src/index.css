@@ -26,9 +26,16 @@ body {
 
 @media (min-width: 640px) {
   .tile-grid {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 20px;
   }
-  .tile-grid > * { grid-column: var(--span); }
+}
+
+/* Extend tap targets to 44px minimum without affecting visual layout */
+button[aria-label="decrease"]::after,
+button[aria-label="increase"]::after {
+  content: "";
+  position: absolute;
+  inset: -12px;
 }
 

@@ -10,7 +10,7 @@ export default function HeartbeatsTile({ dob, name }: { dob: string; name: strin
 
   return (
     <Tile
-      id="5b" span={2} emoji="❤️"
+      id="5b" emoji="❤️"
       value={`${(totalHeartbeats / 1e6).toFixed(1)} million`}
       unit="heartbeats"
       headline={`${heartbeatsPerDay.toLocaleString()} beats per day`}
