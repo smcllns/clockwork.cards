@@ -1,11 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
-import { computeStats, DEFAULT_CONFIG, type StatsConfig, type Stats, fmt, fmtBig, fmtDecimal, fmtYears, hippoHeadline, KM_PER_MILE, EARTH_ORBITAL_MPH, LIGHT_SPEED_MPH } from "./stats";
-import { InlineStepper, InlineSlider, InlinePills, BlockControl, BlockSlider, BlockStepper } from "./controls";
+import { computeStats, DEFAULT_CONFIG, type StatsConfig, type Stats, fmt, fmtBig, fmtDecimal, fmtYears, hippoHeadline } from "./stats";
+import { InlineStepper, InlineSlider, BlockControl, BlockSlider, BlockStepper } from "./controls";
 import { Slide, BigNum, SlideUnit, SlideHeadline, SlideBody, N, IdTag, css } from "./layout";
-import TimeCard from "./time";
-
-// ── Types & constants ──────────────────────────────────────────────
-type SpaceUnit = "miles" | "km";
+import TimeCard from "./time-table";
+import SpaceCard from "./space";
 
 // ── Flippable binary/base-10 card ─────────────────────────────────
 function FlipCard({ ageYears }: { ageYears: number }) {
@@ -67,8 +65,6 @@ function FlipCard({ ageYears }: { ageYears: number }) {
 export default function Cards({ name, dob }: { name: string; dob: string }) {
   const [config, setConfig] = useState<StatsConfig>({ ...DEFAULT_CONFIG });
   const [now, setNow] = useState(Date.now());
-  const [spaceUnit, setSpaceUnit] = useState<SpaceUnit>("miles");
-
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
@@ -78,13 +74,6 @@ export default function Cards({ name, dob }: { name: string; dob: string }) {
   const set = <K extends keyof StatsConfig>(key: K, val: StatsConfig[K]) =>
     setConfig((c) => ({ ...c, [key]: val }));
 
-  const isMiles = spaceUnit === "miles";
-  const toUnit = (mph: number) => isMiles ? mph : mph * KM_PER_MILE;
-  const speedLabel = (mph: number) => `${fmt(Math.round(toUnit(mph)))} ${isMiles ? "mph" : "kph"}`;
-  const spaceVal = toUnit(s.milesInSpace);
-  const earthSpeed = speedLabel(EARTH_ORBITAL_MPH);
-  const lightSpeed = speedLabel(LIGHT_SPEED_MPH);
-
   return (
     <section style={{ background: "var(--bg-primary)" }}>
 
@@ -92,26 +81,7 @@ export default function Cards({ name, dob }: { name: string; dob: string }) {
       <TimeCard dob={dob} name={name} />
 
       {/* 2. SPACE */}
-      <Slide alt id="2">
-        <span className="text-4xl block mb-4">🚀</span>
-        <BigNum>{fmtBig(spaceVal)}</BigNum>
-        <SlideUnit>
-          <InlinePills
-            options={[
-              { value: "miles" as SpaceUnit, label: "miles" },
-              { value: "km" as SpaceUnit, label: "kilometers" },
-            ]}
-            value={spaceUnit}
-            onChange={setSpaceUnit}
-          />{" "}through space
-        </SlideUnit>
-        <SlideHeadline>You're an interstellar traveler.</SlideHeadline>
-        <SlideBody>
-          {fmtYears(s.lapsAroundSun)} laps around the sun. Earth moves at {earthSpeed} — you're not just a kid,
-          you're an interstellar traveler. Though let's be real, light would still whoop you in a race:
-          at {lightSpeed}, it would cover that distance in just {fmtDecimal(s.lightSpeedHours)} hours.
-        </SlideBody>
-      </Slide>
+      <SpaceCard dob={dob} />
 
       {/* 3. YOGURT */}
       <Slide id="3">
