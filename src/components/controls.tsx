@@ -1,4 +1,4 @@
-import { type CSSProperties } from "react";
+import { type CSSProperties, useRef } from "react";
 
 // ── Inline stepper: ‹ value › with +/- buttons ────────────────────
 interface StepperProps {
@@ -45,11 +45,13 @@ const btnBase: CSSProperties = {
 
 export function InlineStepper({ value, min, max, step, unit, decimals = 0, onChange }: StepperProps) {
   const clamp = (v: number) => Math.min(max, Math.max(min, Math.round(v / step) * step));
+  const bumpRef = useRef({ count: 0, dir: "up" as "up" | "down" });
+  const bump = (v: number, dir: "up" | "down") => { bumpRef.current = { count: bumpRef.current.count + 1, dir }; onChange(v); };
   return (
-    <span style={chipBase}>
+    <span key={bumpRef.current.count} className={bumpRef.current.dir === "up" ? "stepper-pop-up" : "stepper-pop-down"} style={chipBase}>
       <button
         style={{ ...btnBase, opacity: value <= min ? 0.3 : 1 }}
-        onClick={(e) => { e.stopPropagation(); onChange(clamp(value - step)); }}
+        onClick={(e) => { e.stopPropagation(); bump(clamp(value - step), "down"); }}
         aria-label="decrease"
       >
         -
@@ -69,7 +71,7 @@ export function InlineStepper({ value, min, max, step, unit, decimals = 0, onCha
       </span>
       <button
         style={{ ...btnBase, opacity: value >= max ? 0.3 : 1 }}
-        onClick={(e) => { e.stopPropagation(); onChange(clamp(value + step)); }}
+        onClick={(e) => { e.stopPropagation(); bump(clamp(value + step), "up"); }}
         aria-label="increase"
       >
         +

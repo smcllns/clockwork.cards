@@ -39,3 +39,22 @@ button[aria-label="increase"]::after {
   inset: -12px;
 }
 
+@keyframes stepper-pop-up {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
+@keyframes stepper-pop-down {
+  0% { transform: scale(1); }
+  40% { transform: scale(0.94); }
+  100% { transform: scale(1); }
+}
+.stepper-pop-up {
+  display: inline-flex;
+  animation: stepper-pop-up 0.25s ease-out;
+}
+.stepper-pop-down {
+  display: inline-flex;
+  animation: stepper-pop-down 0.25s ease-out;
+}
+
