@@ -6,9 +6,9 @@ A birthday card that counts. Live-updating stats about time alive, space travel,
 
 ## What it does
 
-A 3D physics hero spells out "Happy Birthday" in throwable ball-letter clusters. Below it, six full-viewport slides present the birthday kid's life in numbers — seconds alive (ticking), miles through space, yogurt eaten vs. baby hippo weight, and a base-2 math lesson. Most stats have inline controls so the kid can tweak assumptions and watch numbers change.
+A 3D physics hero spells out "Happy Birthday" in throwable ball-letter clusters. Below it, full-viewport slides present the birthday kid's life in numbers — seconds alive (ticking), miles through space, yogurt eaten vs. baby hippo weight, steps walked, teeth brushed, and more. Most stats have inline controls so the kid can tweak assumptions and watch numbers change. A bento tile grid covers brain & body stats (sleep, heartbeats, hugs, lungs, water, fruit).
 
-Two modes beyond the default: **Shiny** (cyberpunk neon + bloom) and **Chaos** (break the hero — gravity, sparks, dying lightbulb flicker). Chaos is a one-way trip.
+Two modes beyond the default: **Cyberpunk** (neon glow + bloom) and **Chaos** (break the hero — gravity, sparks, dying lightbulb flicker). Chaos is a one-way trip.
 
 ## Run it
 
@@ -33,23 +33,27 @@ Bun, React 19, Tailwind v4, Three.js + Rapier (3D physics), Cloudflare Pages.
 
 ```
 src/
-├── index.tsx       App shell, page chrome, mode state
-├── theme.css       CSS custom properties (light + shiny)
-├── footer.tsx      Copyright
-├── hero/           3D physics birthday text
-│   ├── index.tsx   Pure scene component (name, dob, mode)
-│   ├── scene.ts    Three.js + Rapier setup, animation, modes
-│   ├── font.ts     5×7 bitmap font engine
-│   ├── colors.ts   Light + neon palettes
-│   └── shared.ts   Layout specs, shared types
-└── cards/          Stat card slides
-    ├── index.tsx   6 slides, config state, rendering
-    ├── controls.tsx Inline steppers, sliders, pills
-    └── stats.ts    Pure computation from DOB + config
-```
-
-## Tests
-
-```bash
-bun test    # 37 tests — stats computation, formatting, edge cases
+├── index.tsx              App shell — all sections in scroll order
+├── index.css              Tailwind + scroll snap + responsive overrides
+├── theme.css              CSS custom properties (light + shiny themes)
+├── constants.ts           System constants (time, space, body, food)
+├── utils.ts               Shared utilities (getAge, daysSinceAge)
+├── cards/                 Self-contained card components
+│   ├── hero-cyberpunk/    3D physics birthday text (Three.js + Rapier)
+│   ├── slide-time.tsx     Time card (dropdown selector, single value)
+│   ├── slide-time-table.tsx  Time card (table of all units)
+│   ├── slide-space.tsx    Space travel (miles/km toggle)
+│   ├── slide-yogurt.tsx   Yogurt consumption (slider + stepper)
+│   ├── slide-steps.tsx    Steps walked (slider + stepper)
+│   ├── slide-brushing.tsx Teeth brushing + blinks
+│   ├── slide-poops.tsx    Lifetime poops
+│   └── tile-*.tsx         Bento grid tiles (sleep, heartbeats, fruit, hugs, lungs, water)
+└── components/            Shared primitives
+    ├── slide.tsx          Slide, KeyMetric, Headline, Body, Narrative, N, IdTag
+    ├── tile.tsx           TileContainer, Tile (bento grid)
+    ├── section.tsx        Section wrapper (snap + background)
+    ├── controls.tsx       InlinePills, InlineDropdown, InlineStepper, InlineSlider
+    ├── nav.tsx            Fixed nav bar with cyberpunk toggle
+    ├── footer.tsx         Copyright
+    └── useNow.ts          1-second tick hook for live-updating values
 ```

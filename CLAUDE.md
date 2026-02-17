@@ -17,9 +17,8 @@ Digital birthday card for a specific kid. Live-updating stats about time alive, 
 
 ## Commands
 - `bun run dev` — dev server on :3000 with HMR
-- `bun run build` — production build to `dist/`
+- `bun run build` — `tsc && bun run build.ts`, production build to `dist/`
 - `bun run deploy` — build + deploy to Cloudflare Pages
-- `bun test` — run tests (37 tests, stats computation + formatting)
 
 ## URL Parameters
 - `?name=Oscar` — display name
@@ -30,35 +29,41 @@ Defaults live in `.env` as `DEFAULT_NAME`, `DEFAULT_DOB`, `DEFAULT_SEX`. Bun inl
 ## Project Structure
 ```
 src/
-├── index.tsx            # App shell — all sections listed here in scroll order
-├── index.css            # Tailwind + scroll snap + responsive overrides
-├── theme.css            # CSS custom properties (light + shiny themes)
-├── stats.ts             # Pure computation: DOB + config → all metrics
-├── stats.test.ts
-├── sections/            # Page sections, in scroll order
-│   ├── nav.tsx          # Fixed nav bar with cyberpunk toggle
-│   ├── hero-cyberpunk/  # 3D physics birthday text (Three.js + Rapier)
-│   │   ├── index.tsx    # HeroCyberpunk component (name, dob, shiny props, owns chaos)
-│   │   ├── scene.ts     # Three.js + Rapier setup, animation loop, modes
-│   │   ├── font.ts      # 5×7 bitmap font engine
-│   │   ├── colors.ts    # Light + neon palettes
-│   │   └── shared.ts    # Layout specs, shared types
-│   ├── time.tsx         # Time card (dropdown selector, single value)
-│   ├── time-table.tsx   # Time card (table of all units)
-│   ├── space.tsx        # Space travel card (miles/km toggle)
-│   ├── remaining.tsx    # Yogurt, life-in-numbers, brain & body, binary (not yet extracted)
-│   └── footer.tsx       # Copyright
-└── components/          # Shared primitives used by sections
-    ├── slide.tsx        # Slide, KeyMetric, Title, Headline, Body, Unit, N, IdTag, css
-    ├── controls.tsx     # InlinePills, InlineDropdown, InlineStepper, InlineSlider, Block*
-    └── useNow.ts        # 1-second tick hook for live-updating values
+├── index.tsx              # App shell — all sections listed here in scroll order
+├── index.css              # Tailwind + scroll snap + responsive overrides
+├── theme.css              # CSS custom properties (light + shiny themes)
+├── constants.ts           # System constants (time, space, body, food)
+├── utils.ts               # Shared utilities (getAge, daysSinceAge)
+├── cards/                 # Self-contained card components
+│   ├── hero-cyberpunk/    # 3D physics birthday text (Three.js + Rapier)
+│   │   ├── index.tsx      # HeroCyberpunk component (name, dob, shiny props, owns chaos)
+│   │   ├── scene.ts       # Three.js + Rapier setup, animation loop, modes
+│   │   ├── font.ts        # 5×7 bitmap font engine
+│   │   ├── colors.ts      # Light + neon palettes
+│   │   └── shared.ts      # Layout specs, shared types
+│   ├── slide-time.tsx     # Time card (dropdown selector, single value)
+│   ├── slide-time-table.tsx # Time card (table of all units)
+│   ├── slide-space.tsx    # Space travel card (miles/km toggle)
+│   ├── slide-yogurt.tsx   # Yogurt consumption (slider + stepper)
+│   ├── slide-steps.tsx    # Steps walked (slider + stepper)
+│   ├── slide-brushing.tsx # Teeth brushing + blinks
+│   ├── slide-poops.tsx    # Lifetime poops
+│   └── tile-*.tsx         # Bento grid tiles (sleep, heartbeats, fruit, hugs, lungs, water)
+└── components/            # Shared primitives used by cards
+    ├── slide.tsx          # Slide, KeyMetric, Headline, Body, Narrative, N, IdTag, css
+    ├── tile.tsx           # TileContainer, Tile (bento grid with span-based layout)
+    ├── section.tsx        # Section wrapper (snap alignment + background)
+    ├── controls.tsx       # InlinePills, InlineDropdown, InlineStepper, InlineSlider
+    ├── nav.tsx            # Fixed nav bar with cyberpunk toggle
+    ├── footer.tsx         # Copyright
+    └── useNow.ts          # 1-second tick hook for live-updating values
 ```
 
 ## Architecture Notes
-- `index.tsx` owns only `shiny` state. Each section is self-contained and owns its own state.
+- `index.tsx` owns only `shiny` state. Each card is self-contained and owns its own state.
 - HeroCyberpunk owns chaos state internally — it's specific to cyberpunk theme.
-- Extracted sections (time, space) do their own math inline — no shared compute functions. `stats.ts` still used by `remaining.tsx` until those sections are extracted.
-- Shared layout primitives: `Slide` wraps a full-viewport snap section; `Title`, `Headline`, `Body`, `Unit`, `KeyMetric` are text elements within it.
+- All cards do their own math inline — no shared compute functions. `constants.ts` has physical/biological constants, `utils.ts` has age calculation helpers.
+- Three layout patterns: KeyMetric cards (slide-time, slide-space, slide-yogurt), Narrative cards (slide-steps, slide-brushing, slide-poops), and Tile grids (tile-*).
 - No barrel files. Import directly: `from "../components/slide"`, `from "../components/controls"`.
-- `.llm/` is gitignored (plans, config, learnings stay local). Notes moved to `docs/`.
+- `.llm/` is gitignored (plans, config, learnings stay local).
 - Screenshots saved to `screenshots/` (gitignored).
