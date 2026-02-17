@@ -31,7 +31,7 @@ export default function SpaceCard({ dob, name }: { dob: string; name: string }) 
           onChange={setUnit}
         />{" "}through space
       </Unit>
-      <Headline>You're not just a kid, you're an interstellar traveler!</Headline>
+      <Headline>{name}'s not just a kid, {name}'s an interstellar traveler!</Headline>
       <Body>
         Because Earth is flying through our solar system at {Math.round(EARTH_ORBITAL_MPH * k).toLocaleString()} {unitLabel} and {name} has been going that speed for {lapsAroundSun.toFixed(3)} years!
       </Body>

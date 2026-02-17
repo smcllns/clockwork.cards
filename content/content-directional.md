@@ -63,3 +63,30 @@ Any problem you can solve in base 10, you can also solve in base 2, or any other
 ---
 
 We love you, we love your mind, happy 1001st birthday Oscar. ❤️
+
+--
+
+## 9 is 1001 in binary.
+
+"Binary" just means base 2. 
+
+Humans normally write numbers in base 10. 
+Base 10 means there are ten numbers (0-9).
+In base 10, each additional digit means another power of ten: 10 → 100 → 1000. 
+In base 10, think of "9" as meaning: 0 hundreds, 0 tens, 9 ones.
+
+Computers often use binary numbers.
+Binary is the same idea but with two numbers (0 and 1). 
+In base 2, each additional digit means another powers of two: 2 → 4 → 8 → 16.
+In base 2, "1001" means: 1 eight, 0 fours, 0 twos, and 1 one.
+
+Even weirder, 9(base10) and 1001(base2) are actually the same number!
+
+9₁₀ = (0×10²) + (0×10¹) + (9×10⁰) = 0 + 0 + 9 = 9
+1001₂ = (1×2³) + (0×2²) + (0×2¹) + (1×2⁰) = 8 + 0 + 0 + 1 = 9
+
+It's like how "nine", "neuf", "nueve", and "九" all mean the same thing in different languages. 9 and 1001 are the same number in different bases.
+
+---
+
+We love you, we love your mind, happy 1001st birthday Oscar. ❤️

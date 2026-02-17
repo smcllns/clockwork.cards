@@ -8,7 +8,7 @@ const BLINKS_PER_DAY = 15_000;
 const BRUSH_STROKES_PER_MIN = 170;
 import { daysSinceAge } from "../utils";
 
-export default function BrushingCard({ dob }: { dob: string }) {
+export default function BrushingCard({ dob, name }: { dob: string; name: string }) {
   const [minutes, setMinutes] = useState(2);
   const [startAge, setStartAge] = useState(3);
   const now = useNow();
@@ -22,17 +22,17 @@ export default function BrushingCard({ dob }: { dob: string }) {
   return (
     <Slide id="4b">
       <Narrative>
-        If you spend{" "}
+        If {name} spends{" "}
         <InlineStepper value={minutes} min={1} max={5} step={1} unit=" min"
           onChange={setMinutes} />{" "}
-        brushing your teeth every morning and night since age{" "}
+        brushing teeth every morning and night since age{" "}
         <InlineStepper value={startAge} min={1} max={5} step={1}
           onChange={setStartAge} />{" "}
-        , you've spent over <N>{brushingDays.toFixed(1)} solid days</N> brushing,
-        and done over <N>{(brushStrokes / 1e6).toFixed(1)} million brush strokes</N>!
+        , that's over <N>{brushingDays.toFixed(1)} solid days</N> of brushing,
+        and over <N>{(brushStrokes / 1e6).toFixed(1)} million brush strokes</N>!
       </Narrative>
       <Body>
-        Think that's a lot? You've blinked about {(totalBlinks / 1e6).toFixed(1)} million times so far.
+        Think that's a lot? {name} has blinked about {(totalBlinks / 1e6).toFixed(1)} million times so far.
       </Body>
     </Slide>
   );

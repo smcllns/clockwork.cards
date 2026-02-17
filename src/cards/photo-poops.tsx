@@ -9,8 +9,10 @@ import imgShiny from "../assets/photo-poops-shiny.png";
 export default function PoopsPhoto({ dob, shiny }: { dob: string; shiny: boolean }) {
   const [perDay, setPerDay] = useState(1.5);
   const now = useNow();
-  const daysAlive = Math.floor((now - new Date(dob).getTime()) / 86_400_000);
+  const dobDate = new Date(dob);
+  const daysAlive = Math.floor((now - dobDate.getTime()) / 86_400_000);
   const totalPoops = Math.floor(daysAlive * perDay);
+  const age = getAge(dobDate, now, 2);
 
   return (
     <div
@@ -51,9 +53,9 @@ export default function PoopsPhoto({ dob, shiny }: { dob: string; shiny: boolean
           poops so far
         </p>
         <p className="text-base leading-relaxed text-white/60">
-          If you poop{" "}
+          Everyone poops. At{" "}
           <InlineStepper value={perDay} min={0.5} max={4} step={0.5} decimals={1} onChange={setPerDay} />{" "}
-          times per day on average, that's a lot of flushes.
+          times a day, by age {age} that's a lot of flushes.
         </p>
       </div>
     </div>
