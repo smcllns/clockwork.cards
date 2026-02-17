@@ -3,10 +3,11 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "bun ./index.html",
-    "build": "bun run build.ts",
+    "dev": "lsof -ti :3000 | xargs kill -9 2>/dev/null; bun ./index.html",
+    "check": "tsc",
+    "build": "tsc && bun run build.ts",
     "test": "bun test",
-    "deploy": "bun run build && wrangler pages deploy dist"
+    "deploy": "tsc && bun run build.ts && wrangler pages deploy dist"
   },
   "dependencies": {
     "@dimforge/rapier3d-compat": "^0.19.3",
