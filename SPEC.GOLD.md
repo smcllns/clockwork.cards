@@ -22,7 +22,7 @@ Balls are spring-anchored (velocity steering, stiffness 20). Drag anywhere spins
 
 Top-right: "✨ Shiny" in gold. Obvious, inviting. Toggles off↔on.
 
-Next to it: "🚫 Do not touch" in red, with a muted grey toggle. Deliberately provocative — a kid *will* press it. One press triggers broken mode permanently. The toggle goes dead/grey. The shiny toggle goes to 50% opacity, disabled.
+Next to it: "🚫 Do not touch" in red, with a muted grey toggle. Only visible when shiny is toggled on. Deliberately provocative — a kid *will* press it. One press triggers broken mode permanently. The toggle goes dead/grey. The shiny toggle goes to 50% opacity, disabled.
 
 ## Six full-viewport stat slides, live-ticking
 
