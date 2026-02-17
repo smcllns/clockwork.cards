@@ -77,6 +77,44 @@ export function InlineStepper({ value, min, max, step, unit, decimals = 0, onCha
   );
 }
 
+// ── Inline dropdown: native <select> in a chip ───────────────────
+interface DropdownProps<T extends string> {
+  options: readonly { value: T; label: string }[];
+  value: T;
+  onChange: (v: T) => void;
+}
+
+export function InlineDropdown<T extends string>({ options, value, onChange }: DropdownProps<T>) {
+  return (
+    <span style={{ ...chipBase, padding: "1px 6px" }}>
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value as T)}
+        style={{
+          appearance: "none",
+          WebkitAppearance: "none",
+          background: "transparent",
+          border: "none",
+          fontFamily: "var(--font-stat)",
+          fontWeight: 700,
+          color: "var(--text-accent)",
+          fontSize: "inherit",
+          cursor: "pointer",
+          padding: "1px 16px 1px 4px",
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23888'/%3E%3C/svg%3E")`,
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "right 2px center",
+          backgroundSize: "10px 6px",
+        }}
+      >
+        {options.map((opt) => (
+          <option key={opt.value} value={opt.value}>{opt.label}</option>
+        ))}
+      </select>
+    </span>
+  );
+}
+
 // ── Inline pill toggle: [ option1 | option2 ] ─────────────────────
 interface PillsProps<T extends string> {
   options: { value: T; label: string }[];
