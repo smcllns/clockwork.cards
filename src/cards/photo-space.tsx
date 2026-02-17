@@ -25,34 +25,20 @@ export default function SpacePhoto({ dob, name, shiny }: { dob: string; name: st
       imgLight={imgLight}
       imgShiny={imgShiny}
       shiny={shiny}
-      gradient="linear-gradient(to bottom, transparent 20%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.9) 100%)"
-    >
-      <p className="text-lg font-medium mb-1 text-white/70">{name} has flown ...</p>
-      <div className="mb-1">
-        <span
-          className="font-bold leading-none text-white"
-          style={{ fontFamily: "var(--font-stat)", fontSize: "clamp(3rem, 10vw, 5rem)" }}
-          data-stat
-        >
-          {(milesInSpace * k / 1e9).toFixed(1)} billion
-        </span>
-      </div>
-      <p className="text-lg font-medium mb-5 text-white/70">
-        <InlinePills
-          options={[
-            { value: "miles" as const, label: "miles" },
-            { value: "km" as const, label: "kilometers" },
-          ]}
-          value={unit}
-          onChange={setUnit}
-        /> through space
-      </p>
-      <p className="text-lg font-semibold mb-4 text-white">
-        {name}'s not just a kid, {name}'s an interstellar traveler!
-      </p>
-      <p className="text-sm leading-relaxed text-white/60">
+      intro={`${name} has flown ...`}
+      value={`${(milesInSpace * k / 1e9).toFixed(1)} billion`}
+      unit={<><InlinePills
+        options={[
+          { value: "miles" as const, label: "miles" },
+          { value: "km" as const, label: "kilometers" },
+        ]}
+        value={unit}
+        onChange={setUnit}
+      /> through space</>}
+      headline={`${name}'s not just a kid, ${name}'s an interstellar traveler!`}
+      body={<>
         Earth flies through our solar system at {Math.round(EARTH_ORBITAL_MPH * k).toLocaleString()} {unitLabel} — and {name} has been going that speed for {lapsAroundSun.toFixed(3)} years. But light would still win: at {Math.round(LIGHT_SPEED_MPH * k).toLocaleString()} {unitLabel}, it'd cover that distance in just {lightSpeedHours.toFixed(1)} hours.
-      </p>
-    </PhotoSlide>
+      </>}
+    />
   );
 }

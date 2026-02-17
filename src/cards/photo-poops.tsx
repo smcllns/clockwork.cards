@@ -21,25 +21,13 @@ export default function PoopsPhoto({ dob, shiny }: { dob: string; shiny: boolean
       imgShiny={imgShiny}
       shiny={shiny}
       objectPosition="center 30%"
-      gradient="linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.6) 65%, rgba(0,0,0,0.9) 100%)"
-    >
-      <div className="mb-1">
-        <span
-          className="font-bold leading-none text-white"
-          style={{ fontFamily: "var(--font-stat)", fontSize: "clamp(3rem, 10vw, 5rem)" }}
-          data-stat
-        >
-          {totalPoops.toLocaleString()}
-        </span>
-      </div>
-      <p className="text-lg font-semibold mb-4 text-white">
-        poops so far
-      </p>
-      <p className="text-sm leading-relaxed text-white/60">
+      value={totalPoops.toLocaleString()}
+      headline="poops so far"
+      body={<>
         Everyone poops. At{" "}
         <InlineStepper value={perDay} min={0.5} max={4} step={0.5} decimals={1} onChange={setPerDay} />{" "}
         poops a day, by the time you're {age} years old, you'll have done around {totalPoops.toLocaleString()} poops. Maybe even a cyberpunk poop.
-      </p>
-    </PhotoSlide>
+      </>}
+    />
   );
 }

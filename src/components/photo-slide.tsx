@@ -1,18 +1,20 @@
 import { IdTag } from "./section";
 
-interface PhotoSlideProps {
+type PhotoSlideProps = {
   id: string;
   imgLight: string;
   imgShiny: string;
   shiny: boolean;
-  children: React.ReactNode;
   gradient?: string;
   objectPosition?: string;
-}
+} & (
+  | { intro?: string; value: string; unit?: React.ReactNode; headline?: React.ReactNode; body?: React.ReactNode; children?: never }
+  | { intro?: never; value?: never; unit?: never; headline?: never; body?: never; children: React.ReactNode }
+);
 
 const DEFAULT_GRADIENT = "linear-gradient(to bottom, transparent 25%, rgba(0,0,0,0.65) 65%, rgba(0,0,0,0.9) 100%)";
 
-export function PhotoSlide({ id, imgLight, imgShiny, shiny, children, gradient, objectPosition }: PhotoSlideProps) {
+export function PhotoSlide({ id, imgLight, imgShiny, shiny, gradient, objectPosition, children, ...data }: PhotoSlideProps) {
   const imgStyle = objectPosition ? { objectPosition } : undefined;
 
   return (
@@ -39,7 +41,23 @@ export function PhotoSlide({ id, imgLight, imgShiny, shiny, children, gradient, 
       <div className="absolute top-14 right-6 z-10"><IdTag id={id} /></div>
 
       <div className="relative z-10 px-6 pb-16 pt-8 max-w-xl mx-auto w-full">
-        {children}
+        {children ?? (
+          <>
+            {data.intro && <p className="text-lg font-medium mb-1 text-white/70">{data.intro}</p>}
+            <div className="mb-1">
+              <span
+                className="font-bold leading-none text-white"
+                style={{ fontFamily: "var(--font-stat)", fontSize: "clamp(3rem, 10vw, 5rem)" }}
+                data-stat
+              >
+                {data.value}
+              </span>
+            </div>
+            {data.unit && <p className="text-lg font-medium mb-5 text-white/70">{data.unit}</p>}
+            {data.headline && <p className="text-xl font-semibold mb-4 text-white">{data.headline}</p>}
+            {data.body && <p className="text-base leading-relaxed text-white/60">{data.body}</p>}
+          </>
+        )}
       </div>
     </div>
   );

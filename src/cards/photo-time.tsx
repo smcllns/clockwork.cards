@@ -32,23 +32,11 @@ export default function TimePhoto({ dob, name, shiny }: { dob: string; name: str
       imgLight={imgLight}
       imgShiny={imgShiny}
       shiny={shiny}
-      gradient="linear-gradient(to bottom, transparent 25%, rgba(0,0,0,0.6) 65%, rgba(0,0,0,0.9) 100%)"
-    >
-      <p className="text-lg font-medium mb-1 text-white/70">{name} is ...</p>
-      <div className="mb-1">
-        <span
-          className="font-bold leading-none text-white"
-          style={{ fontFamily: "var(--font-stat)", fontSize: "clamp(3rem, 10vw, 5rem)" }}
-          data-stat
-        >
-          {timeUnit === "years"
-            ? values[timeUnit].toFixed(3)
-            : Math.floor(values[timeUnit]).toLocaleString()}
-        </span>
-      </div>
-      <p className="text-lg font-medium mb-5 text-white/70">
-        <InlineDropdown options={TIME_UNITS} value={timeUnit} onChange={setTimeUnit} /> old, right now
-      </p>
-    </PhotoSlide>
+      intro={`${name} is ...`}
+      value={timeUnit === "years"
+        ? values[timeUnit].toFixed(3)
+        : Math.floor(values[timeUnit]).toLocaleString()}
+      unit={<><InlineDropdown options={TIME_UNITS} value={timeUnit} onChange={setTimeUnit} /> old, right now</>}
+    />
   );
 }
