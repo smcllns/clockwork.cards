@@ -21,17 +21,17 @@ export function FlipCard({ front, back, frontColor = "var(--text-secondary)", ba
 
   return (
     <div className="cursor-pointer" style={{ perspective: 800 }} onClick={toggle}>
-      <div className="relative" style={{ transformStyle: "preserve-3d", transition: "transform 0.5s ease", transform: flipped ? "rotateY(180deg)" : "rotateY(0)" }}>
+      <div className="grid" style={{ transformStyle: "preserve-3d", transition: "transform 0.5s ease", transform: flipped ? "rotateY(180deg)" : "rotateY(0)" }}>
         <div
           className="rounded-xl border p-5 space-y-2"
-          style={{ ...base, borderColor: frontColor, background: `color-mix(in srgb, ${frontColor} 6%, transparent)` }}
+          style={{ ...base, gridArea: "1/1", borderColor: frontColor, background: `color-mix(in srgb, ${frontColor} 6%, transparent)` }}
         >
           {front}
           <p className="text-xs uppercase tracking-widest pt-1" style={{ color: frontColor, opacity: 0.7 }}>{frontHint}</p>
         </div>
         <div
-          className="rounded-xl border p-5 space-y-2 absolute inset-0"
-          style={{ ...base, transform: "rotateY(180deg)", borderColor: backColor, background: `color-mix(in srgb, ${backColor} 6%, transparent)` }}
+          className="rounded-xl border p-5 space-y-2"
+          style={{ ...base, gridArea: "1/1", transform: "rotateY(180deg)", borderColor: backColor, background: `color-mix(in srgb, ${backColor} 6%, transparent)` }}
         >
           {back}
           <p className="text-xs uppercase tracking-widest pt-1" style={{ color: backColor, opacity: 0.7 }}>{backHint}</p>
