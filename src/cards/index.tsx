@@ -1,87 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { computeStats, DEFAULT_CONFIG, type StatsConfig, type Stats, fmt, fmtBig, fmtDecimal, fmtYears, hippoHeadline, KM_PER_MILE, EARTH_ORBITAL_MPH, LIGHT_SPEED_MPH } from "./stats";
 import { InlineStepper, InlineSlider, InlinePills, BlockControl, BlockSlider, BlockStepper } from "./controls";
-
-// ── Shared styles (CSS custom properties used throughout) ──────────
-const css = {
-  primary: { color: "var(--text-primary)" } as const,
-  secondary: { color: "var(--text-secondary)" } as const,
-  sectionHead: { color: "var(--text-secondary)", borderColor: "var(--border-color)" } as const,
-  card: { background: "var(--bg-card)", borderColor: "var(--border-color)" } as const,
-  formula: { fontFamily: "var(--font-stat)", color: "var(--text-accent)", fontSize: "1.1rem" } as const,
-};
-
-// ── ID tag (small muted label for feedback reference) ──────────────
-function IdTag({ id }: { id: string }) {
-  return (
-    <span
-      className="text-xs font-mono select-all"
-      style={{ color: "var(--text-secondary)", opacity: 0.4 }}
-    >
-      #{id}
-    </span>
-  );
-}
-
-// ── Reusable V8-style full-viewport slide ──────────────────────────
-function Slide({ children, alt, id }: { children: React.ReactNode; alt?: boolean; id: string }) {
-  return (
-    <div
-      className="flex items-center justify-center px-6 relative snap-section"
-      style={{ minHeight: "100dvh", background: alt ? "var(--bg-secondary)" : "var(--bg-primary)" }}
-    >
-      <div className="absolute top-4 right-6"><IdTag id={id} /></div>
-      <div className="max-w-xl w-full py-16">{children}</div>
-    </div>
-  );
-}
-
-function BigNum({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="mb-2">
-      <span
-        className="font-bold leading-none"
-        style={{ fontFamily: "var(--font-stat)", color: "var(--text-primary)", fontSize: "clamp(3rem, 10vw, 5rem)" }}
-        data-stat
-      >
-        {children}
-      </span>
-    </div>
-  );
-}
-
-function SlideUnit({ children }: { children: React.ReactNode }) {
-  return <p className="text-lg font-medium mb-6" style={css.secondary}>{children}</p>;
-}
-
-function SlideHeadline({ children }: { children: React.ReactNode }) {
-  return <p className="text-xl font-semibold mb-4" style={css.primary}>{children}</p>;
-}
-
-function SlideBody({ children }: { children: React.ReactNode }) {
-  return <p className="text-base leading-relaxed mb-8" style={css.secondary}>{children}</p>;
-}
-
-// ── V6-style inline highlight ──────────────────────────────────────
-function N({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="font-bold text-lg" style={{ fontFamily: "var(--font-stat)", color: "var(--text-primary)" }} data-stat>
-      {children}
-    </span>
-  );
-}
+import { Slide, BigNum, SlideUnit, SlideHeadline, SlideBody, N, IdTag, css } from "./layout";
+import TimeCard from "./time";
 
 // ── Types & constants ──────────────────────────────────────────────
-const TIME_UNITS = [
-  { value: "years", label: "yrs" },
-  { value: "months", label: "mo" },
-  { value: "weeks", label: "wks" },
-  { value: "days", label: "days" },
-  { value: "hours", label: "hrs" },
-  { value: "minutes", label: "min" },
-  { value: "seconds", label: "sec" },
-] as const;
-type TimeUnit = typeof TIME_UNITS[number]["value"];
 type SpaceUnit = "miles" | "km";
 
 // ── Flippable binary/base-10 card ─────────────────────────────────
@@ -144,7 +67,6 @@ function FlipCard({ ageYears }: { ageYears: number }) {
 export default function Cards({ name, dob }: { name: string; dob: string }) {
   const [config, setConfig] = useState<StatsConfig>({ ...DEFAULT_CONFIG });
   const [now, setNow] = useState(Date.now());
-  const [timeUnit, setTimeUnit] = useState<TimeUnit>("seconds");
   const [spaceUnit, setSpaceUnit] = useState<SpaceUnit>("miles");
 
   useEffect(() => {
@@ -156,10 +78,6 @@ export default function Cards({ name, dob }: { name: string; dob: string }) {
   const set = <K extends keyof StatsConfig>(key: K, val: StatsConfig[K]) =>
     setConfig((c) => ({ ...c, [key]: val }));
 
-  const timeValues: Record<TimeUnit, number> = {
-    years: s.yearsAlive, months: s.monthsAlive, weeks: s.weeksAlive,
-    days: s.daysAlive, hours: s.hoursAlive, minutes: s.minutesAlive, seconds: s.secondsAlive,
-  };
   const isMiles = spaceUnit === "miles";
   const toUnit = (mph: number) => isMiles ? mph : mph * KM_PER_MILE;
   const speedLabel = (mph: number) => `${fmt(Math.round(toUnit(mph)))} ${isMiles ? "mph" : "kph"}`;
@@ -170,27 +88,10 @@ export default function Cards({ name, dob }: { name: string; dob: string }) {
   return (
     <section style={{ background: "var(--bg-primary)" }}>
 
-      {/* ──────────────────────────────────────────────────────────
-          1. TIME (V8 style)
-          ────────────────────────────────────────────────────────── */}
-      <Slide id="1">
-        <span className="text-4xl block mb-4">⏳</span>
-        <BigNum>{timeUnit === "years" ? fmtYears(timeValues[timeUnit]) : fmt(timeValues[timeUnit])}</BigNum>
-        <SlideUnit>{timeUnit} of being awesome</SlideUnit>
-        <SlideHeadline>And counting.</SlideHeadline>
-        <SlideBody>
-          That's {fmtYears(s.yearsAlive)} years, {fmt(s.monthsAlive)} months, {fmt(s.weeksAlive)} weeks, {fmt(s.daysAlive)} days,{" "}
-          {fmt(s.hoursAlive)} hours, {fmt(s.minutesAlive)} minutes,
-          or {fmt(s.secondsAlive)} seconds — every single one of them yours.
-        </SlideBody>
-        <BlockControl label="Show as">
-          <InlinePills options={TIME_UNITS} value={timeUnit} onChange={setTimeUnit} />
-        </BlockControl>
-      </Slide>
+      {/* 1. TIME */}
+      <TimeCard dob={dob} name={name} />
 
-      {/* ──────────────────────────────────────────────────────────
-          2. SPACE (V8 style)
-          ────────────────────────────────────────────────────────── */}
+      {/* 2. SPACE */}
       <Slide alt id="2">
         <span className="text-4xl block mb-4">🚀</span>
         <BigNum>{fmtBig(spaceVal)}</BigNum>
@@ -212,9 +113,7 @@ export default function Cards({ name, dob }: { name: string; dob: string }) {
         </SlideBody>
       </Slide>
 
-      {/* ──────────────────────────────────────────────────────────
-          3. YOGURT (V8 style)
-          ────────────────────────────────────────────────────────── */}
+      {/* 3. YOGURT */}
       <Slide id="3">
         <span className="text-4xl block mb-4">🥄</span>
         <BigNum>{fmt(s.yogurtKg)} kg</BigNum>
@@ -236,9 +135,7 @@ export default function Cards({ name, dob }: { name: string; dob: string }) {
         </div>
       </Slide>
 
-      {/* ──────────────────────────────────────────────────────────
-          4. YOUR LIFE IN NUMBERS (V6 style — narrative + controls)
-          ────────────────────────────────────────────────────────── */}
+      {/* 4. YOUR LIFE IN NUMBERS */}
       <div className="flex items-center justify-center px-6 relative snap-section" style={{ minHeight: "100dvh" }}>
         <div className="absolute top-4 right-6"><IdTag id="4" /></div>
         <div className="max-w-2xl w-full py-16">
@@ -292,9 +189,7 @@ export default function Cards({ name, dob }: { name: string; dob: string }) {
         </div>
       </div>
 
-      {/* ──────────────────────────────────────────────────────────
-          5. YOUR BRAIN & BODY (V7 style — rich bento)
-          ────────────────────────────────────────────────────────── */}
+      {/* 5. YOUR BRAIN & BODY */}
       <div className="flex items-center justify-center px-6 relative snap-section" style={{ minHeight: "100dvh", background: "var(--bg-secondary)" }}>
         <div className="absolute top-4 right-6"><IdTag id="5" /></div>
         <div className="w-full py-16">
@@ -309,8 +204,6 @@ export default function Cards({ name, dob }: { name: string; dob: string }) {
           style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: "20px", maxWidth: "900px", margin: "0 auto" }}
         >
           {brainTiles(s).map((tile, i) => {
-            // Brick pattern: rows alternate wide/narrow sides
-            // Row 0: [3][2], Row 1: [2][3], Row 2: [3][2]
             const row = Math.floor(i / 2);
             const isFirst = i % 2 === 0;
             const span = (row % 2 === 0) === isFirst ? 3 : 2;
@@ -349,9 +242,7 @@ export default function Cards({ name, dob }: { name: string; dob: string }) {
         </div>
       </div>
 
-      {/* ──────────────────────────────────────────────────────────
-          6. BINARY / BASE 2 — step-by-step lesson + closing
-          ────────────────────────────────────────────────────────── */}
+      {/* 6. BINARY / BASE 2 */}
       <div className="flex items-center justify-center px-6 relative snap-section" style={{ minHeight: "100dvh", background: "var(--bg-primary)" }}>
         <div className="absolute top-4 right-6"><IdTag id="6" /></div>
         <div className="max-w-2xl w-full py-16">
@@ -440,5 +331,3 @@ function brainTiles(s: Stats) {
     },
   ];
 }
-
-
