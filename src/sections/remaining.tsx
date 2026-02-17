@@ -1,64 +1,7 @@
-import { useState, useCallback } from "react";
-import { computeStats, DEFAULT_CONFIG, type StatsConfig, type Stats, fmt, fmtBig, fmtDecimal, fmtYears, hippoHeadline } from "../stats";
-import { Slide, KeyMetric, Unit, Headline, Body, N, IdTag, css } from "../components/slide";
-import { InlineStepper, InlineSlider, BlockControl, BlockSlider, BlockStepper } from "../components/controls";
+import { useState } from "react";
+import { computeStats, DEFAULT_CONFIG, type StatsConfig, type Stats, fmt, fmtBig, fmtDecimal, fmtYears } from "../stats";
+import { IdTag, css } from "../components/slide";
 import { useNow } from "../components/useNow";
-
-// ── Flippable binary/base-10 card ─────────────────────────────────
-function FlipCard({ ageYears }: { ageYears: number }) {
-  const [flipped, setFlipped] = useState(false);
-  const toggle = useCallback(() => setFlipped(f => !f), []);
-
-  const face = (visible: boolean): React.CSSProperties => ({
-    ...css.card,
-    transition: "opacity 0.2s ease, transform 0.2s ease",
-    opacity: visible ? 1 : 0,
-    transform: visible ? "scale(1)" : "scale(0.97)",
-    pointerEvents: visible ? "auto" : "none",
-  });
-
-  return (
-    <div className="mb-10 cursor-pointer relative" onClick={toggle}>
-      <div
-        className="rounded-xl border p-5 space-y-3"
-        style={face(!flipped)}
-        data-card
-      >
-        <p className="text-xs uppercase tracking-widest font-semibold" style={css.secondary}>
-          Base 2 — tap to flip
-        </p>
-        <p style={css.primary}>
-          In base 2, there are only two numbers: <strong>0</strong> and <strong>1</strong>.
-        </p>
-        <p style={css.secondary}>
-          1001 means: 1 eight, 0 fours, 0 twos, and 1 one.
-        </p>
-        <p className="pt-2" style={css.formula} data-stat>
-          1001₂ = (1×2³) + (0×2²) + (0×2¹) + (1×2⁰) = 8 + 0 + 0 + 1 = {ageYears}
-        </p>
-      </div>
-
-      <div
-        className="rounded-xl border p-5 space-y-3 absolute inset-0"
-        style={face(flipped)}
-        data-card
-      >
-        <p className="text-xs uppercase tracking-widest font-semibold" style={css.secondary}>
-          Base 10 — tap to flip
-        </p>
-        <p style={css.primary}>
-          In base 10, there are 10 numbers: 0 – 9.
-        </p>
-        <p style={css.secondary}>
-          {ageYears} is … {ageYears}. But to write it the same way: 0 hundreds, 0 tens, {ageYears} ones.
-        </p>
-        <p className="pt-2" style={css.formula} data-stat>
-          {ageYears}₁₀ = (0×10²) + (0×10¹) + ({ageYears}×10⁰) = 0 + 0 + {ageYears} = {ageYears}
-        </p>
-      </div>
-    </div>
-  );
-}
 
 // ════════════════════════════════════════════════════════════════════
 export default function RemainingCards({ name, dob }: { name: string; dob: string }) {
@@ -66,88 +9,9 @@ export default function RemainingCards({ name, dob }: { name: string; dob: strin
   const now = useNow();
 
   const s = computeStats(dob, config, now);
-  const set = <K extends keyof StatsConfig>(key: K, val: StatsConfig[K]) =>
-    setConfig((c) => ({ ...c, [key]: val }));
 
   return (
     <>
-
-      {/* 3. YOGURT */}
-      <Slide id="3">
-        <span className="text-4xl block mb-4">🥄</span>
-        <KeyMetric>{fmt(s.yogurtKg)} kg</KeyMetric>
-        <Unit>of yogurt</Unit>
-        <Headline>{hippoHeadline(s.yogurtKg)}</Headline>
-        <Body>
-          If you've eaten yogurt every day since you were little, that's {fmt(s.yogurtKg)} kg of
-          creamy, tangy fuel. Baby hippos weigh about 40 kg at birth.
-        </Body>
-        <div className="space-y-3">
-          <BlockControl label="Grams per day">
-            <BlockSlider value={config.yogurtGramsPerDay} min={10} max={150} step={10} unit="g"
-              onChange={(v) => set("yogurtGramsPerDay", v)} />
-          </BlockControl>
-          <BlockControl label="Since age">
-            <BlockStepper value={config.yogurtStartAge} min={1} max={7} step={1}
-              onChange={(v) => set("yogurtStartAge", v)} />
-          </BlockControl>
-        </div>
-      </Slide>
-
-      {/* 4. YOUR LIFE IN NUMBERS */}
-      <div className="flex items-center justify-center px-6 relative snap-section" style={{ minHeight: "100dvh" }}>
-        <div className="absolute top-4 right-6"><IdTag id="4" /></div>
-        <div className="max-w-2xl w-full py-16">
-        <h3
-          className="text-sm font-semibold uppercase tracking-[0.15em] mb-10 pb-3 border-b"
-          style={css.sectionHead}
-        >
-          Your life in numbers
-        </h3>
-        <article className="space-y-6 text-base leading-relaxed" style={css.primary}>
-          <p>
-            <IdTag id="4a" />{" "}If you've walked{" "}
-            <InlineSlider value={config.stepsPerDay} min={2000} max={15000} step={1000}
-              onChange={(v) => set("stepsPerDay", v)} />{" "}
-            steps a day since you were{" "}
-            <InlineStepper value={config.stepsStartAge} min={1} max={5} step={1}
-              onChange={(v) => set("stepsStartAge", v)} />{" "}
-            , you've taken about <N>{fmtBig(s.totalSteps)} steps</N> in your life so far.
-          </p>
-
-          <p>
-            <IdTag id="4b" />{" "}If you spend{" "}
-            <InlineStepper value={config.brushMinutes} min={1} max={5} step={1} unit=" min"
-              onChange={(v) => set("brushMinutes", v)} />{" "}
-            brushing your teeth every morning and night since age{" "}
-            <InlineStepper value={config.brushStartAge} min={1} max={5} step={1}
-              onChange={(v) => set("brushStartAge", v)} />{" "}
-            , you've spent over <N>{fmtDecimal(s.brushingDays)} solid days</N> brushing,
-            and done over <N>{fmtBig(s.brushStrokes)} brush strokes</N>!
-          </p>
-
-          <p>
-            <IdTag id="4c" />{" "}Think that's a lot? You've blinked about <N>{fmtBig(s.totalBlinks)} times</N> so far.
-          </p>
-
-          <p>
-            <IdTag id="4d" />{" "}Your hair grows about{" "}
-            <InlineStepper value={config.hairGrowthCmPerMonth} min={0.5} max={2.0} step={0.1}
-              unit=" cm" decimals={1} onChange={(v) => set("hairGrowthCmPerMonth", v)} />{" "}
-            per month. If you'd never had a haircut, your hair would now be about{" "}
-            <N>{fmtDecimal(s.hairLengthCm / 100)} meters</N> long!
-          </p>
-
-          <p>
-            <IdTag id="4e" />{" "}If you poop{" "}
-            <InlineStepper value={config.poopsPerDay} min={0.5} max={4} step={0.5} decimals={1}
-              onChange={(v) => set("poopsPerDay", v)} />{" "}
-            times per day on average, you've pooped around <N>{fmt(s.totalPoops)} times</N> so far.
-          </p>
-        </article>
-        </div>
-      </div>
-
       {/* 5. YOUR BRAIN & BODY */}
       <div className="flex items-center justify-center px-6 relative snap-section" style={{ minHeight: "100dvh", background: "var(--bg-secondary)" }}>
         <div className="absolute top-4 right-6"><IdTag id="5" /></div>
@@ -200,51 +64,6 @@ export default function RemainingCards({ name, dob }: { name: string; dob: strin
         </div>
         </div>
       </div>
-
-      {/* 6. BINARY / BASE 2 */}
-      <div className="flex items-center justify-center px-6 relative snap-section" style={{ minHeight: "100dvh", background: "var(--bg-primary)" }}>
-        <div className="absolute top-4 right-6"><IdTag id="6" /></div>
-        <div className="max-w-2xl w-full py-16">
-        <h3
-          className="text-sm font-semibold uppercase tracking-[0.15em] mb-10 pb-3 border-b"
-          style={css.sectionHead}
-        >
-          One more thing (hard math! See if you can work it out)
-        </h3>
-
-        <p className="text-xl font-semibold mb-8" style={css.primary}>
-          In binary, {s.ageYears} is{" "}
-          <span style={{ fontFamily: "var(--font-stat)", color: "var(--text-accent)" }} data-stat>1001</span>.
-        </p>
-
-        <p className="text-base leading-relaxed mb-10" style={css.secondary}>
-          "Binary" is what computers use — it just means base 2. Humans write numbers in base 10,
-          where digits grow in powers of ten: 10 → 100 → 1000. Binary is the same idea but
-          with powers of 2: 2 → 4 → 8 → 16.
-        </p>
-
-        <FlipCard ageYears={s.ageYears} />
-
-        <p className="text-base leading-relaxed mb-12" style={css.secondary}>
-          Any problem you can solve in base 10, you can also solve in base 2 — or base 3, or any base.
-          You're just writing the numbers differently. It's like how "nine", "neuf", "nueve", and "九"
-          all mean the same thing in different languages. {s.ageYears} and 1001 are the same number in different bases.
-        </p>
-
-        {/* Closing */}
-        <div className="pt-8 border-t text-center" style={{ borderColor: "var(--border-color)" }}>
-          <p className="text-4xl mb-6">❤️</p>
-          <p
-            className="text-2xl sm:text-3xl font-semibold leading-snug"
-            style={css.primary}
-          >
-            We love you, we love your mind,<br />
-            happy 1001st birthday {name}.
-          </p>
-        </div>
-        </div>
-      </div>
-
     </>
   );
 }
