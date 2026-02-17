@@ -1,10 +1,3 @@
-// Time
-export const MS_PER_SEC = 1000;
-export const MS_PER_MIN = MS_PER_SEC * 60;
-export const MS_PER_HOUR = MS_PER_MIN * 60;
-export const MS_PER_DAY = MS_PER_HOUR * 24;
-export const DAYS_PER_YEAR = 365.25;
-
 // Space
 export const KM_PER_MILE = 1.60934;
 export const EARTH_ORBITAL_MPH = 67_000;

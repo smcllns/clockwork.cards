@@ -2,12 +2,12 @@ import { useState } from "react";
 import { Slide, Narrative, N } from "../components/slide";
 import { InlineStepper } from "../components/controls";
 import { useNow } from "../components/useNow";
-import { MS_PER_DAY } from "../constants";
+
 
 export default function PoopsCard({ dob }: { dob: string }) {
   const [perDay, setPerDay] = useState(1.5);
   const now = useNow();
-  const daysAlive = Math.floor((now - new Date(dob).getTime()) / MS_PER_DAY);
+  const daysAlive = Math.floor((now - new Date(dob).getTime()) / 86_400_000);
 
   return (
     <Slide id="4e">

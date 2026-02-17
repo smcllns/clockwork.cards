@@ -1,10 +1,8 @@
-import { MS_PER_DAY, DAYS_PER_YEAR } from "./constants";
-
 // Days elapsed since the child turned a given age
 export function daysSinceAge(dob: Date, age: number, now: number): number {
   const start = new Date(dob);
   start.setFullYear(start.getFullYear() + age);
-  return Math.max(0, (now - start.getTime()) / MS_PER_DAY);
+  return Math.max(0, (now - start.getTime()) / 86_400_000);
 }
 
 // Precise fractional years alive (e.g. 8.992), accounting for calendar year lengths

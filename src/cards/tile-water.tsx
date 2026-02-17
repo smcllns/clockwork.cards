@@ -1,16 +1,16 @@
 import { Tile } from "../components/tiles";
 import { useNow } from "../components/useNow";
-import { MS_PER_DAY, DAYS_PER_YEAR, OLYMPIC_POOL_LITERS, GLASS_ML } from "../constants";
+import { OLYMPIC_POOL_LITERS, GLASS_ML } from "../constants";
 
 const GLASSES_PER_DAY = 6;
 const LITERS_PER_DAY = (GLASSES_PER_DAY * GLASS_ML) / 1000;
 
 export default function WaterTile({ dob }: { dob: string }) {
   const now = useNow();
-  const daysAlive = Math.floor((now - new Date(dob).getTime()) / MS_PER_DAY);
+  const daysAlive = Math.floor((now - new Date(dob).getTime()) / 86_400_000);
   const waterLiters = daysAlive * LITERS_PER_DAY;
   const waterPoolPercent = (waterLiters / OLYMPIC_POOL_LITERS) * 100;
-  const poolYearsRemaining = (OLYMPIC_POOL_LITERS - waterLiters) / LITERS_PER_DAY / DAYS_PER_YEAR;
+  const poolYearsRemaining = (OLYMPIC_POOL_LITERS - waterLiters) / LITERS_PER_DAY / 365.25;
 
   return (
     <Tile

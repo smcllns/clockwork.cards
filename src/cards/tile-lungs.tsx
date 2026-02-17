@@ -1,10 +1,10 @@
 import { Tile } from "../components/tiles";
 import { useNow } from "../components/useNow";
-import { MS_PER_DAY, HARD_PLAY_LITERS_PER_MIN } from "../constants";
+import { HARD_PLAY_LITERS_PER_MIN } from "../constants";
 
 export default function LungsTile({ dob }: { dob: string }) {
   const now = useNow();
-  const daysAlive = Math.floor((now - new Date(dob).getTime()) / MS_PER_DAY);
+  const daysAlive = Math.floor((now - new Date(dob).getTime()) / 86_400_000);
   const lungExtraLiters = daysAlive * 1 * 60 * HARD_PLAY_LITERS_PER_MIN;
 
   return (
