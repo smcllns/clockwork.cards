@@ -40,22 +40,22 @@ export function PhotoSlide({ id, imgLight, imgShiny, shiny, gradient, objectPosi
       />
       <div className="absolute top-14 right-6 z-10"><IdTag id={id} /></div>
 
-      <div className="relative z-10 px-6 pb-16 pt-8 max-w-xl mx-auto w-full">
+      <div className="relative z-10 px-6 pb-16 pt-8 max-w-2xl mx-auto w-full">
         {children ?? (
           <>
-            {data.intro && <p className="text-lg font-medium mb-1 text-white/70">{data.intro}</p>}
-            <div className="mb-1">
+            {data.intro && <p className="text-xl font-medium mb-2 text-white/70">{data.intro}</p>}
+            <div className="mb-2">
               <span
                 className="font-bold leading-none text-white"
-                style={{ fontFamily: "var(--font-stat)", fontSize: "clamp(3rem, 10vw, 5rem)" }}
+                style={{ fontFamily: "var(--font-stat)", fontSize: "clamp(4rem, 12vw, 6rem)" }}
                 data-stat
               >
                 {data.value}
               </span>
             </div>
-            {data.unit && <p className="text-lg font-medium mb-5 text-white/70">{data.unit}</p>}
-            {data.headline && <p className="text-xl font-semibold mb-4 text-white">{data.headline}</p>}
-            {data.body && <p className="text-base leading-relaxed text-white/60">{data.body}</p>}
+            {data.unit && <p className="text-2xl font-medium mb-8 text-white/70">{data.unit}</p>}
+            {data.headline && <p className="text-2xl font-semibold mb-6 text-white">{data.headline}</p>}
+            {data.body && <p className="text-xl leading-loose text-white/60">{data.body}</p>}
           </>
         )}
       </div>
