@@ -79,12 +79,15 @@ export function InlineStepper({ value, min, max, step, unit, decimals = 0, onCha
 
 // ── Inline dropdown: native <select> in a chip ───────────────────
 interface DropdownProps<T extends string> {
-  options: readonly { value: T; label: string }[];
+  options: readonly (T | { value: T; label: string })[];
   value: T;
   onChange: (v: T) => void;
 }
 
 export function InlineDropdown<T extends string>({ options, value, onChange }: DropdownProps<T>) {
+  const normalized = options.map((opt) =>
+    typeof opt === "string" ? { value: opt, label: opt } : opt
+  );
   return (
     <span style={{ ...chipBase, padding: "1px 6px" }}>
       <select
@@ -107,7 +110,7 @@ export function InlineDropdown<T extends string>({ options, value, onChange }: D
           backgroundSize: "10px 6px",
         }}
       >
-        {options.map((opt) => (
+        {normalized.map((opt) => (
           <option key={opt.value} value={opt.value}>{opt.label}</option>
         ))}
       </select>

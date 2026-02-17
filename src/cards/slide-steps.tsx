@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Slide, Narrative, N, KeyMetric, Headline, Unit } from "../components/slide";
 import { InlineStepper, InlineSlider } from "../components/controls";
 import { useNow } from "../components/useNow";
-import { getAge, daysSinceAge, fmtBig } from "../utils";
+import { getAge, daysSinceAge } from "../utils";
 
 export default function StepsCard({ dob, name }: { dob: string; name: string }) {
   const [stepsPerDay, setStepsPerDay] = useState(8_000);
@@ -13,7 +13,7 @@ export default function StepsCard({ dob, name }: { dob: string; name: string }) 
   return (
     <Slide id="4a">
       <Headline>{name} has walked ...</Headline>
-      <KeyMetric>{fmtBig(totalSteps)} steps</KeyMetric>
+      <KeyMetric>{(totalSteps / 1e6).toFixed(1)} million steps</KeyMetric>
       <Unit>so far in his {getAge(new Date(dob), now, 2)} years</Unit>
 
       <Narrative className="pt-8">

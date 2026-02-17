@@ -3,18 +3,10 @@ import { Slide, KeyMetric, Title, Unit } from "../components/slide";
 import { InlineDropdown } from "../components/controls";
 import { useNow } from "../components/useNow";
 import { MS_PER_SEC, MS_PER_MIN, MS_PER_HOUR, MS_PER_DAY, DAYS_PER_YEAR } from "../constants";
-import { getAge, fmt, fmtYears } from "../utils";
+import { getAge } from "../utils";
 
-const TIME_UNITS = [
-  { value: "years", label: "years" },
-  { value: "months", label: "months" },
-  { value: "weeks", label: "weeks" },
-  { value: "days", label: "days" },
-  { value: "hours", label: "hours" },
-  { value: "minutes", label: "minutes" },
-  { value: "seconds", label: "seconds" },
-] as const;
-type TimeUnit = typeof TIME_UNITS[number]["value"];
+const TIME_UNITS = ["years", "months", "weeks", "days", "hours", "minutes", "seconds"] as const;
+type TimeUnit = typeof TIME_UNITS[number];
 
 export default function TimeCard({ dob, name }: { dob: string; name: string }) {
   const [timeUnit, setTimeUnit] = useState<TimeUnit>("seconds");
@@ -36,7 +28,11 @@ export default function TimeCard({ dob, name }: { dob: string; name: string }) {
   return (
     <Slide id="1">
       <Title>{name} is ...</Title>
-      <KeyMetric>{timeUnit === "years" ? fmtYears(values[timeUnit]) : fmt(values[timeUnit])}</KeyMetric>
+      <KeyMetric>
+        {timeUnit === "years"
+          ? values[timeUnit].toFixed(3)
+          : Math.floor(values[timeUnit]).toLocaleString()}
+      </KeyMetric>
       <Unit><InlineDropdown options={TIME_UNITS} value={timeUnit} onChange={setTimeUnit} /> old, right now</Unit>
     </Slide>
   );
