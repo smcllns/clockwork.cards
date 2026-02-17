@@ -59,13 +59,13 @@ export default function ClosingCard({ dob, name }: { dob: string; name: string }
           And {age} in base₁₀ and {binary} in base₂ are actually the same!
         </p>
 
-        <div className="space-y-1 mb-6">
-          <p className="text-sm" style={{ color: BASE10, fontFamily: "var(--font-stat)", fontVariantNumeric: "tabular-nums" }}>
-            {expandBase(age, 10, 3)}
-          </p>
-          <p className="text-sm" style={{ color: BASE2, fontFamily: "var(--font-stat)", fontVariantNumeric: "tabular-nums" }}>
-            {expandBase(age, 2)}
-          </p>
+        <div className="space-y-3 mb-6">
+          <div className="text-sm" style={{ color: BASE10, fontFamily: "var(--font-stat)", fontVariantNumeric: "tabular-nums" }}>
+            {expandBase(age, 10, 3).map((line, i) => <p key={i}>{line}</p>)}
+          </div>
+          <div className="text-sm" style={{ color: BASE2, fontFamily: "var(--font-stat)", fontVariantNumeric: "tabular-nums" }}>
+            {expandBase(age, 2).map((line, i) => <p key={i}>{line}</p>)}
+          </div>
         </div>
 
         <Body>

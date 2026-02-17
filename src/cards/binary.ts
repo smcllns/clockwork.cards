@@ -7,7 +7,7 @@ function sup(n: number): string {
     .join("");
 }
 
-export function expandBase(n: number, base: number, minDigits = 1): string {
+export function expandBase(n: number, base: number, minDigits = 1): string[] {
   const repr = base === 2 ? n.toString(2) : String(n);
   const digits = repr.split("").map(Number);
   while (digits.length < minDigits) digits.unshift(0);
@@ -20,7 +20,10 @@ export function expandBase(n: number, base: number, minDigits = 1): string {
     (d, i) => d * Math.pow(base, digits.length - 1 - i)
   );
 
-  return `${repr}${sub} = ${terms.join(" + ")} = ${values.join(" + ")} = ${n}`;
+  return [
+    `${repr}${sub} = ${terms.join(" + ")}`,
+    `= ${values.join(" + ")} = ${n}`,
+  ];
 }
 
 const BASE_10_PLACES = [
