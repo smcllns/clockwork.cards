@@ -1,0 +1,44 @@
+/* Global styles and layout */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-snap-type: y mandatory;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-display);
+  background-color: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tile grid: 5-column bento on sm: breakpoint */
+.tile-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .tile-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  .tile-grid > * {
+    grid-column: span var(--span, 1);
+  }
+}
+
+/* Scroll snap behavior */
+section {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
