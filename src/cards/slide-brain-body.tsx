@@ -1,7 +1,7 @@
 import { IdTag, css } from "../components/slide";
 import { useNow } from "../components/useNow";
 import { MS_PER_DAY, DAYS_PER_YEAR, AVG_CHILD_BPM, HARD_PLAY_LITERS_PER_MIN, OLYMPIC_POOL_LITERS, GLASS_ML } from "../constants";
-import { fmt, fmtBig, fmtDecimal, fmtYears } from "../utils";
+import { fmt, fmtBig, fmtYears } from "../utils";
 
 const SLEEP_HOURS_PER_NIGHT = 10;
 const FRUIT_SERVINGS_PER_DAY = 3;
@@ -9,7 +9,7 @@ const HUGS_PER_DAY = 2;
 const PLAY_HOURS_PER_DAY = 1;
 const WATER_GLASSES_PER_DAY = 6;
 
-export default function BrainBodyCard({ dob }: { dob: string; name: string }) {
+export default function BrainBodyCard({ dob }: { dob: string }) {
   const now = useNow();
   const dobDate = new Date(dob);
   const msAlive = now - dobDate.getTime();
@@ -63,7 +63,7 @@ export default function BrainBodyCard({ dob }: { dob: string; name: string }) {
     {
       id: "5f", emoji: "💧",
       value: `${fmt(waterLiters)} L`, unit: "of water",
-      headline: `${fmtDecimal(waterPoolPercent)}% of an Olympic pool`,
+      headline: `${waterPoolPercent.toFixed(1)}% of an Olympic pool`,
       body: `An Olympic swimming pool holds 2.5 million liters. At this rate, it would take you about ${fmt(poolYearsRemaining)} more years to drink the rest.`,
     },
   ];

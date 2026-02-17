@@ -5,7 +5,7 @@ import { useNow } from "../components/useNow";
 import { MS_PER_DAY, BLINKS_PER_DAY, BRUSH_STROKES_PER_MIN } from "../constants";
 import { daysSinceAge, fmtBig } from "../utils";
 
-export default function BrushingCard({ dob }: { dob: string; name: string }) {
+export default function BrushingCard({ dob }: { dob: string }) {
   const [minutes, setMinutes] = useState(2);
   const [startAge, setStartAge] = useState(3);
   const now = useNow();

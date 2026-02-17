@@ -4,7 +4,7 @@ import { InlineStepper } from "../components/controls";
 import { useNow } from "../components/useNow";
 import { MS_PER_DAY, DAYS_PER_YEAR } from "../constants";
 
-export default function HairCard({ dob }: { dob: string; name: string }) {
+export default function HairCard({ dob }: { dob: string }) {
   const [cmPerMonth, setCmPerMonth] = useState(1.2);
   const now = useNow();
   const monthsAlive = (now - new Date(dob).getTime()) / MS_PER_DAY / (DAYS_PER_YEAR / 12);

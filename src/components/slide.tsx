@@ -72,6 +72,46 @@ export function Narrative({ children, sm, className }: Props & { sm?: boolean })
   );
 }
 
+export function TileContainer({ children, id, title, className }: Props & { id: string; title: string }) {
+  return (
+    <div
+      className={`flex items-center justify-center px-6 relative snap-section ${className ?? ""}`}
+      style={{ minHeight: "100dvh", background: "var(--bg-secondary)" }}
+    >
+      <div className="absolute top-4 right-6"><IdTag id={id} /></div>
+      <div className="w-full py-16">
+        <h3
+          className="text-sm font-semibold uppercase tracking-[0.15em] mb-8 pb-3 border-b max-w-2xl mx-auto"
+          style={css.sectionHead}
+        >
+          {title}
+        </h3>
+        <div className="tile-grid">
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function Tile({ children, id, span, className }: Props & { id: string; span: number }) {
+  return (
+    <div
+      className={`rounded-2xl border p-6 flex flex-col gap-3 relative ${className ?? ""}`}
+      style={{
+        "--span": `span ${span}`,
+        background: "var(--bg-card)",
+        borderColor: "var(--border-color)",
+        boxShadow: "var(--shadow-sm)",
+      } as React.CSSProperties}
+      data-card
+    >
+      <div className="absolute top-3 right-3"><IdTag id={id} /></div>
+      {children}
+    </div>
+  );
+}
+
 export function N({ children, className }: Props) {
   return (
     <span className={`font-bold ${className ?? ""}`} style={{ fontFamily: "var(--font-stat)", color: "var(--text-primary)" }} data-stat>

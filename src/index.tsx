@@ -1,18 +1,23 @@
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
-import Nav from "./sections/nav";
-import HeroCyberpunk from "./sections/hero-cyberpunk";
-import TimeCard from "./sections/time";
-import TimeTableCard from "./sections/time-table";
-import SpaceCard from "./sections/space";
-import YogurtCard from "./sections/yogurt";
-import StepsCard from "./sections/steps";
-import BrushingCard from "./sections/brushing";
-import HairCard from "./sections/hair";
-import PoopsCard from "./sections/poops";
-import BrainBodyCard from "./sections/brain-body";
-import BinaryCard from "./sections/binary";
-import Footer from "./sections/footer";
+import Nav from "./cards/slide-nav";
+import HeroCyberpunk from "./cards/slide-hero-cyberpunk";
+import TimeCard from "./cards/slide-time";
+import TimeTableCard from "./cards/slide-time-table";
+import SpaceCard from "./cards/slide-space";
+import YogurtCard from "./cards/slide-yogurt";
+import StepsCard from "./cards/slide-steps";
+import BrushingCard from "./cards/slide-brushing";
+import PoopsCard from "./cards/slide-poops";
+import BrainBodyCard from "./cards/slide-brain-body";
+import { TileContainer } from "./components/slide";
+import SleepTile from "./cards/tile-sleep";
+import HeartbeatsTile from "./cards/tile-heartbeats";
+import FruitTile from "./cards/tile-fruit";
+import HugsTile from "./cards/tile-hugs";
+import LungsTile from "./cards/tile-lungs";
+import WaterTile from "./cards/tile-water";
+import Footer from "./cards/slide-footer";
 
 const params = new URLSearchParams(window.location.search);
 const name = params.get("name") ?? process.env.DEFAULT_NAME ?? "Oscar";
@@ -37,11 +42,17 @@ function App() {
         <SpaceCard dob={dob} name={name} />
         <YogurtCard dob={dob} name={name} />
         <StepsCard dob={dob} name={name} />
-        <BrushingCard dob={dob} name={name} />
-        {/* <HairCard dob={dob} name={name} /> */}
-        <PoopsCard dob={dob} name={name} />
-        <BrainBodyCard dob={dob} name={name} />
-        {/* <BinaryCard dob={dob} name={name} /> */}
+        <BrushingCard dob={dob} />
+        <PoopsCard dob={dob} />
+        <BrainBodyCard dob={dob} />
+        <TileContainer id="5v2" title="Your brain &amp; body">
+          <SleepTile dob={dob} name={name} />
+          <HeartbeatsTile dob={dob} name={name} />
+          <FruitTile dob={dob} name={name} />
+          <HugsTile dob={dob} name={name} />
+          <LungsTile dob={dob} name={name} />
+          <WaterTile dob={dob} name={name} />
+        </TileContainer>
       </section>
       <Footer />
     </div>

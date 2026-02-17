@@ -16,6 +16,22 @@ body {
   background-color: var(--bg-primary);
 }
 
+.tile-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+@media (min-width: 640px) {
+  .tile-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+  }
+  .tile-grid > * { grid-column: var(--span); }
+}
+
 @media (max-width: 767px) {
   [data-brain-bento] { grid-template-columns: 1fr !important; }
   [data-brain-bento] > * { grid-column: span 1 !important; }
