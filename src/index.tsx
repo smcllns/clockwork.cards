@@ -9,7 +9,6 @@ import YogurtCard from "./cards/slide-yogurt";
 import StepsCard from "./cards/slide-steps";
 import BrushingCard from "./cards/slide-brushing";
 import PoopsCard from "./cards/slide-poops";
-import BrainBodyCard from "./cards/slide-brain-body";
 import { TileContainer } from "./components/slide";
 import SleepTile from "./cards/tile-sleep";
 import HeartbeatsTile from "./cards/tile-heartbeats";
@@ -44,14 +43,13 @@ function App() {
         <StepsCard dob={dob} name={name} />
         <BrushingCard dob={dob} />
         <PoopsCard dob={dob} />
-        <BrainBodyCard dob={dob} />
-        <TileContainer id="5v2" title="Your brain &amp; body">
-          <SleepTile dob={dob} name={name} />
-          <HeartbeatsTile dob={dob} name={name} />
-          <FruitTile dob={dob} name={name} />
-          <HugsTile dob={dob} name={name} />
-          <LungsTile dob={dob} name={name} />
-          <WaterTile dob={dob} name={name} />
+        <TileContainer id="5" title="Your brain &amp; body">
+          <SleepTile dob={dob} />
+          <HeartbeatsTile dob={dob} />
+          <FruitTile dob={dob} />
+          <HugsTile dob={dob} />
+          <LungsTile dob={dob} />
+          <WaterTile dob={dob} />
         </TileContainer>
       </section>
       <Footer />

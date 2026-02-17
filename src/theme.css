@@ -2,19 +2,12 @@
   --bg-primary: #ffffff;
   --bg-secondary: #f9fafb;
   --bg-card: #ffffff;
-  --bg-hero: #ffffff;
   --text-primary: #18181b;
   --text-secondary: #71717a;
   --text-accent: #3b82f6;
   --border-color: #e4e4e7;
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
-  --shadow-glow: none;
-  --accent-1: #06b6d4;
-  --accent-2: #8b5cf6;
-  --accent-3: #ec4899;
   --font-display: 'Space Grotesk', system-ui, sans-serif;
-  --font-mono: 'Space Mono', ui-monospace, monospace;
   --font-stat: var(--font-display);
 }
 
@@ -22,17 +15,11 @@
   --bg-primary: #0a0a0f;
   --bg-secondary: #0f0f1a;
   --bg-card: #16162a;
-  --bg-hero: #0a0a0f;
   --text-primary: #e2e2ff;
   --text-secondary: #7a7a9a;
   --text-accent: #00ffff;
   --border-color: #2a2a4a;
   --shadow-sm: 0 0 8px rgba(0, 255, 255, 0.08);
-  --shadow-md: 0 0 16px rgba(0, 255, 255, 0.12), 0 0 32px rgba(139, 92, 246, 0.08);
-  --shadow-glow: 0 0 20px rgba(0, 255, 255, 0.25), 0 0 40px rgba(139, 92, 246, 0.15), 0 0 80px rgba(236, 72, 153, 0.08);
-  --accent-1: #00ffff;
-  --accent-2: #bf5af2;
-  --accent-3: #ff2d55;
 }
 
 /* Theme transitions — scoped to key containers to preserve scroll perf */
@@ -54,11 +41,6 @@ footer,
     0 0 10px rgba(0, 255, 255, 0.4),
     0 0 30px rgba(0, 255, 255, 0.2),
     0 0 60px rgba(139, 92, 246, 0.1);
-}
-
-@keyframes led-blink {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 1; }
 }
 
 @keyframes neon-pulse {
