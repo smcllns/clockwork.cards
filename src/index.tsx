@@ -6,9 +6,13 @@ import TimeCard from "./cards/slide-time";
 import TimeTableCard from "./cards/slide-time-table";
 import SpaceCard from "./cards/slide-space";
 import YogurtCard from "./cards/slide-yogurt";
+import YogurtPhoto from "./cards/photo-yogurt";
+import TimePhoto from "./cards/photo-time";
+import SpacePhoto from "./cards/photo-space";
 import StepsCard from "./cards/slide-steps";
 import BrushingCard from "./cards/slide-brushing";
 import PoopsCard from "./cards/slide-poops";
+import PoopsPhoto from "./cards/photo-poops";
 import { TileContainer } from "./components/tile";
 import SleepTile from "./cards/tile-sleep";
 import HeartbeatsTile from "./cards/tile-heartbeats";
@@ -36,21 +40,25 @@ function App() {
       <Nav name={name} shiny={shiny} onToggleShiny={toggleShiny} />
       <HeroCyberpunk name={name} dob={dob} shiny={shiny} />
       <section style={{ background: "var(--bg-primary)" }}>
-        <TimeCard dob={dob} name={name} />
+        {/* <TimeCard dob={dob} name={name} /> */}
+        <TimePhoto dob={dob} name={name} shiny={shiny} />
         <TimeTableCard dob={dob} name={name} />
-        <SpaceCard dob={dob} name={name} />
-        <YogurtCard dob={dob} name={name} />
+        {/* <SpaceCard dob={dob} name={name} /> */}
+        <SpacePhoto dob={dob} name={name} shiny={shiny} />
+        {/* <YogurtCard dob={dob} name={name} /> */}
         <StepsCard dob={dob} name={name} />
-        <BrushingCard dob={dob} />
-        <PoopsCard dob={dob} />
-        <TileContainer id="5" title="Your brain &amp; body">
-          <SleepTile dob={dob} />
-          <HeartbeatsTile dob={dob} />
-          <FruitTile dob={dob} />
-          <HugsTile dob={dob} />
-          <LungsTile dob={dob} />
-          <WaterTile dob={dob} />
+        <YogurtPhoto dob={dob} name={name} shiny={shiny} />
+        <TileContainer id="5" title={`${name}'s brain &amp; body`}>
+          <SleepTile dob={dob} name={name} />
+          <HeartbeatsTile dob={dob} name={name} />
+          <FruitTile dob={dob} name={name} />
+          <HugsTile dob={dob} name={name} />
+          <LungsTile dob={dob} name={name} />
+          <WaterTile dob={dob} name={name} />
         </TileContainer>
+        {/* <BrushingCard dob={dob} /> */}
+        {/* <PoopsCard dob={dob} /> */}
+        <PoopsPhoto dob={dob} shiny={shiny} />
       </section>
       <Footer />
     </div>
