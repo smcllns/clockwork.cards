@@ -9,7 +9,7 @@ import YogurtCard from "./cards/slide-yogurt";
 import StepsCard from "./cards/slide-steps";
 import BrushingCard from "./cards/slide-brushing";
 import PoopsCard from "./cards/slide-poops";
-import { TileContainer } from "./components/slide";
+import { TileContainer } from "./components/tiles";
 import SleepTile from "./cards/tile-sleep";
 import HeartbeatsTile from "./cards/tile-heartbeats";
 import FruitTile from "./cards/tile-fruit";

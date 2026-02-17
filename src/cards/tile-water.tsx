@@ -1,4 +1,4 @@
-import { Tile } from "../components/slide";
+import { Tile } from "../components/tiles";
 import { useNow } from "../components/useNow";
 import { MS_PER_DAY, DAYS_PER_YEAR, OLYMPIC_POOL_LITERS, GLASS_ML } from "../constants";
 import { fmt } from "../utils";
