@@ -7,7 +7,7 @@ import TimeTableCard from "./sections/time-table";
 import SpaceCard from "./sections/space";
 import YogurtCard from "./sections/yogurt";
 import LifeInNumbersCard from "./sections/life-in-numbers";
-import RemainingCards from "./sections/remaining";
+import BrainBodyCard from "./sections/brain-body";
 import BinaryCard from "./sections/binary";
 import Footer from "./sections/footer";
 
@@ -34,7 +34,7 @@ function App() {
         <SpaceCard dob={dob} name={name} />
         <YogurtCard dob={dob} name={name} />
         <LifeInNumbersCard dob={dob} name={name} />
-        <RemainingCards name={name} dob={dob} />
+        <BrainBodyCard dob={dob} name={name} />
         <BinaryCard dob={dob} name={name} />
       </section>
       <Footer />

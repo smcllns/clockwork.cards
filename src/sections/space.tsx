@@ -5,15 +5,8 @@ import { useNow } from "../components/useNow";
 import { KM_PER_MILE, EARTH_ORBITAL_MPH, LIGHT_SPEED_MPH, MS_PER_HOUR } from "../constants";
 import { preciseAge, fmtBig } from "../utils";
 
-type SpaceUnit = "miles" | "km";
-
-const UNIT_OPTIONS = [
-  { value: "miles" as SpaceUnit, label: "miles" },
-  { value: "km" as SpaceUnit, label: "kilometers" },
-] as const;
-
 export default function SpaceCard({ dob, name }: { dob: string; name: string }) {
-  const [spaceUnit, setSpaceUnit] = useState<SpaceUnit>("miles");
+  const [unit, setUnit] = useState<"miles" | "km">("miles");
   const now = useNow();
 
   const hoursAlive = (now - new Date(dob).getTime()) / MS_PER_HOUR;
@@ -21,26 +14,29 @@ export default function SpaceCard({ dob, name }: { dob: string; name: string }) 
   const lightSpeedHours = milesInSpace / LIGHT_SPEED_MPH;
   const lapsAroundSun = preciseAge(new Date(dob), now);
 
-  const isMiles = spaceUnit === "miles";
-  const convert = (miles: number) => isMiles ? miles : miles * KM_PER_MILE;
-  const unit = isMiles ? "mph" : "kph";
-  const spaceVal = convert(milesInSpace);
-  const earthSpeed = Math.round(convert(EARTH_ORBITAL_MPH)).toLocaleString();
-  const lightSpeed = Math.round(convert(LIGHT_SPEED_MPH)).toLocaleString();
+  const k = unit === "km" ? KM_PER_MILE : 1;
+  const unitLabel = unit === "km" ? "kph" : "mph";
 
   return (
     <Slide alt id="2">
       <Headline>🚀 {name} has flown around the sun {lapsAroundSun.toFixed(3)} times, or ...</Headline>
-      <KeyMetric>{fmtBig(spaceVal)}</KeyMetric>
+      <KeyMetric>{fmtBig(milesInSpace * k)}</KeyMetric>
       <Unit>
-        <InlinePills options={UNIT_OPTIONS} value={spaceUnit} onChange={setSpaceUnit} />{" "}through space
+        <InlinePills
+          options={[
+            { value: "miles" as const, label: "miles" },
+            { value: "km" as const, label: "kilometers" },
+          ]}
+          value={unit}
+          onChange={setUnit}
+        />{" "}through space
       </Unit>
       <Headline>He's not just a kid, he's an interstellar traveler!</Headline>
       <Body>
-        Because Earth is flying through our solar system at {earthSpeed} {unit}, so you've been going that speed for {lapsAroundSun.toFixed(3)} years!
+        Because Earth is flying through our solar system at {Math.round(EARTH_ORBITAL_MPH * k).toLocaleString()} {unitLabel}, so you've been going that speed for {lapsAroundSun.toFixed(3)} years!
       </Body>
       <Body>
-        But also, let's be real, light would still whoop you in a race. Traveling at {lightSpeed} {unit}, a beam of light would cover that same distance in just {lightSpeedHours.toFixed(1)} hours.
+        But also, let's be real, light would still whoop you in a race. Traveling at {Math.round(LIGHT_SPEED_MPH * k).toLocaleString()} {unitLabel}, a beam of light would cover that same distance in just {lightSpeedHours.toFixed(1)} hours.
       </Body>
     </Slide>
   );
