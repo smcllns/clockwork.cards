@@ -20,6 +20,7 @@ import FruitTile from "./cards/tile-fruit";
 import HugsTile from "./cards/tile-hugs";
 import LungsTile from "./cards/tile-lungs";
 import WaterTile from "./cards/tile-water";
+import ClosingCard from "./cards/slide-closing";
 import Footer from "./components/footer";
 
 const params = new URLSearchParams(window.location.search);
@@ -59,6 +60,7 @@ function App() {
         {/* <BrushingCard dob={dob} /> */}
         {/* <PoopsCard dob={dob} /> */}
         <PoopsPhoto dob={dob} shiny={shiny} />
+        <ClosingCard dob={dob} name={name} />
       </section>
       <Footer />
     </div>
