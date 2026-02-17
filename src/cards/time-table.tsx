@@ -64,7 +64,7 @@ export default function TimeTableCard({ dob, name }: { dob: string; name: string
 
   return (
     <Slide id="1">
-      <p className="text-xl font-semibold mb-6" style={css.primary}>{name} is ...</p>
+      <p className="text-xl font-semibold mb-6" style={css.primary}>As of right now, {name} is...</p>
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <tbody>
           {rows.map(({ key, label, format }) => (
@@ -73,6 +73,7 @@ export default function TimeTableCard({ dob, name }: { dob: string; name: string
                 className="text-right font-bold py-2 pr-4"
                 style={{
                   fontFamily: "var(--font-stat)",
+                  fontVariantNumeric: "tabular-nums",
                   color: "var(--text-primary)",
                   fontSize: "clamp(1.5rem, 5vw, 2.5rem)",
                   whiteSpace: "nowrap",
@@ -85,7 +86,7 @@ export default function TimeTableCard({ dob, name }: { dob: string; name: string
                 className="text-left py-2 pl-2"
                 style={{ color: "var(--text-secondary)", fontSize: "clamp(0.9rem, 2.5vw, 1.1rem)" }}
               >
-                {label}
+                {label} old
               </td>
             </tr>
           ))}
