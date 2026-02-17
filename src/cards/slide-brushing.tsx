@@ -23,17 +23,23 @@ export default function BrushingCard({ dob, name }: { dob: string; name: string 
     <Slide id="4b">
       <Narrative>
         If {name} spends{" "}
-        <InlineStepper value={minutes} min={1} max={5} step={1} unit=" min"
+        <InlineStepper value={minutes} min={1} max={5} step={0.5} unit=" min"
           onChange={setMinutes} />{" "}
-        brushing teeth every morning and night since age{" "}
-        <InlineStepper value={startAge} min={1} max={5} step={1}
-          onChange={setStartAge} />{" "}
-        , that's over <N>{brushingDays.toFixed(1)} solid days</N> of brushing,
-        and over <N>{(brushStrokes / 1e6).toFixed(1)} million brush strokes</N>!
+        brushing teeth each morning and night &mdash; so <N>{minutes*2} minutes</N> total each day &mdash; that's over <N>{(brushStrokes / 1e6).toFixed(1)} million brush strokes</N> so far!
       </Narrative>
       <Body>
-        Think that's a lot? {name} has blinked about {(totalBlinks / 1e6).toFixed(1)} million times so far.
+        Think that's a lot? {name}'s eyes have blinked about {(totalBlinks / 1e6).toFixed(1)} million times. Getting the reps in!
       </Body>
+      <Body>
+        Assuming: [make these changeable:]
+        <ul>
+          <li>170 brush strokes per minute</li>
+          <li>15,000 blinks per day</li>
+        </ul>
+      </Body>
+      {/* <Body>
+        And at [STEPPER: 80] beats per minute, {name}'s heart has beat around {(totalBlinks / 1e6).toFixed(0)} million times.
+      </Body> */}
     </Slide>
   );
 }
