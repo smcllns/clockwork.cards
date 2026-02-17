@@ -52,7 +52,7 @@ Every card is self-contained: owns state, does math inline, imports only shared 
 - Narrative card (brushing, poops): prose with inline controls and `<N>` values
 - KeyMetric + Narrative (steps): big number plus explanatory prose
 
-`Tile` accepts either data props (`emoji`, `value`, `unit`, `headline`, `body`) for the common layout, or `children` for custom markup. `body` is ReactNode so it can hold InlineSteppers. `TileContainer` wraps tiles in a 5-column bento grid (collapses to 1-col mobile). Tiles declare their span via `span` prop → CSS `--span` variable.
+`Tile` accepts either data props (`emoji`, `value`, `unit`, `headline`, `body`) for the common layout, or `children` for custom markup. `body` is ReactNode so it can hold InlineSteppers. `TileContainer` wraps tiles in a 5-column bento grid (collapses to 1-col mobile). Tiles declare their span via `span` prop → CSS `--span` variable → `grid-column: span var(--span)`. Row pattern: span-2 + span-2 + span-1 = 5, producing a 60/40 brick layout. Grid has horizontal padding matching slides (`px-8`).
 
 ## Hero — 3D physics birthday text
 
@@ -62,9 +62,9 @@ Balls spring-anchored to origin (velocity steering, stiffness 20). Drag spins sc
 
 Four modes: `off | on | broken | broken-off`. Mode derived from `shiny × chaos`.
 
-**Off:** Greyscale Lambert, no bloom, `renderer.render()` direct. Circuit-board decorations at opacity 0.12.
+**Off:** Greyscale Lambert, no bloom, `renderer.render()` direct.
 
-**On (shiny):** `.shiny` on `<html>`. MeshPhysicalMaterial with emissive glow, metalness 0.6, clearcoat 0.5. Bloom pass. Circuits animate, LEDs pulse.
+**On (shiny):** `.shiny` on `<html>`. MeshPhysicalMaterial with emissive glow, metalness 0.6, clearcoat 0.5. Bloom pass.
 
 **Broken:** Gravity -80y. Staggered radial wave release (0–0.8s). Ground hit → spark → dying-lightbulb flicker. Death times heavy-tailed: 80% in 5–60s, 15% in 60–180s, 5% in 3–100 minutes. Bloom tracks brightest survivor.
 
@@ -105,11 +105,11 @@ Theme transitions scoped to body/section/footer/`[data-card]` only (not `*`) for
 
 ## IdTags
 
-Every slide and tile has a muted `#id` tag. Purpose: feedback during development — "change something on #5d." Not for end users.
+Every Section has a muted `#id` tag positioned top-left. Rendered by `IdTag` in `section.tsx`. Purpose: feedback during development — "change something on #space." Not for end users.
 
 ## Stack
 
-Bun (runtime/bundler/dev), React 19, Tailwind v4 (`bun-plugin-tailwind`), Three.js + Rapier 3D. Deploy: Cloudflare Pages. Font: Space Grotesk. URL params: `?name=`, `?dob=` (defaults from `.env`).
+Bun (runtime/bundler/dev), React 19, Tailwind v4 (`bun-plugin-tailwind`), Three.js + Rapier 3D. Deploy: Cloudflare Pages. Font: Space Grotesk. URL params: `?name=`, `?dob=` (defaults from `.env` via `process.env.DEFAULT_*` — Bun inlines these at build time through `bunfig.toml`'s `env = "DEFAULT_*"`).
 
 ## Device priority
 
