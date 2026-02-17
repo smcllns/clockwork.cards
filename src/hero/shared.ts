@@ -8,7 +8,7 @@ import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 import { FONT, CHAR_W, CHAR_H, CHAR_GAP, LINE_GAP, SPACE_W } from "./font";
 import { LIGHT, SHINY } from "./colors";
 
-export type HeroMode = "off" | "on" | "broken";
+export type HeroMode = "off" | "on" | "broken" | "broken-off";
 
 export type Ball = { x: number; y: number; colorIndex: number; scale: number };
 export type LineSpec = { text: string; scale: number };
