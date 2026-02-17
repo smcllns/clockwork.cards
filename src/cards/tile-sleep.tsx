@@ -1,12 +1,12 @@
 import { Tile } from "../components/tiles";
 import { useNow } from "../components/useNow";
-import { MS_PER_DAY, DAYS_PER_YEAR } from "../constants";
+
 
 export default function SleepTile({ dob }: { dob: string }) {
   const now = useNow();
-  const daysAlive = Math.floor((now - new Date(dob).getTime()) / MS_PER_DAY);
+  const daysAlive = Math.floor((now - new Date(dob).getTime()) / 86_400_000);
   const sleepHours = daysAlive * 10;
-  const sleepYears = sleepHours / (24 * DAYS_PER_YEAR);
+  const sleepYears = sleepHours / (24 * 365.25);
 
   return (
     <Tile

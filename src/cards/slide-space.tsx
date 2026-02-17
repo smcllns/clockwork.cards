@@ -2,14 +2,14 @@ import { useState } from "react";
 import { Slide, KeyMetric, Unit, Headline, Body } from "../components/slide";
 import { InlinePills } from "../components/controls";
 import { useNow } from "../components/useNow";
-import { KM_PER_MILE, EARTH_ORBITAL_MPH, LIGHT_SPEED_MPH, MS_PER_HOUR } from "../constants";
+import { KM_PER_MILE, EARTH_ORBITAL_MPH, LIGHT_SPEED_MPH } from "../constants";
 import { getAge } from "../utils";
 
 export default function SpaceCard({ dob, name }: { dob: string; name: string }) {
   const [unit, setUnit] = useState<"miles" | "km">("miles");
   const now = useNow();
 
-  const hoursAlive = (now - new Date(dob).getTime()) / MS_PER_HOUR;
+  const hoursAlive = (now - new Date(dob).getTime()) / 3_600_000;
   const milesInSpace = hoursAlive * EARTH_ORBITAL_MPH;
   const lightSpeedHours = milesInSpace / LIGHT_SPEED_MPH;
   const lapsAroundSun = getAge(new Date(dob), now);

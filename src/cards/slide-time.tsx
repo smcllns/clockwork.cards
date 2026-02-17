@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Slide, KeyMetric, Title, Unit } from "../components/slide";
 import { InlineDropdown } from "../components/controls";
 import { useNow } from "../components/useNow";
-import { MS_PER_SEC, MS_PER_MIN, MS_PER_HOUR, MS_PER_DAY, DAYS_PER_YEAR } from "../constants";
 import { getAge } from "../utils";
 
 const TIME_UNITS = ["years", "months", "weeks", "days", "hours", "minutes", "seconds"] as const;
@@ -13,16 +12,16 @@ export default function TimeCard({ dob, name }: { dob: string; name: string }) {
   const now = useNow();
 
   const msAlive = now - new Date(dob).getTime();
-  const daysAlive = msAlive / MS_PER_DAY;
+  const daysAlive = msAlive / 86_400_000;
 
   const values: Record<TimeUnit, number> = {
     years: getAge(new Date(dob), now),
-    months: Math.floor(daysAlive / (DAYS_PER_YEAR / 12)),
+    months: Math.floor(daysAlive / (365.25 / 12)),
     weeks: Math.floor(daysAlive / 7),
     days: Math.floor(daysAlive),
-    hours: Math.floor(msAlive / MS_PER_HOUR),
-    minutes: Math.floor(msAlive / MS_PER_MIN),
-    seconds: Math.floor(msAlive / MS_PER_SEC),
+    hours: Math.floor(msAlive / 3_600_000),
+    minutes: Math.floor(msAlive / 60_000),
+    seconds: Math.floor(msAlive / 1000),
   };
 
   return (

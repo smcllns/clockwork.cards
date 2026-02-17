@@ -1,10 +1,10 @@
 import { Tile } from "../components/tiles";
 import { useNow } from "../components/useNow";
-import { MS_PER_DAY } from "../constants";
+
 
 export default function HugsTile({ dob }: { dob: string }) {
   const now = useNow();
-  const daysAlive = Math.floor((now - new Date(dob).getTime()) / MS_PER_DAY);
+  const daysAlive = Math.floor((now - new Date(dob).getTime()) / 86_400_000);
   const totalHugs = daysAlive * 2;
 
   return (

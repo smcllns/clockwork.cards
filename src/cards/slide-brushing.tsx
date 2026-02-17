@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Slide, Narrative, Body, N } from "../components/slide";
 import { InlineStepper } from "../components/controls";
 import { useNow } from "../components/useNow";
-import { MS_PER_DAY } from "../constants";
+
 
 const BLINKS_PER_DAY = 15_000;
 const BRUSH_STROKES_PER_MIN = 170;
@@ -16,7 +16,7 @@ export default function BrushingCard({ dob }: { dob: string }) {
   const minutesTotal = daysSinceAge(dobDate, startAge, now) * minutes * 2;
   const brushingDays = minutesTotal / (60 * 24);
   const brushStrokes = minutesTotal * BRUSH_STROKES_PER_MIN;
-  const daysAlive = Math.floor((now - dobDate.getTime()) / MS_PER_DAY);
+  const daysAlive = Math.floor((now - dobDate.getTime()) / 86_400_000);
   const totalBlinks = daysAlive * BLINKS_PER_DAY;
 
   return (

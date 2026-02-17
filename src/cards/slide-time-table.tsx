@@ -1,22 +1,21 @@
 import { Slide, Headline } from "../components/slide";
 import { useNow } from "../components/useNow";
-import { MS_PER_SEC, MS_PER_MIN, MS_PER_HOUR, MS_PER_DAY, DAYS_PER_YEAR } from "../constants";
 import { getAge } from "../utils";
 
 export default function TimeTableCard({ dob, name }: { dob: string; name: string }) {
   const now = useNow();
 
   const msAlive = now - new Date(dob).getTime();
-  const daysAlive = msAlive / MS_PER_DAY;
+  const daysAlive = msAlive / 86_400_000;
 
   const t = {
     yearsAlive: getAge(new Date(dob), now),
-    monthsAlive: Math.floor(daysAlive / (DAYS_PER_YEAR / 12)),
+    monthsAlive: Math.floor(daysAlive / (365.25 / 12)),
     weeksAlive: Math.floor(daysAlive / 7),
     daysAlive: Math.floor(daysAlive),
-    hoursAlive: Math.floor(msAlive / MS_PER_HOUR),
-    minutesAlive: Math.floor(msAlive / MS_PER_MIN),
-    secondsAlive: Math.floor(msAlive / MS_PER_SEC),
+    hoursAlive: Math.floor(msAlive / 3_600_000),
+    minutesAlive: Math.floor(msAlive / 60_000),
+    secondsAlive: Math.floor(msAlive / 1000),
   };
 
   const fmt = (n: number) => Math.floor(n).toLocaleString();
