@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
-import { Slide, BigNum, SlideTitle, SlideUnit } from "./layout";
-import { InlineDropdown } from "./controls";
-import { fmt, fmtYears } from "./stats";
+import { useState } from "react";
+import { Slide, KeyMetric, Title, Unit } from "../components/slide";
+import { InlineDropdown } from "../components/controls";
+import { useNow } from "../components/useNow";
+import { fmt, fmtYears } from "../stats";
 
 const MS_PER_SEC = 1000;
 const MS_PER_MIN = MS_PER_SEC * 60;
@@ -56,12 +57,7 @@ function computeTime(dob: string, now: number) {
 
 export default function TimeCard({ dob, name }: { dob: string; name: string }) {
   const [timeUnit, setTimeUnit] = useState<TimeUnit>("seconds");
-  const [now, setNow] = useState(Date.now());
-
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
-  }, []);
+  const now = useNow();
 
   const t = computeTime(dob, now);
   const values: Record<TimeUnit, number> = {
@@ -71,9 +67,9 @@ export default function TimeCard({ dob, name }: { dob: string; name: string }) {
 
   return (
     <Slide id="1">
-      <SlideTitle>{name} is ...</SlideTitle>
-      <BigNum>{timeUnit === "years" ? fmtYears(values[timeUnit]) : fmt(values[timeUnit])}</BigNum>
-      <SlideUnit><InlineDropdown options={TIME_UNITS} value={timeUnit} onChange={setTimeUnit} /> old, right now</SlideUnit>        
+      <Title>{name} is ...</Title>
+      <KeyMetric>{timeUnit === "years" ? fmtYears(values[timeUnit]) : fmt(values[timeUnit])}</KeyMetric>
+      <Unit><InlineDropdown options={TIME_UNITS} value={timeUnit} onChange={setTimeUnit} /> old, right now</Unit>        
     </Slide>
   );
 }

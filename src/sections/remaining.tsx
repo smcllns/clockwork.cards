@@ -1,10 +1,8 @@
-import { useState, useEffect, useCallback } from "react";
-import { computeStats, DEFAULT_CONFIG, type StatsConfig, type Stats, fmt, fmtBig, fmtDecimal, fmtYears, hippoHeadline } from "./stats";
-import { InlineStepper, InlineSlider, BlockControl, BlockSlider, BlockStepper } from "./controls";
-import { Slide, BigNum, SlideUnit, SlideHeadline, SlideBody, N, IdTag, css } from "./layout";
-import TimeCard from "./time";
-import TimeTableCard from "./time-table";
-import SpaceCard from "./space";
+import { useState, useCallback } from "react";
+import { computeStats, DEFAULT_CONFIG, type StatsConfig, type Stats, fmt, fmtBig, fmtDecimal, fmtYears, hippoHeadline } from "../stats";
+import { Slide, KeyMetric, Unit, Headline, Body, N, IdTag, css } from "../components/slide";
+import { InlineStepper, InlineSlider, BlockControl, BlockSlider, BlockStepper } from "../components/controls";
+import { useNow } from "../components/useNow";
 
 // ── Flippable binary/base-10 card ─────────────────────────────────
 function FlipCard({ ageYears }: { ageYears: number }) {
@@ -63,37 +61,27 @@ function FlipCard({ ageYears }: { ageYears: number }) {
 }
 
 // ════════════════════════════════════════════════════════════════════
-export default function Cards({ name, dob }: { name: string; dob: string }) {
+export default function RemainingCards({ name, dob }: { name: string; dob: string }) {
   const [config, setConfig] = useState<StatsConfig>({ ...DEFAULT_CONFIG });
-  const [now, setNow] = useState(Date.now());
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
-  }, []);
+  const now = useNow();
 
   const s = computeStats(dob, config, now);
   const set = <K extends keyof StatsConfig>(key: K, val: StatsConfig[K]) =>
     setConfig((c) => ({ ...c, [key]: val }));
 
   return (
-    <section style={{ background: "var(--bg-primary)" }}>
-
-      {/* 1. TIME */}
-      <TimeCard dob={dob} name={name} />
-      <TimeTableCard dob={dob} name={name} />
-      {/* 2. SPACE */}
-      <SpaceCard dob={dob} name={name} />
+    <>
 
       {/* 3. YOGURT */}
       <Slide id="3">
         <span className="text-4xl block mb-4">🥄</span>
-        <BigNum>{fmt(s.yogurtKg)} kg</BigNum>
-        <SlideUnit>of yogurt</SlideUnit>
-        <SlideHeadline>{hippoHeadline(s.yogurtKg)}</SlideHeadline>
-        <SlideBody>
+        <KeyMetric>{fmt(s.yogurtKg)} kg</KeyMetric>
+        <Unit>of yogurt</Unit>
+        <Headline>{hippoHeadline(s.yogurtKg)}</Headline>
+        <Body>
           If you've eaten yogurt every day since you were little, that's {fmt(s.yogurtKg)} kg of
           creamy, tangy fuel. Baby hippos weigh about 40 kg at birth.
-        </SlideBody>
+        </Body>
         <div className="space-y-3">
           <BlockControl label="Grams per day">
             <BlockSlider value={config.yogurtGramsPerDay} min={10} max={150} step={10} unit="g"
@@ -257,7 +245,7 @@ export default function Cards({ name, dob }: { name: string; dob: string }) {
         </div>
       </div>
 
-    </section>
+    </>
   );
 }
 

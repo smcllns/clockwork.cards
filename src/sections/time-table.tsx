@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { Slide, SlideTitle, SlideHeadline, css } from "./layout";
-import { fmt, fmtYears } from "./stats";
+import { Slide, Title, Headline, css } from "../components/slide";
+import { useNow } from "../components/useNow";
+import { fmt, fmtYears } from "../stats";
 
 const MS_PER_SEC = 1000;
 const MS_PER_MIN = MS_PER_SEC * 60;
@@ -53,18 +53,13 @@ const rows = [
 ] as const;
 
 export default function TimeTableCard({ dob, name }: { dob: string; name: string }) {
-  const [now, setNow] = useState(Date.now());
-
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 1000);
-    return () => clearInterval(id);
-  }, []);
+  const now = useNow();
 
   const t = computeTime(dob, now);
 
   return (
     <Slide id="1">
-      <SlideHeadline>Precisely, {name} is...</SlideHeadline>
+      <Headline>Precisely, {name} is...</Headline>
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <tbody>
           {rows.map(({ key, label, format }) => (

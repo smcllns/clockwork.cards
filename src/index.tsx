@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
-import Hero from "./hero";
-import type { HeroMode } from "./hero";
-import Cards from "./cards";
-import Footer from "./footer";
+import Nav from "./sections/nav";
+import HeroCyberpunk from "./sections/hero-cyberpunk";
+import TimeCard from "./sections/time";
+import TimeTableCard from "./sections/time-table";
+import SpaceCard from "./sections/space";
+import RemainingCards from "./sections/remaining";
+import Footer from "./sections/footer";
 
 const params = new URLSearchParams(window.location.search);
 const name = params.get("name") ?? process.env.DEFAULT_NAME ?? "Oscar";
@@ -11,9 +14,6 @@ const dob = params.get("dob") ?? process.env.DEFAULT_DOB ?? "2017-02-20";
 
 function App() {
   const [shiny, setShiny] = useState(false);
-  const [chaos, setChaos] = useState(false);
-
-  const mode: HeroMode = chaos ? (shiny ? "broken" : "broken-off") : shiny ? "on" : "off";
 
   function toggleShiny() {
     const next = !shiny;
@@ -21,147 +21,16 @@ function App() {
     document.documentElement.classList.toggle("shiny", next);
   }
 
-  function breakGlass() {
-    if (chaos) return;
-    setChaos(true);
-  }
-
   return (
     <div>
-      {/* Fixed nav bar */}
-      <nav
-        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3"
-        style={{
-          backgroundColor: shiny ? "rgba(10,10,15,0.85)" : "rgba(255,255,255,0.85)",
-          backdropFilter: "blur(12px)",
-          borderBottom: shiny ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.06)",
-          transition: "background-color 0.5s, border-color 0.5s",
-        }}
-      >
-        <span
-          className="text-sm font-medium"
-          style={{
-            color: shiny ? "#7a7a9a" : "#71717a",
-            fontFamily: "'Space Grotesk', system-ui, sans-serif",
-            transition: "color 0.5s",
-          }}
-        >
-          clockwork.cards/{name.toLowerCase()}
-        </span>
-
-        {/* ⚡ SHINY TOGGLE */}
-        <div
-          className="select-none flex items-center gap-2 px-3 py-1.5 rounded-full transition-all duration-300"
-          style={{
-            backgroundColor: shiny ? "rgba(245,158,11,0.15)" : "transparent",
-            border: shiny ? "1px solid rgba(217,119,6,0.3)" : "1px solid transparent",
-            transition: "all 0.3s",
-          }}
-        >
-          <span
-            style={{
-              fontFamily: "'Space Mono', monospace",
-              fontSize: "0.6rem",
-              fontWeight: 700,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase" as const,
-              color: shiny ? "#f59e0b" : "#d97706",
-              transition: "color 0.3s",
-            }}
-          >✨ Cyberpunk</span>
-          <button
-            onClick={toggleShiny}
-            className="relative transition-all duration-300 cursor-pointer"
-            style={{
-              width: 36,
-              height: 20,
-              borderRadius: 10,
-              backgroundColor: shiny ? "#f59e0b" : "#e5e5e5",
-              boxShadow: shiny
-                ? "0 0 8px rgba(245,158,11,0.5), inset 0 1px 2px rgba(255,255,255,0.2)"
-                : "inset 0 1px 2px rgba(0,0,0,0.1)",
-              border: shiny ? "1px solid #d97706" : "1px solid #d4d4d4",
-              transition: "all 0.3s",
-            }}
-          >
-            <div
-              className="absolute top-[2px] rounded-full bg-white transition-all duration-300"
-              style={{
-                width: 14,
-                height: 14,
-                left: shiny ? 19 : 2,
-                boxShadow: shiny
-                  ? "0 1px 3px rgba(0,0,0,0.2), 0 0 4px rgba(245,158,11,0.3)"
-                  : "0 1px 2px rgba(0,0,0,0.2)",
-              }}
-            />
-          </button>
-        </div>
-      </nav>
-
-      <div
-        className="h-[90dvh] relative snap-section"
-        style={{ background: shiny ? "#0a0a0f" : "#fff", transition: "background-color 0.5s" }}
-      >
-        <Hero name={name} dob={dob} mode={mode} />
-
-        {/* 🚨 CHAOS TOGGLE — invisible in light, revealed when lights go out */}
-        <div
-          className="absolute bottom-4 left-4 z-10"
-          style={{ opacity: shiny ? 1 : 0 }}
-        >
-          <div
-            className="select-none flex flex-col items-center gap-1.5 px-3 py-2 rounded-lg"
-            style={{
-              backgroundColor: chaos ? "rgba(41,37,36,0.85)" : "rgba(10,10,15,0.75)",
-              backdropFilter: "blur(8px)",
-              border: chaos ? "1px solid #44403c" : "1px solid rgba(255,255,255,0.08)",
-              boxShadow: chaos ? "0 2px 8px rgba(0,0,0,0.3)" : "0 2px 12px rgba(0,0,0,0.3)",
-            }}
-          >
-            <span
-              style={{
-                fontFamily: "'Space Mono', monospace",
-                fontSize: "0.55rem",
-                fontWeight: 700,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase" as const,
-                color: chaos ? "#57534e" : "#dc2626",
-              }}
-            >🚫 Do not touch</span>
-            <button
-              onClick={!chaos ? breakGlass : undefined}
-              className={`relative flex-shrink-0 ${
-                !chaos ? "cursor-pointer" : "cursor-default"
-              }`}
-              style={{
-                width: 44,
-                height: 24,
-                borderRadius: 12,
-                backgroundColor: chaos ? "#292524" : "#57534e",
-                boxShadow: chaos
-                  ? "inset 0 1px 3px rgba(0,0,0,0.4)"
-                  : "inset 0 1px 3px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.1)",
-                border: chaos ? "1px solid #44403c" : "1px solid #a8a29e",
-              }}
-            >
-              <div
-                className="absolute top-[2px] rounded-full"
-                style={{
-                  width: 18,
-                  height: 18,
-                  left: chaos ? 23 : 2,
-                  backgroundColor: chaos ? "#57534e" : "#e7e5e4",
-                  boxShadow: "0 1px 2px rgba(0,0,0,0.2)",
-                }}
-              />
-            </button>
-          </div>
-        </div>
-
-      </div>
-
-      <Cards name={name} dob={dob} />
+      <Nav name={name} shiny={shiny} onToggleShiny={toggleShiny} />
+      <HeroCyberpunk name={name} dob={dob} shiny={shiny} />
+      <section style={{ background: "var(--bg-primary)" }}>
+        <TimeCard dob={dob} name={name} />
+        <TimeTableCard dob={dob} name={name} />
+        <SpaceCard dob={dob} name={name} />
+        <RemainingCards name={name} dob={dob} />
+      </section>
       <Footer />
     </div>
   );

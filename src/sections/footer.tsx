@@ -1,4 +1,5 @@
-import "./theme.css";
+import "../theme.css";
+
 
 export default function Footer() {
   return (

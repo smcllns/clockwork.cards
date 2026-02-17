@@ -31,7 +31,7 @@ export function Slide({ children, alt, id }: { children: React.ReactNode; alt?: 
   );
 }
 
-export function BigNum({ children }: { children: React.ReactNode }) {
+export function KeyMetric({ children }: { children: React.ReactNode }) {
   return (
     <div className="mb-2">
       <span
@@ -45,19 +45,19 @@ export function BigNum({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function SlideUnit({ children }: { children: React.ReactNode }) {
+export function Unit({ children }: { children: React.ReactNode }) {
   return <p className="text-lg font-medium mb-6" style={css.secondary}>{children}</p>;
 }
 
-export function SlideTitle({ children }: { children: React.ReactNode }) {
+export function Title({ children }: { children: React.ReactNode }) {
   return <p className="text-4xl sm:text-5xl font-light mb-6" style={css.primary}>{children}</p>;
 }
 
-export function SlideHeadline({ children }: { children: React.ReactNode }) {
+export function Headline({ children }: { children: React.ReactNode }) {
   return <p className="text-xl font-semibold mb-4" style={css.primary}>{children}</p>;
 }
 
-export function SlideBody({ children }: { children: React.ReactNode }) {
+export function Body({ children }: { children: React.ReactNode }) {
   return <p className="text-base leading-relaxed mb-8" style={css.secondary}>{children}</p>;
 }
 

@@ -1,0 +1,106 @@
+import { useEffect, useRef, useState } from "react";
+import RAPIER from "@dimforge/rapier3d-compat";
+import { initV11 } from "./scene";
+
+type HeroMode = import("./shared").HeroMode;
+type VariationHandle = { setMode: (m: HeroMode) => void; dispose: () => void };
+
+export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob: string; shiny: boolean }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const handleRef = useRef<VariationHandle | null>(null);
+  const [ready, setReady] = useState(false);
+  const [chaos, setChaos] = useState(false);
+
+  const mode: HeroMode = chaos ? (shiny ? "broken" : "broken-off") : shiny ? "on" : "off";
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    let disposed = false;
+
+    const prev = container.querySelector("canvas");
+    if (prev) prev.remove();
+    handleRef.current?.dispose();
+    handleRef.current = null;
+    setReady(false);
+
+    RAPIER.init().then(() => {
+      if (disposed) return;
+      const handle = initV11(container, name, dob);
+      handleRef.current = handle;
+      setReady(true);
+    });
+
+    return () => {
+      disposed = true;
+      handleRef.current?.dispose();
+      handleRef.current = null;
+    };
+  }, [name, dob]);
+
+  useEffect(() => {
+    if (ready && handleRef.current) {
+      handleRef.current.setMode(mode);
+    }
+  }, [mode, ready]);
+
+  return (
+    <div
+      className="h-[90dvh] relative snap-section"
+      style={{ background: shiny ? "#0a0a0f" : "#fff", transition: "background-color 0.5s" }}
+    >
+      <section ref={containerRef} className="h-full overflow-hidden" />
+
+      <div
+        className="absolute bottom-4 left-4 z-10"
+        style={{ opacity: shiny ? 1 : 0 }}
+      >
+        <div
+          className="select-none flex flex-col items-center gap-1.5 px-3 py-2 rounded-lg"
+          style={{
+            backgroundColor: chaos ? "rgba(41,37,36,0.85)" : "rgba(10,10,15,0.75)",
+            backdropFilter: "blur(8px)",
+            border: chaos ? "1px solid #44403c" : "1px solid rgba(255,255,255,0.08)",
+            boxShadow: chaos ? "0 2px 8px rgba(0,0,0,0.3)" : "0 2px 12px rgba(0,0,0,0.3)",
+          }}
+        >
+          <span
+            style={{
+              fontFamily: "'Space Mono', monospace",
+              fontSize: "0.55rem",
+              fontWeight: 700,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase" as const,
+              color: chaos ? "#57534e" : "#dc2626",
+            }}
+          >🚫 Do not touch</span>
+          <button
+            onClick={!chaos ? () => setChaos(true) : undefined}
+            className={`relative flex-shrink-0 ${!chaos ? "cursor-pointer" : "cursor-default"}`}
+            style={{
+              width: 44,
+              height: 24,
+              borderRadius: 12,
+              backgroundColor: chaos ? "#292524" : "#57534e",
+              boxShadow: chaos
+                ? "inset 0 1px 3px rgba(0,0,0,0.4)"
+                : "inset 0 1px 3px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.1)",
+              border: chaos ? "1px solid #44403c" : "1px solid #a8a29e",
+            }}
+          >
+            <div
+              className="absolute top-[2px] rounded-full"
+              style={{
+                width: 18,
+                height: 18,
+                left: chaos ? 23 : 2,
+                backgroundColor: chaos ? "#57534e" : "#e7e5e4",
+                boxShadow: "0 1px 2px rgba(0,0,0,0.2)",
+              }}
+            />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
