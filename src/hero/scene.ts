@@ -91,9 +91,9 @@ function createFlowDots(circuitGroup: THREE.Group, scene: THREE.Scene) {
 
 function sampleDeathTime(): number {
   const r = Math.random();
-  if (r < 0.80) return 5 + Math.random() * 55;      // 80%: 5-60s
-  if (r < 0.95) return 60 + Math.random() * 120;     // 15%: 60-180s
-  return 180 + Math.random() * 5820;                  // 5%: 180-6000s
+  if (r < 0.80) return 5 + Math.random() * 25;       // 80%: 5-30s
+  if (r < 0.95) return 30 + Math.random() * 60;      // 15%: 30-90s
+  return 90 + Math.random() * 510;                    // 5%: 90-600s
 }
 
 // Raise the floor so balls don't clip the bottom viewport edge.
@@ -227,7 +227,7 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
     if (needsPhysics) {
       for (const body of grabbed) {
         const pos = body.translation();
-        body.setLinvel({ x: (target.x - pos.x) * 12, y: (target.y - pos.y) * 12, z: 0 }, true);
+        body.setLinvel({ x: (target.x - pos.x) * 12, y: (target.y - pos.y) * 12, z: -pos.z * 12 }, true);
         body.setAngvel({ x: 0, y: 0, z: 0 }, true);
       }
 
