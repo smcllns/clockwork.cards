@@ -5,7 +5,10 @@ import HeroCyberpunk from "./sections/hero-cyberpunk";
 import TimeCard from "./sections/time";
 import TimeTableCard from "./sections/time-table";
 import SpaceCard from "./sections/space";
+import YogurtCard from "./sections/yogurt";
+import LifeInNumbersCard from "./sections/life-in-numbers";
 import RemainingCards from "./sections/remaining";
+import BinaryCard from "./sections/binary";
 import Footer from "./sections/footer";
 
 const params = new URLSearchParams(window.location.search);
@@ -29,7 +32,10 @@ function App() {
         <TimeCard dob={dob} name={name} />
         <TimeTableCard dob={dob} name={name} />
         <SpaceCard dob={dob} name={name} />
+        <YogurtCard dob={dob} name={name} />
+        <LifeInNumbersCard dob={dob} name={name} />
         <RemainingCards name={name} dob={dob} />
+        <BinaryCard dob={dob} name={name} />
       </section>
       <Footer />
     </div>

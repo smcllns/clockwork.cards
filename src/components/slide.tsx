@@ -61,9 +61,20 @@ export function Body({ children }: { children: React.ReactNode }) {
   return <p className="text-base leading-relaxed mb-8" style={css.secondary}>{children}</p>;
 }
 
+export function Narrative({ children, sm }: { children: React.ReactNode; sm?: boolean }) {
+  return (
+    <p
+      className={sm ? "text-2xl sm:text-3xl font-medium mb-12" : "text-xl sm:text-2xl leading-relaxed mb-12"}
+      style={css.primary}
+    >
+      {children}
+    </p>
+  );
+}
+
 export function N({ children }: { children: React.ReactNode }) {
   return (
-    <span className="font-bold text-lg" style={{ fontFamily: "var(--font-stat)", color: "var(--text-primary)" }} data-stat>
+    <span className="font-bold" style={{ fontFamily: "var(--font-stat)", color: "var(--text-primary)" }} data-stat>
       {children}
     </span>
   );
