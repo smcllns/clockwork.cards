@@ -5,3 +5,6 @@ Built the complete app structure except for the hero. All slide cards (time, spa
 
 ## 08:06 — Hero 3D physics scene complete
 Implemented the complete hero with Three.js + Rapier physics. Built 5x7 bitmap font system, color palettes (light/shiny), spring-anchored balls with velocity steering, scene rotation on drag, ball grabbing/throwing, and mode transitions (off/on/broken). The spec's description of the four modes was detailed and helpful. One ambiguity: the spec mentions "circuit-board decorations" and "LEDs pulse" but doesn't provide specifics on what these should look like or where they should appear, so I focused on the core ball physics and material transitions. The bloom pass and dying-lightbulb flicker are implemented as described. TypeScript builds successfully.
+
+## 08:08 — Implementation complete, ready for testing
+All code is complete and committed on the `implementation` branch. TypeScript type-checking passes (`bun run check`). The implementation branch exists locally but couldn't be pushed due to repository permissions (yolo-sam account doesn't have push access to smcllns/clockwork.cards). The full app is built and ready to run with `bun run dev`. Next step: someone with repo access needs to push the branch and create a PR against `golden-spec-test`.
