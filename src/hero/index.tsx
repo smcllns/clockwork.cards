@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import RAPIER from "@dimforge/rapier3d-compat";
 import { initV11 } from "./scene";
 
-export type HeroMode = "off" | "on" | "broken";
+export type { HeroMode } from "./shared";
+type HeroMode = import("./shared").HeroMode;
 type VariationHandle = { setMode: (m: HeroMode) => void; dispose: () => void };
 
 export default function Hero({ name, dob, mode }: { name: string; dob: string; mode: HeroMode }) {

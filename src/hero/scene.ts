@@ -31,7 +31,7 @@ function countGlyphPixels(text: string): number[] {
 
 function createCircuitPaths(visW: number, visH: number, scene: THREE.Scene) {
   const group = new THREE.Group();
-  for (let i = 0; i < 20; i++) {
+  for (let i = 0; i < 40; i++) {
     const points: THREE.Vector3[] = [];
     let x = (Math.random() - 0.5) * visW;
     let y = (Math.random() - 0.5) * visH;
@@ -57,7 +57,7 @@ function createCircuitPaths(visW: number, visH: number, scene: THREE.Scene) {
       group.add(dot);
     }
   }
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 12; i++) {
     const chip = new THREE.Mesh(
       new THREE.PlaneGeometry(1 + Math.random() * 2, 0.5 + Math.random()),
       new THREE.MeshBasicMaterial({ color: 0x223333, transparent: true, opacity: 0.1 }),
@@ -74,7 +74,7 @@ function createFlowDots(circuitGroup: THREE.Group, scene: THREE.Scene) {
   const dotGeo = new THREE.SphereGeometry(0.08, 8, 8);
   circuitGroup.children.forEach((child) => {
     if (!(child instanceof THREE.Line)) return;
-    if (Math.random() > 0.5) return;
+    if (Math.random() > 0.8) return;
     const positions = (child.geometry.getAttribute("position") as THREE.BufferAttribute).array;
     const path: THREE.Vector3[] = [];
     for (let i = 0; i < positions.length; i += 3) {
@@ -103,9 +103,13 @@ function sampleDeathTime(): number {
 // ~1.15 (0.46 * 2.5 scale), so z=3 gives a bit of bounce room.
 const FRONT_WALL_Z = 3;
 
+const isBroken = (m: HeroMode) => m === "broken" || m === "broken-off";
+const isShiny = (m: HeroMode) => m === "on" || m === "broken";
+
 export function initV11(container: HTMLElement, name: string, dob: string) {
   let disposed = false;
   let mode: HeroMode = "off";
+  let chaosInitialized = false;
   let frame = 0;
   const startTime = performance.now();
 
@@ -196,28 +200,6 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
   const hitGround = new Uint8Array(meshes.length);
   const floorY = -visH / 2 + 4 + 1.5;
 
-  let spinAngle = 0;
-  const _yAxis = new THREE.Vector3(0, 1, 0);
-  const _spinQuat = new THREE.Quaternion();
-  const _vec3 = new THREE.Vector3();
-
-  let spinActive = false;
-  let lastX = 0;
-  function onPointerDown(e: PointerEvent) { spinActive = true; lastX = e.clientX; }
-  function onPointerMove(e: PointerEvent) {
-    if (!spinActive) return;
-    // Only spin when not grabbing balls (grab takes priority)
-    if (grabbed.length === 0) {
-      spinAngle += (e.clientX - lastX) * 0.01;
-    }
-    lastX = e.clientX;
-  }
-  function onPointerUp() { spinActive = false; }
-  container.addEventListener("pointerdown", onPointerDown);
-  container.addEventListener("pointermove", onPointerMove);
-  // Bind up to window so it fires even if pointer leaves container
-  window.addEventListener("pointerup", onPointerUp);
-
   let visible = true;
   const observer = new IntersectionObserver(([entry]) => {
     visible = entry.isIntersecting;
@@ -236,7 +218,7 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
     if (wasGrabbing && !isGrabbing) settleFrames = 120;
     wasGrabbing = isGrabbing;
 
-    let needsPhysics = mode === "broken" || isGrabbing || spinActive;
+    let needsPhysics = isBroken(mode) || isGrabbing;
     if (!needsPhysics && settleFrames > 0) {
       settleFrames--;
       needsPhysics = true;
@@ -249,7 +231,7 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
         body.setAngvel({ x: 0, y: 0, z: 0 }, true);
       }
 
-      if (mode === "broken") {
+      if (isBroken(mode)) {
         const t = elapsed - breakTime;
         for (let i = 0; i < bodies.length; i++) {
           if (released[i]) continue;
@@ -282,11 +264,9 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
 
       world.step();
     }
-    _spinQuat.setFromAxisAngle(_yAxis, spinAngle);
     for (let i = 0; i < bodies.length; i++) {
       const pos = bodies[i].translation();
-      _vec3.set(pos.x, pos.y, pos.z).applyQuaternion(_spinQuat);
-      meshes[i].position.copy(_vec3);
+      meshes[i].position.set(pos.x, pos.y, pos.z);
     }
 
     if (mode === "on") {
@@ -320,11 +300,11 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
 
       for (let i = 0; i < meshes.length; i++) {
         const mat = meshes[i].material as THREE.MeshPhysicalMaterial;
-        mat.emissiveIntensity = 0.4 + 0.2 * Math.sin(elapsed * 1.5 + phases[i]);
+        mat.emissiveIntensity = 0.7 + 0.3 * Math.sin(elapsed * 1.5 + phases[i]);
       }
     }
 
-    if (mode === "broken") {
+    if (isBroken(mode)) {
       const t = elapsed - breakTime;
 
       // V5 spark/flicker on circuits
@@ -404,7 +384,7 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
     }
 
     // Perf: skip bloom/composer in off mode
-    if (mode === "off") {
+    if (!isShiny(mode)) {
       renderer.render(scene, camera);
     } else {
       composer.render();
@@ -418,23 +398,50 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
     setMode(newMode: HeroMode) {
       mode = newMode;
       settleFrames = 120;
-      if (newMode === "on") {
-        renderer.setClearColor(0x080c10);
-        bloomPass.strength = 0.7;
-        bloomPass.radius = 0.3;
-        bloomPass.threshold = 0.25;
+      // Initialize chaos physics once
+      if (isBroken(newMode) && !chaosInitialized) {
+        chaosInitialized = true;
+        breakTime = (performance.now() - startTime) / 1000;
+        world.gravity = { x: 0, y: -80, z: 0 };
+
+        for (let i = 0; i < meshes.length; i++) {
+          deathTimes[i] = sampleDeathTime();
+          hitGround[i] = 0;
+        }
+
+        const impactX = (Math.random() - 0.5) * visW * 0.8;
+        const impactY = (Math.random() - 0.5) * visH * 0.8;
+        let maxDist = 0;
+        for (let i = 0; i < bodies.length; i++) {
+          const pos = bodies[i].translation();
+          const dist = Math.sqrt((pos.x - impactX) ** 2 + (pos.y - impactY) ** 2);
+          releaseDelays[i] = dist;
+          if (dist > maxDist) maxDist = dist;
+          released[i] = 0;
+        }
+        for (let i = 0; i < bodies.length; i++) {
+          releaseDelays[i] = (releaseDelays[i] / maxDist) * 0.8;
+        }
+      }
+
+      // Apply visual mode
+      if (isShiny(newMode)) {
+        renderer.setClearColor(isBroken(newMode) ? 0x050505 : 0x080c10);
+        bloomPass.strength = isBroken(newMode) ? 1.5 : 0.9;
+        bloomPass.radius = 0.35;
+        bloomPass.threshold = 0.1;
         for (let i = 0; i < meshes.length; i++) {
           meshes[i].material = physicalMats[i];
           const mat = physicalMats[i];
           const hex = SHINY.hex[colorIndices[i]];
           mat.color.setHex(hex);
           mat.emissive.setHex(hex);
-          mat.emissiveIntensity = 0.4;
+          mat.emissiveIntensity = 0.7;
           mat.roughness = 0.2;
           mat.metalness = 0.6;
           mat.clearcoat = 0.5;
         }
-      } else if (newMode === "off") {
+      } else {
         renderer.setClearColor(0xf5f5f0);
         bloomPass.strength = 0;
         for (let i = 0; i < meshes.length; i++) {
@@ -458,43 +465,6 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
           mat.color.setHex(0x333333);
           mat.opacity = 0.3;
         });
-      } else if (newMode === "broken") {
-        breakTime = (performance.now() - startTime) / 1000;
-        renderer.setClearColor(0x050505);
-        bloomPass.strength = 1.5;
-        bloomPass.threshold = 0.1;
-
-        for (let i = 0; i < meshes.length; i++) {
-          deathTimes[i] = sampleDeathTime();
-        }
-
-        for (let i = 0; i < meshes.length; i++) {
-          meshes[i].material = physicalMats[i];
-          const mat = physicalMats[i];
-          const hex = SHINY.hex[colorIndices[i]];
-          mat.color.setHex(hex);
-          mat.emissive.setHex(hex);
-          mat.emissiveIntensity = 0.4;
-          hitGround[i] = 0;
-        }
-
-        world.gravity = { x: 0, y: -80, z: 0 };
-
-        // Stagger release: balls near a random impact point fall first
-        const impactX = (Math.random() - 0.5) * visW * 0.8;
-        const impactY = (Math.random() - 0.5) * visH * 0.8;
-        let maxDist = 0;
-        for (let i = 0; i < bodies.length; i++) {
-          const pos = bodies[i].translation();
-          const dist = Math.sqrt((pos.x - impactX) ** 2 + (pos.y - impactY) ** 2);
-          releaseDelays[i] = dist;
-          if (dist > maxDist) maxDist = dist;
-          released[i] = 0;
-        }
-        // Normalize to 0-0.8s spread
-        for (let i = 0; i < bodies.length; i++) {
-          releaseDelays[i] = (releaseDelays[i] / maxDist) * 0.8;
-        }
       }
     },
     dispose() {
@@ -502,9 +472,6 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
       cancelAnimationFrame(frame);
       grabCleanup();
       observer.disconnect();
-      container.removeEventListener("pointerdown", onPointerDown);
-      container.removeEventListener("pointermove", onPointerMove);
-      window.removeEventListener("pointerup", onPointerUp);
       composer.dispose();
       renderer.dispose();
       if (renderer.domElement.parentNode) container.removeChild(renderer.domElement);
