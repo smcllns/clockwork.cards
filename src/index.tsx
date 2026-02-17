@@ -6,7 +6,10 @@ import TimeCard from "./sections/time";
 import TimeTableCard from "./sections/time-table";
 import SpaceCard from "./sections/space";
 import YogurtCard from "./sections/yogurt";
-import LifeInNumbersCard from "./sections/life-in-numbers";
+import StepsCard from "./sections/steps";
+import BrushingCard from "./sections/brushing";
+import HairCard from "./sections/hair";
+import PoopsCard from "./sections/poops";
 import BrainBodyCard from "./sections/brain-body";
 import BinaryCard from "./sections/binary";
 import Footer from "./sections/footer";
@@ -33,9 +36,12 @@ function App() {
         <TimeTableCard dob={dob} name={name} />
         <SpaceCard dob={dob} name={name} />
         <YogurtCard dob={dob} name={name} />
-        <LifeInNumbersCard dob={dob} name={name} />
+        <StepsCard dob={dob} name={name} />
+        <BrushingCard dob={dob} name={name} />
+        {/* <HairCard dob={dob} name={name} /> */}
+        <PoopsCard dob={dob} name={name} />
         <BrainBodyCard dob={dob} name={name} />
-        <BinaryCard dob={dob} name={name} />
+        {/* <BinaryCard dob={dob} name={name} /> */}
       </section>
       <Footer />
     </div>

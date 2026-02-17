@@ -31,7 +31,7 @@ export default function TimeTableCard({ dob, name }: { dob: string; name: string
 
   return (
     <Slide id="1">
-      <Headline>Precisely, {name} is...</Headline>
+      <Headline>{name} is, precisely ...</Headline>
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <tbody>
           {rows.map(({ key, label, format }) => (
