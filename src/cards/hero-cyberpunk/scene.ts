@@ -154,7 +154,7 @@ export function initV11(container: HTMLElement, name: string, dob: Date) {
 
   const aspect = w / h;
   const camDist = fitCamera(camera, maxW, totalH, aspect);
-  addWalls(world, camera, aspect);
+  let wallBodies = addWalls(world, camera, aspect);
 
   // Glass wall between balls and camera — prevents z-axis perspective blowup
   const vRad = (VFOV * Math.PI) / 180;
@@ -195,12 +195,16 @@ export function initV11(container: HTMLElement, name: string, dob: Date) {
     const nw = container.clientWidth;
     const nh = container.clientHeight;
     if (nw === 0 || nh === 0) return;
-    camera.aspect = nw / nh;
+    const newAspect = nw / nh;
+    camera.aspect = newAspect;
     camera.updateProjectionMatrix();
     renderer.setSize(nw, nh);
     composer.setSize(nw, nh);
     grabSize.w = nw;
     grabSize.h = nh;
+    fitCamera(camera, maxW, totalH, newAspect);
+    for (const body of wallBodies) world.removeRigidBody(body);
+    wallBodies = addWalls(world, camera, newAspect);
     settleFrames = 30;
   }
   window.addEventListener("resize", onResize);

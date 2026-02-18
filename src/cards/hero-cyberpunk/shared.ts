@@ -145,7 +145,7 @@ export function fitCamera(camera: THREE.PerspectiveCamera, maxW: number, totalH:
   return dist;
 }
 
-export function addWalls(world: RAPIER.World, camera: THREE.PerspectiveCamera, aspect: number): void {
+export function addWalls(world: RAPIER.World, camera: THREE.PerspectiveCamera, aspect: number): RAPIER.RigidBody[] {
   const camDist = camera.position.z;
   const vRad = (VFOV * Math.PI) / 180;
   const visH = 2 * camDist * Math.tan(vRad / 2);
@@ -160,10 +160,13 @@ export function addWalls(world: RAPIER.World, camera: THREE.PerspectiveCamera, a
     [0, 0, -half, half, hh, 1],
     [0, 0, half, half, hh, 1],
   ];
+  const bodies: RAPIER.RigidBody[] = [];
   for (const [x, y, z, hx, hy, hz] of walls) {
     const b = world.createRigidBody(RAPIER.RigidBodyDesc.fixed().setTranslation(x, y, z));
     world.createCollider(RAPIER.ColliderDesc.cuboid(hx, hy, hz).setRestitution(0.6).setFriction(0.2), b);
+    bodies.push(b);
   }
+  return bodies;
 }
 
 export function createBalls(
