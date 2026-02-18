@@ -7,9 +7,8 @@
   "photo-time-shiny.png": {
     "model": "gemini-3-pro-image-preview",
     "cost_usd": 0.240,
-    "generation": "multimodal-transform",
-    "reference": "photo-time-shiny-prev.png",
-    "prompt": "Add hot pink neon streaks through his hair alongside the existing teal ones — both teal AND hot pink hair lightning. Also add electric neon lightning bolt arcs around him: teal and hot pink electricity crackling from his kicking foot as it connects with the ball, and arcing around his body. More kinetic energy overall — like a superhero moment. Keep everything else identical: same pose, same expression, same stadium, same goal on the right."
+    "generation": "text-to-image",
+    "prompt": "Pixar 3D claymation boy in a cyberpunk city at night, kicking a glowing neon soccer ball toward a wireframe neon goal. Dark cityscape background with glowing neon billboards. Boy wearing a futuristic neon-trimmed suit. Neon ball trail arc. Reflective dark ground with neon city reflections."
   },
   "photo-space.png": {
     "model": "gemini-2.5-flash-image",
