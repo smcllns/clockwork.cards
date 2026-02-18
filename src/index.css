@@ -58,6 +58,20 @@ button[aria-label="increase"]::after {
   color: var(--text-primary);
 }
 
+@keyframes toggle-glisten {
+  0%, 72%, 100% {
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.35), 0 2px 12px rgba(0,0,0,0.4);
+    border-color: rgba(168, 85, 247, 0.55);
+  }
+  78%, 88% {
+    box-shadow: 0 0 22px rgba(236, 72, 153, 0.75), 0 0 44px rgba(236, 72, 153, 0.25), 0 2px 12px rgba(0,0,0,0.4);
+    border-color: #ec4899;
+  }
+}
+.toggle-glisten {
+  animation: toggle-glisten 3.5s ease-in-out infinite;
+}
+
 @keyframes stepper-pop-up {
   0% { transform: scale(1); }
   40% { transform: scale(1.08); }

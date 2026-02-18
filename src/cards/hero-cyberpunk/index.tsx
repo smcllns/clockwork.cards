@@ -72,12 +72,12 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
         style={{ opacity: shiny ? 1 : 0, pointerEvents: shiny ? "auto" : "none", transition: "opacity 0.5s" }}
       >
         <div
-          className="select-none flex flex-col items-center gap-1.5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg"
+          className={`select-none flex flex-col items-center gap-1.5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg ${!chaos ? "toggle-glisten" : ""}`}
           style={{
-            backgroundColor: chaos ? "rgba(41,37,36,0.85)" : "rgba(10,10,15,0.75)",
+            backgroundColor: chaos ? "rgba(41,37,36,0.85)" : "rgba(15,5,30,0.85)",
             backdropFilter: "blur(8px)",
-            border: chaos ? "1px solid #44403c" : "1px solid rgba(255,255,255,0.08)",
-            boxShadow: chaos ? "0 2px 8px rgba(0,0,0,0.3)" : "0 2px 12px rgba(0,0,0,0.3)",
+            border: chaos ? "1px solid #44403c" : "1px solid rgba(168,85,247,0.55)",
+            boxShadow: chaos ? "0 2px 8px rgba(0,0,0,0.3)" : undefined,
           }}
         >
           <span
@@ -87,7 +87,7 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
               fontWeight: 700,
               letterSpacing: "0.08em",
               textTransform: "uppercase" as const,
-              color: chaos ? "#57534e" : "#dc2626",
+              color: chaos ? "#57534e" : "#c084fc",
             }}
           >🚫 Do not touch</span>
           <button
@@ -97,11 +97,11 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
               width: 36,
               height: 20,
               borderRadius: 10,
-              backgroundColor: chaos ? "#292524" : "#57534e",
+              backgroundColor: chaos ? "#292524" : "rgba(88,28,135,0.7)",
               boxShadow: chaos
                 ? "inset 0 1px 3px rgba(0,0,0,0.4)"
-                : "inset 0 1px 3px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.1)",
-              border: chaos ? "1px solid #44403c" : "1px solid #a8a29e",
+                : "inset 0 1px 3px rgba(0,0,0,0.3), 0 0 6px rgba(168,85,247,0.3)",
+              border: chaos ? "1px solid #44403c" : "1px solid #a855f7",
             }}
           >
             <div
@@ -110,8 +110,8 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
                 width: 14,
                 height: 14,
                 left: chaos ? 19 : 2,
-                backgroundColor: chaos ? "#57534e" : "#e7e5e4",
-                boxShadow: "0 1px 2px rgba(0,0,0,0.2)",
+                backgroundColor: chaos ? "#57534e" : "#e879f9",
+                boxShadow: chaos ? "0 1px 2px rgba(0,0,0,0.2)" : "0 0 6px rgba(232,121,249,0.7)",
               }}
             />
           </button>
