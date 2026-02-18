@@ -45,12 +45,12 @@ function createCircuitPaths(visW: number, visH: number, scene: THREE.Scene) {
       points.push(new THREE.Vector3(x, y, -1));
     }
     const geo = new THREE.BufferGeometry().setFromPoints(points);
-    const mat = new THREE.LineBasicMaterial({ color: 0x334444, transparent: true, opacity: 0.12 });
+    const mat = new THREE.LineBasicMaterial({ color: 0x334444, transparent: true, opacity: 0.22 });
     group.add(new THREE.Line(geo, mat));
     for (const pt of [points[0], points[points.length - 1]]) {
       const dot = new THREE.Mesh(
         new THREE.CircleGeometry(0.15, 8),
-        new THREE.MeshBasicMaterial({ color: 0x446666, transparent: true, opacity: 0.2 }),
+        new THREE.MeshBasicMaterial({ color: 0x446666, transparent: true, opacity: 0.35 }),
       );
       dot.position.copy(pt);
       dot.position.z = -0.9;
@@ -106,7 +106,7 @@ const FRONT_WALL_Z = 3;
 const isBroken = (m: HeroMode) => m === "broken" || m === "broken-off";
 const isShiny = (m: HeroMode) => m === "on" || m === "broken";
 
-export function initV11(container: HTMLElement, name: string, dob: string) {
+export function initV11(container: HTMLElement, name: string, dob: Date) {
   let disposed = false;
   let mode: HeroMode = "off";
   let chaosInitialized = false;
@@ -114,7 +114,32 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
   const startTime = performance.now();
 
   const { scene, camera, renderer, composer, bloomPass, w, h } = setupScene(container, { antialias: true, shadows: true });
-  renderer.setClearColor(0xf5f5f0);
+  scene.background = new THREE.Color(0xf5f5f0);
+
+  let bgLightTex: THREE.Texture | null = null;
+  let bgShinyTex: THREE.Texture | null = null;
+
+  function applyBackground() {
+    const hasBg = bgLightTex !== null || bgShinyTex !== null;
+    if (hasBg) {
+      // Transparent canvas — CSS background + vignette shows through.
+      // Linear tonemapping prevents ACES from crushing emissive neon balls to white.
+      // Shiny mode needs lower exposure (emissive); light mode uses ACES at 1.0 (no emissive).
+      scene.background = null;
+      renderer.setClearColor(0x000000, 0);
+      if (isShiny(mode)) {
+        renderer.toneMapping = THREE.LinearToneMapping;
+        renderer.toneMappingExposure = 0.6;
+      } else {
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.0;
+      }
+    } else {
+      scene.background = new THREE.Color(isShiny(mode) ? (isBroken(mode) ? 0x050505 : 0x080c10) : 0xf5f5f0);
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.0;
+    }
+  }
 
   // Perf: cap pixel ratio at 1 (skip retina rendering)
   renderer.setPixelRatio(1);
@@ -440,7 +465,7 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
 
       // Apply visual mode
       if (isShiny(newMode)) {
-        renderer.setClearColor(isBroken(newMode) ? 0x050505 : 0x080c10);
+        applyBackground();
         bloomPass.strength = isBroken(newMode) ? 1.5 : 0.9;
         bloomPass.radius = 0.35;
         bloomPass.threshold = 0.1;
@@ -456,7 +481,7 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
           mat.clearcoat = 0.5;
         }
       } else {
-        renderer.setClearColor(0xf5f5f0);
+        applyBackground();
         bloomPass.strength = 0;
         for (let i = 0; i < meshes.length; i++) {
           meshes[i].material = simpleMats[i];
@@ -480,6 +505,11 @@ export function initV11(container: HTMLElement, name: string, dob: string) {
           mat.opacity = 0.3;
         });
       }
+    },
+    setBg(lightUrl: string, shinyUrl: string) {
+      const loader = new THREE.TextureLoader();
+      loader.load(lightUrl, (tex) => { bgLightTex = tex; applyBackground(); });
+      loader.load(shinyUrl, (tex) => { bgShinyTex = tex; applyBackground(); });
     },
     dispose() {
       disposed = true;

@@ -66,10 +66,9 @@ export function layoutBalls(specs: LineSpec[]): { balls: Ball[]; maxW: number; t
   return { balls, maxW, totalH };
 }
 
-export function getBirthdaySpecs(name: string, dob: string): LineSpec[] {
-  const age = Math.floor((Date.now() - new Date(dob).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
-  const d = new Date(dob);
-  const dateLine = `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()} ${d.getUTCFullYear()}`;
+export function getBirthdaySpecs(name: string, dob: Date): LineSpec[] {
+  const age = Math.floor((Date.now() - dob.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+  const dateLine = `${MONTHS[dob.getUTCMonth()]} ${dob.getUTCDate()} ${dob.getUTCFullYear()}`;
   return [
     { text: String(age), scale: 2.5 },
     { text: "HAPPY", scale: 1.4 },
@@ -88,8 +87,8 @@ export function setupScene(container: HTMLElement, opts?: SceneOpts) {
   const h = container.clientHeight;
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(VFOV, w / h, 0.1, 200);
-  const renderer = new THREE.WebGLRenderer({ antialias: aa });
-  renderer.setClearColor(0xffffff);
+  const renderer = new THREE.WebGLRenderer({ antialias: aa, alpha: true });
+  renderer.setClearColor(0x000000, 0);
   renderer.setSize(w, h);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.shadowMap.enabled = shadows;
