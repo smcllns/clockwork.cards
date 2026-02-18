@@ -59,6 +59,10 @@ src/
     └── useNow.ts          # 1-second tick hook for live-updating values
 ```
 
+## Assets
+- **Never delete files from `src/assets/`.** Generated images cost money and old versions are useful for comparison/rollback. When replacing an image, just overwrite the file — don't delete others.
+- `src/assets/image-prompts.json` tracks the prompt, model, and cost for every generated image. Update it when adding new images.
+
 ## Architecture Notes
 - `index.tsx` owns only `shiny` state. Each card is self-contained and owns its own state.
 - HeroCyberpunk owns chaos state internally — it's specific to cyberpunk theme.
