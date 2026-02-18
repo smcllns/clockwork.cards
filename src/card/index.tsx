@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
-import { useNow } from "./components/useNow";
-import Nav from "./components/nav";
-import Footer from "./components/footer";
-import HeroCyberpunk from "./cards/hero-cyberpunk";
+import { useNow } from "../components/useNow";
+import Nav from "../components/nav";
+import Footer from "../components/footer";
 import {
   useTimeMetrics, useSpaceMetrics, useStepsMetrics, useYogurtMetrics,
   useHeartMetrics, useFruitMetrics, useHugsMetrics, useLungsMetrics,
   useSleepMetrics, useBrushingMetrics, useWaterMetrics, usePoopsMetrics,
   useHairMetrics, useClosingMetrics,
 } from "./hooks";
+import { HeroSection } from "./sections/00_hero";
 import { TimeSection } from "./sections/01_time";
 import { SpaceSection } from "./sections/02_space";
 import { StepsSection } from "./sections/03_steps";
@@ -56,7 +56,7 @@ function App() {
   return (
     <div>
       <Nav name={name} shiny={shiny} onToggleShiny={toggleShiny} />
-      <HeroCyberpunk name={name} dob={dob} shiny={shiny} />
+      <HeroSection name={name} dob={dob} shiny={shiny} />
       <section style={{ background: "var(--bg-primary)" }}>
         <TimeSection         name={name}     shiny={shiny} time={time} />
         <SpaceSection        name={name}     shiny={shiny} space={space} />

@@ -1,8 +1,8 @@
 import type { useWaterMetrics } from "../hooks";
-import { PhotoSlide } from "../components/photo-slide";
-import { InlineStepper } from "../components/controls";
-import imgLight from "../assets/photo-water.png";
-import imgShiny from "../assets/photo-water-shiny.png";
+import { PhotoSlide } from "../../components/photo-slide";
+import { InlineStepper } from "../../components/controls";
+import imgLight from "../../assets/photo-water.png";
+import imgShiny from "../../assets/photo-water-shiny.png";
 
 type Props = { name: string; shiny: boolean; water: ReturnType<typeof useWaterMetrics> };
 

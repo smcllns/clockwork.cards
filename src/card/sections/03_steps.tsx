@@ -1,7 +1,7 @@
 import type { useStepsMetrics } from "../hooks";
-import { Slide, KeyMetric, Headline, Unit } from "../components/slide";
-import { InlineStepper, InlineSlider } from "../components/controls";
-import { his, he } from "../utils";
+import { Slide, KeyMetric, Headline, Unit } from "../../components/slide";
+import { InlineStepper, InlineSlider } from "../../components/controls";
+import { his, he } from "../../utils";
 import { styles } from "./styles";
 
 type Props = { name: string; pronouns: "m" | "f"; steps: ReturnType<typeof useStepsMetrics> };

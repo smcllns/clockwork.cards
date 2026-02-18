@@ -58,6 +58,12 @@ button[aria-label="increase"]::after {
   color: var(--text-primary);
 }
 
+@keyframes toggle-glimmer {
+  0%, 83%, 100% { filter: none; }
+  87%           { filter: drop-shadow(0 0 6px rgba(255, 220, 80, 0.9)) brightness(1.15); }
+  91%           { filter: none; }
+}
+
 @keyframes toggle-glisten {
   0%, 72%, 100% {
     box-shadow: 0 0 10px rgba(168, 85, 247, 0.35), 0 2px 12px rgba(0,0,0,0.4);

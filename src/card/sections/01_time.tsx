@@ -1,10 +1,10 @@
 import type { useTimeMetrics } from "../hooks";
-import { PhotoSlide } from "../components/photo-slide";
-import { Slide, Headline } from "../components/slide";
-import { InlineDropdown } from "../components/controls";
+import { PhotoSlide } from "../../components/photo-slide";
+import { Slide, Headline } from "../../components/slide";
+import { InlineDropdown } from "../../components/controls";
 import { TIME_UNITS } from "../hooks";
-import imgLight from "../assets/photo-time.png";
-import imgShiny from "../assets/photo-time-shiny.png";
+import imgLight from "../../assets/photo-time.png";
+import imgShiny from "../../assets/photo-time-shiny.png";
 
 type Props = { name: string; shiny: boolean; time: ReturnType<typeof useTimeMetrics> };
 

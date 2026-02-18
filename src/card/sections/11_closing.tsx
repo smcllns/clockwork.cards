@@ -1,8 +1,8 @@
 import type { useClosingMetrics } from "../hooks";
-import { Slide, Headline } from "../components/slide";
-import { FlipCard } from "../components/flip-card";
-import { css } from "../components/section";
-import { expandBase, describeBase, ordinalSuffix } from "../cards/binary";
+import { Slide, Headline } from "../../components/slide";
+import { FlipCard } from "../../components/flip-card";
+import { css } from "../../components/section";
+import { expandBase, describeBase, ordinalSuffix } from "../../cards/binary";
 import { styles } from "./styles";
 
 type Props = { name: string; closing: ReturnType<typeof useClosingMetrics> };

@@ -1,8 +1,8 @@
 import type { useSpaceMetrics } from "../hooks";
-import { PhotoSlide } from "../components/photo-slide";
-import { InlinePills } from "../components/controls";
-import imgLight from "../assets/photo-space.png";
-import imgShiny from "../assets/photo-space-shiny.png";
+import { PhotoSlide } from "../../components/photo-slide";
+import { InlinePills } from "../../components/controls";
+import imgLight from "../../assets/photo-space.png";
+import imgShiny from "../../assets/photo-space-shiny.png";
 
 type Props = { name: string; shiny: boolean; space: ReturnType<typeof useSpaceMetrics> };
 

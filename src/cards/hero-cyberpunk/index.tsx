@@ -72,7 +72,7 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
         style={{ opacity: shiny ? 1 : 0, pointerEvents: shiny ? "auto" : "none", transition: "opacity 0.5s" }}
       >
         <div
-          className={`select-none flex flex-col items-center gap-1.5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg ${!chaos ? "toggle-glisten" : ""}`}
+          className="select-none flex flex-col items-center gap-1.5 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg"
           style={{
             backgroundColor: chaos ? "rgba(41,37,36,0.85)" : "rgba(15,5,30,0.85)",
             backdropFilter: "blur(8px)",

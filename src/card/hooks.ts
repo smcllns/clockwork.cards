@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { getAge, daysSinceAge } from "./utils";
+import { getAge, daysSinceAge } from "../utils";
 import {
   MS_PER_DAY, AVG_BLINKS_PER_DAY, AVG_CHILD_BPM,
   HARD_PLAY_LITERS_PER_MIN, KM_PER_MILE, EARTH_ORBITAL_MPH,
   LIGHT_SPEED_MPH, OLYMPIC_POOL_LITERS, GLASS_ML,
-} from "./constants";
+} from "../constants";
 
 const TIME_UNITS = ["years", "months", "weeks", "days", "hours", "minutes", "seconds"] as const;
 export type TimeUnit = typeof TIME_UNITS[number];

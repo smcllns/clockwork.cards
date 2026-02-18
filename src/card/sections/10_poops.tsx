@@ -1,8 +1,8 @@
 import type { usePoopsMetrics } from "../hooks";
-import { PhotoSlide } from "../components/photo-slide";
-import { InlineStepper } from "../components/controls";
-import imgLight from "../assets/photo-poops.png";
-import imgShiny from "../assets/photo-poops-shiny.png";
+import { PhotoSlide } from "../../components/photo-slide";
+import { InlineStepper } from "../../components/controls";
+import imgLight from "../../assets/photo-poops.png";
+import imgShiny from "../../assets/photo-poops-shiny.png";
 
 type Props = { shiny: boolean; poops: ReturnType<typeof usePoopsMetrics> };
 

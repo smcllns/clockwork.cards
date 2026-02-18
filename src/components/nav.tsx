@@ -18,13 +18,24 @@ export default function Nav({ name, shiny, onToggleShiny }: { name: string; shin
       }}
     >
       <span
-        className="text-sm font-medium"
+        className="flex items-center gap-2 text-sm font-medium"
         style={{
           color: shiny ? "#7a7a9a" : "#71717a",
           fontFamily: "'Space Grotesk', system-ui, sans-serif",
           transition: "color 0.5s",
         }}
       >
+        <svg
+          width="16" height="16" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" strokeWidth="2"
+          strokeLinecap="round" strokeLinejoin="round"
+          style={{ opacity: 0.7 }}
+        >
+          <path d="M5 22h14" />
+          <path d="M5 2h14" />
+          <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22" />
+          <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2" />
+        </svg>
         clockwork.cards/{name.toLowerCase()}
       </span>
 
@@ -34,9 +45,9 @@ export default function Nav({ name, shiny, onToggleShiny }: { name: string; shin
         style={{
           backgroundColor: shiny ? "rgba(245,158,11,0.15)" : "rgba(100,60,0,0.08)",
           border: shiny ? "1px solid rgba(217,119,6,0.3)" : "1px solid rgba(180,130,50,0.25)",
-          boxShadow: shiny ? "0 0 12px rgba(245,158,11,0.2)" : "none",
-          animation: shiny ? "none" : "toggle-hint 3s ease-in-out infinite",
-          transition: "all 0.3s",
+          boxShadow: shiny ? "0 0 12px rgba(245,158,11,0.2)" : undefined,
+          animation: shiny ? "none" : "toggle-glimmer 6s linear infinite",
+          transition: "background-color 0.3s, border-color 0.3s",
         }}
       >
         <Sparkle color={shiny ? "#f59e0b" : "#b8860b"} size={12} />

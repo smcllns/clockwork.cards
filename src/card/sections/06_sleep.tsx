@@ -1,8 +1,8 @@
 import type { useSleepMetrics } from "../hooks";
-import { PhotoSlide } from "../components/photo-slide";
-import { InlineStepper } from "../components/controls";
-import imgLight from "../assets/photo-sleep.png";
-import imgShiny from "../assets/photo-sleep-shiny.png";
+import { PhotoSlide } from "../../components/photo-slide";
+import { InlineStepper } from "../../components/controls";
+import imgLight from "../../assets/photo-sleep.png";
+import imgShiny from "../../assets/photo-sleep-shiny.png";
 
 type Props = { name: string; shiny: boolean; sleep: ReturnType<typeof useSleepMetrics> };
 
