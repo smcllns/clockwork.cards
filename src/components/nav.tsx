@@ -46,7 +46,6 @@ export default function Nav({ name, shiny, onToggleShiny }: { name: string; shin
           backgroundColor: shiny ? "rgba(245,158,11,0.15)" : "rgba(100,60,0,0.08)",
           border: shiny ? "1px solid rgba(217,119,6,0.3)" : "1px solid rgba(180,130,50,0.25)",
           boxShadow: shiny ? "0 0 12px rgba(245,158,11,0.2)" : undefined,
-          animation: shiny ? "none" : "toggle-glimmer 6s linear infinite",
           transition: "background-color 0.3s, border-color 0.3s",
         }}
       >
