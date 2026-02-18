@@ -333,7 +333,7 @@ export function initV11(container: HTMLElement, name: string, dob: Date) {
 
       for (let i = 0; i < meshes.length; i++) {
         const mat = meshes[i].material as THREE.MeshPhysicalMaterial;
-        mat.emissiveIntensity = 0.7 + 0.3 * Math.sin(elapsed * 1.5 + phases[i]);
+        mat.emissiveIntensity = 0.38 + 0.12 * Math.sin(elapsed * 1.5 + phases[i]);
       }
     }
 
@@ -405,14 +405,14 @@ export function initV11(container: HTMLElement, name: string, dob: Date) {
 
       // Bloom: flicker early (V5 sparks), then track survivors
       if (t < 3) {
-        bloomPass.strength = Math.random() > 0.8 ? 2 : 0.5;
+        bloomPass.strength = Math.random() > 0.8 ? 1.2 : 0.3;
       } else {
         let maxIntensity = 0;
         for (let i = 0; i < meshes.length; i++) {
           const mat = meshes[i].material as THREE.MeshPhysicalMaterial;
           if (mat.emissiveIntensity > maxIntensity) maxIntensity = mat.emissiveIntensity;
         }
-        bloomPass.strength = maxIntensity > 0 ? 0.4 + maxIntensity * 0.8 : 0;
+        bloomPass.strength = maxIntensity > 0 ? 0.25 + maxIntensity * 0.6 : 0;
       }
     }
 
@@ -460,16 +460,16 @@ export function initV11(container: HTMLElement, name: string, dob: Date) {
       // Apply visual mode
       if (isShiny(newMode)) {
         applyBackground();
-        bloomPass.strength = isBroken(newMode) ? 1.5 : 0.9;
-        bloomPass.radius = 0.35;
-        bloomPass.threshold = 0.1;
+        bloomPass.strength = isBroken(newMode) ? 1.0 : 0.22;
+        bloomPass.radius = 0.07;
+        bloomPass.threshold = 0.15;
         for (let i = 0; i < meshes.length; i++) {
           meshes[i].material = physicalMats[i];
           const mat = physicalMats[i];
           const hex = SHINY.hex[colorIndices[i]];
           mat.color.setHex(hex);
           mat.emissive.setHex(hex);
-          mat.emissiveIntensity = 0.7;
+          mat.emissiveIntensity = 0.38;
           mat.roughness = 0.2;
           mat.metalness = 0.6;
           mat.clearcoat = 0.5;
