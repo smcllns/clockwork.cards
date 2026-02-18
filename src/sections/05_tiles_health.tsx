@@ -1,6 +1,6 @@
 import type { useHeartMetrics, useFruitMetrics, useHugsMetrics, useLungsMetrics } from "../hooks";
-import { TileContainer, Tile } from "../components/tile";
-import { InlineStepper } from "../components/controls";
+import { TileContainer, Tile } from "../page/tile";
+import { InlineStepper } from "../page/controls";
 
 type Props = {
   name: string;

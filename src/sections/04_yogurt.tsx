@@ -1,6 +1,6 @@
 import type { useYogurtMetrics } from "../hooks";
 import { PhotoSlide } from "../components/photo-slide";
-import { InlinePills, InlineSlider, InlineStepper } from "../components/controls";
+import { InlinePills, InlineSlider, InlineStepper } from "../page/controls";
 import imgLight from "../assets/photo-yogurt.png";
 import imgShiny from "../assets/photo-yogurt-shiny.png";
 

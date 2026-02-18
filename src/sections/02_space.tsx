@@ -1,6 +1,6 @@
 import type { useSpaceMetrics } from "../hooks";
 import { PhotoSlide } from "../components/photo-slide";
-import { InlinePills } from "../components/controls";
+import { InlinePills } from "../page/controls";
 import imgLight from "../assets/photo-space.png";
 import imgShiny from "../assets/photo-space-shiny.png";
 

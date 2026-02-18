@@ -1,4 +1,4 @@
-import { Slide, Headline } from "./slide";
+import { Slide, Headline } from "../page/slide";
 import { useNow } from "../lib/useNow";
 import { getAge } from "../lib/utils";
 

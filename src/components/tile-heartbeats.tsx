@@ -1,4 +1,4 @@
-import { Tile } from "./tile";
+import { Tile } from "../page/tile";
 import { useNow } from "../lib/useNow";
 import { AVG_CHILD_BPM } from "../lib/constants";
 

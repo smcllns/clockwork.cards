@@ -1,6 +1,6 @@
 import type { useHairMetrics } from "../hooks";
-import { Slide } from "../components/slide";
-import { InlineStepper } from "../components/controls";
+import { Slide } from "../page/slide";
+import { InlineStepper } from "../page/controls";
 import { styles } from "./styles";
 
 type Props = { name: string; hair: ReturnType<typeof useHairMetrics> };

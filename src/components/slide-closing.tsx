@@ -1,6 +1,6 @@
-import { Slide, Headline, Body } from "./slide";
-import { FlipCard } from "./flip-card";
-import { css } from "./section";
+import { Slide, Headline, Body } from "../page/slide";
+import { FlipCard } from "../page/flip-card";
+import { css } from "../page/section";
 import { useNow } from "../lib/useNow";
 import { getAge } from "../lib/utils";
 import { expandBase, describeBase, ordinalSuffix } from "./binary";

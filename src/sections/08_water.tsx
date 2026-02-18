@@ -1,6 +1,6 @@
 import type { useWaterMetrics } from "../hooks";
 import { PhotoSlide } from "../components/photo-slide";
-import { InlineStepper } from "../components/controls";
+import { InlineStepper } from "../page/controls";
 import imgLight from "../assets/photo-water.png";
 import imgShiny from "../assets/photo-water-shiny.png";
 

@@ -1,6 +1,6 @@
 import type { useSleepMetrics } from "../hooks";
 import { PhotoSlide } from "../components/photo-slide";
-import { InlineStepper } from "../components/controls";
+import { InlineStepper } from "../page/controls";
 import imgLight from "../assets/photo-sleep.png";
 import imgShiny from "../assets/photo-sleep-shiny.png";
 
