@@ -10,7 +10,7 @@ import { LIGHT, SHINY } from "./colors";
 
 export type HeroMode = "off" | "on" | "broken" | "broken-off";
 
-export type Ball = { x: number; y: number; colorIndex: number; scale: number };
+export type Ball = { x: number; y: number; colorIndex: number; wordColorIndex: number; scale: number };
 export type LineSpec = { text: string; scale: number };
 
 export const VFOV = 50;
@@ -48,6 +48,7 @@ export function layoutBalls(specs: LineSpec[]): { balls: Ball[]; maxW: number; t
     curY += gapBefore(li);
     const lineOffX = (maxW - lineW) / 2;
 
+    const wordColor = Math.floor(Math.random() * LIGHT.hex.length);
     for (const { char, col } of chars) {
       const glyph = FONT[char];
       if (!glyph) continue;
@@ -57,7 +58,7 @@ export function layoutBalls(specs: LineSpec[]): { balls: Ball[]; maxW: number; t
           if (!glyph[r][c]) continue;
           const x = lineOffX + col + c * scale - maxW / 2;
           const y = -(curY + r * scale - totalH / 2);
-          balls.push({ x, y, colorIndex: charColor, scale });
+          balls.push({ x, y, colorIndex: charColor, wordColorIndex: wordColor, scale });
         }
       }
     }

@@ -210,6 +210,7 @@ export function initV11(container: HTMLElement, name: string, dob: Date) {
   window.addEventListener("resize", onResize);
 
   const colorIndices = balls.map(b => b.colorIndex);
+  const wordColorIndices = balls.map(b => b.wordColorIndex);
   const phases = new Float32Array(meshes.length);
   for (let i = 0; i < phases.length; i++) phases[i] = Math.random() * Math.PI * 2;
 
@@ -484,7 +485,7 @@ export function initV11(container: HTMLElement, name: string, dob: Date) {
         for (let i = 0; i < meshes.length; i++) {
           meshes[i].material = physicalMats[i];
           const mat = physicalMats[i];
-          mat.color.setHex(LIGHT.hex[colorIndices[i]]);
+          mat.color.setHex(LIGHT.hex[wordColorIndices[i]]);
           mat.emissive.setHex(0x000000);
           mat.emissiveIntensity = 0;
           mat.roughness = 0.35;
