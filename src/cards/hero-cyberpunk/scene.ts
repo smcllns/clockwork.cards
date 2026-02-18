@@ -131,8 +131,8 @@ export function initV11(container: HTMLElement, name: string, dob: Date) {
         renderer.toneMapping = THREE.LinearToneMapping;
         renderer.toneMappingExposure = 0.6;
       } else {
-        renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        renderer.toneMappingExposure = 1.0;
+        renderer.toneMapping = THREE.LinearToneMapping;
+        renderer.toneMappingExposure = 1.2;
       }
     } else {
       scene.background = new THREE.Color(isShiny(mode) ? (isBroken(mode) ? 0x050505 : 0x080c10) : 0xf5f5f0);
@@ -186,13 +186,7 @@ export function initV11(container: HTMLElement, name: string, dob: Date) {
     return { x: t.x, y: t.y, z: t.z };
   });
 
-  // Perf: simple materials for off mode (Lambert instead of Physical)
-  const simpleMats = balls.map(b =>
-    new THREE.MeshLambertMaterial({ color: LIGHT.hex[b.colorIndex] })
-  );
   const physicalMats = meshes.map(m => m.material as THREE.MeshPhysicalMaterial);
-  // Start in off mode with simple materials
-  for (let i = 0; i < meshes.length; i++) meshes[i].material = simpleMats[i];
 
   const { grabbed, target, size: grabSize, cleanup: grabCleanup } = setupGrabHandlers(renderer.domElement, camera, bodies, w, h);
   let wasGrabbing = false;
@@ -484,8 +478,15 @@ export function initV11(container: HTMLElement, name: string, dob: Date) {
         applyBackground();
         bloomPass.strength = 0;
         for (let i = 0; i < meshes.length; i++) {
-          meshes[i].material = simpleMats[i];
-          simpleMats[i].color.setHex(LIGHT.hex[colorIndices[i]]);
+          meshes[i].material = physicalMats[i];
+          const mat = physicalMats[i];
+          mat.color.setHex(LIGHT.hex[colorIndices[i]]);
+          mat.emissive.setHex(0x000000);
+          mat.emissiveIntensity = 0;
+          mat.roughness = 0.35;
+          mat.metalness = 0.1;
+          mat.clearcoat = 0.6;
+          mat.clearcoatRoughness = 0.2;
         }
         circuitGroup.children.forEach((child) => {
           if (child instanceof THREE.Line) {

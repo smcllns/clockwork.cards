@@ -1,20 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import RAPIER from "@dimforge/rapier3d-compat";
 import { initV11 } from "./scene";
-import bedroomLight from "../../assets/hero-bg-bedroom-light.png";
-import bedroomShiny from "../../assets/hero-bg-bedroom-shiny.png";
 import forestLight from "../../assets/hero-bg-forest-light.png";
 import forestShiny from "../../assets/hero-bg-forest-shiny.png";
-import spaceLight from "../../assets/hero-bg-space-light.png";
-import spaceShiny from "../../assets/hero-bg-space-shiny.png";
-
-const BG_THEMES = ["forest", "bedroom", "space"] as const;
-type BgTheme = typeof BG_THEMES[number];
-const bgImages: Record<BgTheme, { light: string; shiny: string }> = {
-  forest: { light: forestLight, shiny: forestShiny },
-  bedroom: { light: bedroomLight, shiny: bedroomShiny },
-  space: { light: spaceLight, shiny: spaceShiny },
-};
 
 type HeroMode = import("./shared").HeroMode;
 type VariationHandle = { setMode: (m: HeroMode) => void; setBg: (l: string, s: string) => void; dispose: () => void };
@@ -24,7 +12,6 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
   const handleRef = useRef<VariationHandle | null>(null);
   const [ready, setReady] = useState(false);
   const [chaos, setChaos] = useState(false);
-  const [bgTheme, setBgTheme] = useState<BgTheme>("forest");
 
   const mode: HeroMode = chaos ? (shiny ? "broken" : "broken-off") : shiny ? "on" : "off";
 
@@ -43,6 +30,7 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
       if (disposed) return;
       const handle = initV11(container, name, dob);
       handleRef.current = handle;
+      handle.setBg(forestLight, forestShiny);
       setReady(true);
     });
 
@@ -59,13 +47,7 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
     }
   }, [mode, ready]);
 
-  useEffect(() => {
-    if (ready && handleRef.current) {
-      handleRef.current.setBg(bgImages[bgTheme].light, bgImages[bgTheme].shiny);
-    }
-  }, [bgTheme, ready]);
-
-  const bgSrc = shiny ? bgImages[bgTheme].shiny : bgImages[bgTheme].light;
+  const bgSrc = shiny ? forestShiny : forestLight;
 
   return (
     <div className="h-[90dvh] relative snap-section">
@@ -84,23 +66,6 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
 
       {/* Three.js canvas mounts here */}
       <section ref={containerRef} className="absolute inset-0 overflow-hidden" />
-
-      <div className="absolute top-16 right-4 z-10 flex gap-2">
-        {BG_THEMES.map((t) => (
-          <button
-            key={t}
-            onClick={() => setBgTheme(t)}
-            className="px-2 py-1 rounded text-xs font-mono"
-            style={{
-              background: bgTheme === t ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.4)",
-              color: bgTheme === t ? "#000" : "#fff",
-              border: "1px solid rgba(255,255,255,0.3)",
-            }}
-          >
-            {t}
-          </button>
-        ))}
-      </div>
 
       <div
         className="absolute bottom-4 left-4 z-10"
