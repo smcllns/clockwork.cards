@@ -72,6 +72,6 @@
   "hero-bg-forest-light.png": {
     "model": "gemini-2.5-flash-image",
     "cost_usd": 0.04,
-    "prompt": "A frosty winter morning forest. Almost entirely white and pale ice blue — high-key, very bright. Bare deciduous trees with white frost and ice crystals on every branch and twig. Soft morning mist filtering through bare branches. Fresh undisturbed snow on the ground. Frost crystals sparkling. Nearly monochromatic white and silver-blue palette — no green. Soft diffused cold morning light through the mist. No characters, people, or animals. Photorealistic atmospheric landscape. The image should be predominantly pale/white so colorful objects overlaid on it will have strong contrast."
+    "prompt": "A magical enchanted forest valley with giant ancient twisted oak trees, a winding path through the middle, and large colorful mushrooms scattered on the forest floor. Daytime version — soft warm golden morning light filtering down through the forest canopy. Natural colors: warm amber and golden light, cream and soft green tones, the mushrooms are in natural earthy reds, oranges, and creams. Misty atmosphere in the background valley. The same composition and sense of wonder as a fantasy illustration, but in warm natural daylight instead of neon dark. Pale golden-warm tones throughout. Illustrated fantasy art style."
   }
 }

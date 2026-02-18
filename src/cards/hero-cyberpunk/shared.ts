@@ -97,6 +97,9 @@ export function setupScene(container: HTMLElement, opts?: SceneOpts) {
   renderer.toneMappingExposure = 1.0;
   renderer.domElement.style.position = "absolute";
   renderer.domElement.style.inset = "0";
+  // Override the pixel dimensions Three.js sets so the canvas fills via inset:0
+  renderer.domElement.style.width = "100%";
+  renderer.domElement.style.height = "100%";
   container.appendChild(renderer.domElement);
 
   scene.add(new THREE.AmbientLight(0xffffff, 0.4));
@@ -114,7 +117,15 @@ export function setupScene(container: HTMLElement, opts?: SceneOpts) {
   dirLight.shadow.radius = 4;
   scene.add(dirLight);
 
-  const composer = new EffectComposer(renderer);
+  // RGBA render target so the composer doesn't write opaque black pixels in
+  // empty areas — required when the canvas overlays a CSS background image.
+  const rt = new THREE.WebGLRenderTarget(w, h, {
+    minFilter: THREE.LinearFilter,
+    magFilter: THREE.LinearFilter,
+    type: THREE.HalfFloatType,
+    format: THREE.RGBAFormat,
+  });
+  const composer = new EffectComposer(renderer, rt);
   composer.addPass(new RenderPass(scene, camera));
   const bloomPass = new UnrealBloomPass(new THREE.Vector2(w, h), 0, 0, 0);
   composer.addPass(bloomPass);

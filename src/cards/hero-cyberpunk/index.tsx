@@ -54,15 +54,15 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
       {/* Background image — img+object-cover is more reliable than CSS background-size on mobile */}
       <img src={bgSrc} className="absolute inset-0 w-full h-full object-cover" alt="" style={{ pointerEvents: "none" }} />
 
-      {/* Dark vignette so balls read clearly over the image */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: shiny
-            ? "radial-gradient(ellipse 80% 85% at 50% 42%, rgba(0,0,15,0.72) 0%, rgba(0,0,15,0.45) 50%, rgba(0,0,15,0.08) 100%)"
-            : "radial-gradient(ellipse 80% 85% at 50% 42%, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.32) 50%, rgba(0,0,0,0.0) 100%)",
-        }}
-      />
+      {/* Dark vignette for shiny mode — neon balls need contrast against the dark forest */}
+      {shiny && (
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: "radial-gradient(ellipse 80% 85% at 50% 42%, rgba(0,0,15,0.72) 0%, rgba(0,0,15,0.45) 50%, rgba(0,0,15,0.08) 100%)",
+          }}
+        />
+      )}
 
       {/* Three.js canvas mounts here */}
       <section ref={containerRef} className="absolute inset-0 overflow-hidden" />
