@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { InlineStepper } from "./page/controls";
-import { useNow } from "../lib/useNow";
-import { getAge } from "../lib/utils";
+import { InlineStepper } from "../page/controls";
+import { useNow } from "../../lib/useNow";
+import { getAge } from "../../lib/utils";
 import { PhotoSlide } from "./photo-slide";
-import imgLight from "../assets/photo-poops.png";
-import imgShiny from "../assets/photo-poops-shiny.png";
+import imgLight from "../../assets/photo-poops.png";
+import imgShiny from "../../assets/photo-poops-shiny.png";
 
 export default function PoopsPhoto({ dob, shiny }: { dob: Date; shiny: boolean }) {
   const [perDay, setPerDay] = useState(1.5);

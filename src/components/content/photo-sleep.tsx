@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { InlineStepper } from "./page/controls";
-import { useNow } from "../lib/useNow";
+import { InlineStepper } from "../page/controls";
+import { useNow } from "../../lib/useNow";
 import { PhotoSlide } from "./photo-slide";
-import imgLight from "../assets/photo-sleep.png";
-import imgShiny from "../assets/photo-sleep-shiny.png";
+import imgLight from "../../assets/photo-sleep.png";
+import imgShiny from "../../assets/photo-sleep-shiny.png";
 
 export default function SleepPhoto({ dob, name, shiny }: { dob: Date; name: string; shiny: boolean }) {
   const [hoursPerNight, setHoursPerNight] = useState(10);

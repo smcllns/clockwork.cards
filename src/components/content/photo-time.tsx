@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { InlineDropdown } from "./page/controls";
-import { useNow } from "../lib/useNow";
-import { getAge } from "../lib/utils";
+import { InlineDropdown } from "../page/controls";
+import { useNow } from "../../lib/useNow";
+import { getAge } from "../../lib/utils";
 import { PhotoSlide } from "./photo-slide";
-import imgLight from "../assets/photo-time.png";
-import imgShiny from "../assets/photo-time-shiny.png";
+import imgLight from "../../assets/photo-time.png";
+import imgShiny from "../../assets/photo-time-shiny.png";
 
 const TIME_UNITS = ["years", "months", "weeks", "days", "hours", "minutes", "seconds"] as const;
 type TimeUnit = typeof TIME_UNITS[number];

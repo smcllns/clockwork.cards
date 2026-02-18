@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Slide, Narrative, Body, N } from "./page/slide";
-import { InlineStepper } from "./page/controls";
-import { useNow } from "../lib/useNow";
-import { daysSinceAge } from "../lib/utils";
+import { Slide, Narrative, Body, N } from "../page/slide";
+import { InlineStepper } from "../page/controls";
+import { useNow } from "../../lib/useNow";
+import { daysSinceAge } from "../../lib/utils";
 
 export default function BrushingCard({ dob, name }: { dob: Date; name: string }) {
   const [minutes, setMinutes] = useState(2);

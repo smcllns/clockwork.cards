@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { InlineSlider, InlineStepper, InlinePills } from "./page/controls";
-import { useNow } from "../lib/useNow";
-import { daysSinceAge } from "../lib/utils";
+import { InlineSlider, InlineStepper, InlinePills } from "../page/controls";
+import { useNow } from "../../lib/useNow";
+import { daysSinceAge } from "../../lib/utils";
 import { PhotoSlide } from "./photo-slide";
-import imgLight from "../assets/photo-yogurt.png";
-import imgShiny from "../assets/photo-yogurt-shiny.png";
+import imgLight from "../../assets/photo-yogurt.png";
+import imgShiny from "../../assets/photo-yogurt-shiny.png";
 
 function hippoHeadline(yogurtKg: number): string {
   const ratio = yogurtKg / 40;

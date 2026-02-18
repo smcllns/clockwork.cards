@@ -1,5 +1,5 @@
 import type { useTimeMetrics } from "../hooks";
-import { PhotoSlide } from "../components/photo-slide";
+import { PhotoSlide } from "../components/content/photo-slide";
 import { Slide, Headline } from "../components/page/slide";
 import { InlineDropdown } from "../components/page/controls";
 import { TIME_UNITS } from "../hooks";

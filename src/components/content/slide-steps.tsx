@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { Slide, Narrative, N, KeyMetric, Headline, Unit } from "./page/slide";
-import { InlineStepper, InlineSlider } from "./page/controls";
-import { useNow } from "../lib/useNow";
-import { getAge, daysSinceAge, his, he } from "../lib/utils";
+import { Slide, Narrative, N, KeyMetric, Headline, Unit } from "../page/slide";
+import { InlineStepper, InlineSlider } from "../page/controls";
+import { useNow } from "../../lib/useNow";
+import { getAge, daysSinceAge, his, he } from "../../lib/utils";
 
 export default function StepsCard({ dob, name, pronouns }: { dob: Date; name: string; pronouns: "m" | "f" }) {
   const [stepsPerDay, setStepsPerDay] = useState(8_000);

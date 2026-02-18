@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { InlinePills } from "./page/controls";
-import { useNow } from "../lib/useNow";
-import { KM_PER_MILE, EARTH_ORBITAL_MPH, LIGHT_SPEED_MPH } from "../lib/constants";
-import { getAge } from "../lib/utils";
+import { InlinePills } from "../page/controls";
+import { useNow } from "../../lib/useNow";
+import { KM_PER_MILE, EARTH_ORBITAL_MPH, LIGHT_SPEED_MPH } from "../../lib/constants";
+import { getAge } from "../../lib/utils";
 import { PhotoSlide } from "./photo-slide";
-import imgLight from "../assets/photo-space.png";
-import imgShiny from "../assets/photo-space-shiny.png";
+import imgLight from "../../assets/photo-space.png";
+import imgShiny from "../../assets/photo-space-shiny.png";
 
 export default function SpacePhoto({ dob, name, shiny }: { dob: Date; name: string; shiny: boolean }) {
   const [unit, setUnit] = useState<"miles" | "km">("miles");
