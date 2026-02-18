@@ -54,13 +54,13 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
       {/* Background image — img+object-cover is more reliable than CSS background-size on mobile */}
       <img src={bgSrc} className="absolute inset-0 w-full h-full object-cover" alt="" style={{ pointerEvents: "none" }} />
 
-      {/* Center vignette — shiny needs heavy darkening for neon contrast; light needs subtle dim so text reads over the bright god rays */}
+      {/* Subtle vignette — shiny sky is naturally dark, light needs gentle center dim for text contrast */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background: shiny
-            ? "radial-gradient(ellipse 85% 80% at 50% 52%, rgba(0,0,12,0.80) 0%, rgba(0,0,12,0.55) 55%, rgba(0,0,12,0.15) 100%)"
-            : "radial-gradient(ellipse 70% 75% at 50% 40%, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.15) 55%, rgba(0,0,0,0) 100%)",
+            ? "radial-gradient(ellipse 85% 80% at 50% 52%, rgba(0,0,12,0.45) 0%, rgba(0,0,12,0.25) 55%, rgba(0,0,12,0) 100%)"
+            : "radial-gradient(ellipse 70% 75% at 50% 40%, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0.10) 55%, rgba(0,0,0,0) 100%)",
         }}
       />
 
