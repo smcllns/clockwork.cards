@@ -60,6 +60,26 @@
     "cost_usd": 0.039,
     "prompt": "A miniature isometric swimming pool with lane dividers, viewed from above at an angle. Cyberpunk rave aesthetic — the pool has glowing turquoise neon water, neon-lit lane dividers. The pool sits on a dark reflective platform. Surrounded by neon light bars and glowing cyberpunk signs in cyan, magenta, and purple. Volumetric fog swirling around. A glass of water sits on the pool edge glowing in the neon light. Dark moody atmosphere with dramatic neon lighting. 3D render style."
   },
+  "hero-bg-bedroom-light.png": {
+    "model": "gemini-2.5-flash-image",
+    "cost_usd": 0.039,
+    "prompt": "unknown — generated before catalog was maintained"
+  },
+  "hero-bg-bedroom-shiny.png": {
+    "model": "gemini-2.5-flash-image",
+    "cost_usd": 0.039,
+    "prompt": "unknown — generated before catalog was maintained"
+  },
+  "hero-bg-space-light.png": {
+    "model": "gemini-2.5-flash-image",
+    "cost_usd": 0.039,
+    "prompt": "unknown — generated before catalog was maintained"
+  },
+  "hero-bg-space-shiny.png": {
+    "model": "gemini-2.5-flash-image",
+    "cost_usd": 0.039,
+    "prompt": "unknown — generated before catalog was maintained"
+  },
   "photo-poops.png": {
     "model": "gemini-3-pro-image-preview",
     "cost_usd": 0.240,
