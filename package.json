@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "lsof -ti :3000 | xargs kill -9 2>/dev/null; bun ./index.html",
+    "dev": "lsof -ti :3000 | xargs kill -9 2>/dev/null; bun ./index.html --hostname=0.0.0.0",
     "check": "tsc",
     "build": "tsc && bun run build.ts",
     "test": "bun test",
