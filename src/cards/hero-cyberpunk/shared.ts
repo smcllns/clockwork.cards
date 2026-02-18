@@ -189,14 +189,15 @@ export function createBalls(
       clearcoatRoughness: 0.3,
       ...materialOverrides,
     });
+    const jitter = ball.scale > 0.5 ? 0.95 + Math.random() * 0.1 : 1;
     const mesh = new THREE.Mesh(sphereGeo, mat);
-    mesh.scale.setScalar(ball.scale);
+    mesh.scale.setScalar(ball.scale * jitter);
     mesh.position.set(ball.x, ball.y, 0);
     mesh.castShadow = true;
     mesh.receiveShadow = true;
     scene.add(mesh);
 
-    const radius = BALL_RADIUS_FACTOR * ball.scale;
+    const radius = BALL_RADIUS_FACTOR * ball.scale * jitter;
     const body = world.createRigidBody(
       RAPIER.RigidBodyDesc.dynamic()
         .setTranslation(ball.x, ball.y, 0)
