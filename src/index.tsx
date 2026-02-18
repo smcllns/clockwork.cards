@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
-import { useNow } from "./components/useNow";
+import { useNow } from "./lib/useNow";
 import Nav from "./components/nav";
 import Footer from "./components/footer";
 import {

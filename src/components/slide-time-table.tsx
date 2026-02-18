@@ -1,5 +1,5 @@
 import { Slide, Headline } from "./slide";
-import { useNow } from "./useNow";
+import { useNow } from "../lib/useNow";
 import { getAge } from "../lib/utils";
 
 export default function TimeTableCard({ dob, name }: { dob: Date; name: string }) {

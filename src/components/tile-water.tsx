@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Tile } from "./tile";
 import { InlineStepper } from "./controls";
-import { useNow } from "./useNow";
+import { useNow } from "../lib/useNow";
 import { OLYMPIC_POOL_LITERS, GLASS_ML } from "../lib/constants";
 
 export default function WaterTile({ dob, name }: { dob: Date; name: string }) {

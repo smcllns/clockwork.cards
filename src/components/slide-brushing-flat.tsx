@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Slide } from "./slide";
 import { InlineStepper } from "./controls";
-import { useNow } from "./useNow";
+import { useNow } from "../lib/useNow";
 import { daysSinceAge } from "../lib/utils";
 import { MS_PER_DAY, AVG_BLINKS_PER_DAY } from "../lib/constants";
 

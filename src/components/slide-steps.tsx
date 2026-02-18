@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Slide, Narrative, N, KeyMetric, Headline, Unit } from "./slide";
 import { InlineStepper, InlineSlider } from "./controls";
-import { useNow } from "./useNow";
+import { useNow } from "../lib/useNow";
 import { getAge, daysSinceAge, his, he } from "../lib/utils";
 
 export default function StepsCard({ dob, name, pronouns }: { dob: Date; name: string; pronouns: "m" | "f" }) {

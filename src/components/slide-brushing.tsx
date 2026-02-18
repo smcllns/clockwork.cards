@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Slide, Narrative, Body, N } from "./slide";
 import { InlineStepper } from "./controls";
-import { useNow } from "./useNow";
+import { useNow } from "../lib/useNow";
 import { daysSinceAge } from "../lib/utils";
 
 export default function BrushingCard({ dob, name }: { dob: Date; name: string }) {

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { InlineStepper } from "./controls";
-import { useNow } from "./useNow";
+import { useNow } from "../lib/useNow";
 import { getAge } from "../lib/utils";
 import { PhotoSlide } from "./photo-slide";
 import imgLight from "../assets/photo-poops.png";

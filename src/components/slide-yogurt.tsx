@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Slide, KeyMetric, Unit, Headline, Body } from "./slide";
 import { InlineSlider, InlineStepper, InlinePills } from "./controls";
-import { useNow } from "./useNow";
+import { useNow } from "../lib/useNow";
 import { daysSinceAge } from "../lib/utils";
 
 function hippoHeadline(yogurtKg: number): string {

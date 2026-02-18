@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Tile } from "./tile";
 import { InlineStepper } from "./controls";
-import { useNow } from "./useNow";
+import { useNow } from "../lib/useNow";
 
 
 export default function FruitTile({ dob, name }: { dob: Date; name: string }) {

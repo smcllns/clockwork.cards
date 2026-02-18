@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Slide, KeyMetric, Headline, Unit } from "./slide";
 import { InlineDropdown } from "./controls";
-import { useNow } from "./useNow";
+import { useNow } from "../lib/useNow";
 import { getAge } from "../lib/utils";
 
 const TIME_UNITS = ["years", "months", "weeks", "days", "hours", "minutes", "seconds"] as const;

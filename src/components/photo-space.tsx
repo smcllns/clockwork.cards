@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { InlinePills } from "./controls";
-import { useNow } from "./useNow";
+import { useNow } from "../lib/useNow";
 import { KM_PER_MILE, EARTH_ORBITAL_MPH, LIGHT_SPEED_MPH } from "../lib/constants";
 import { getAge } from "../lib/utils";
 import { PhotoSlide } from "./photo-slide";

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Tile } from "./tile";
 import { InlineStepper } from "./controls";
-import { useNow } from "./useNow";
+import { useNow } from "../lib/useNow";
 import { HARD_PLAY_LITERS_PER_MIN } from "../lib/constants";
 
 export default function LungsTile({ dob, name }: { dob: Date; name: string }) {

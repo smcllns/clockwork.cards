@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Slide, Narrative, N } from "./slide";
 import { InlineStepper } from "./controls";
-import { useNow } from "./useNow";
+import { useNow } from "../lib/useNow";
 import { getAge } from "../lib/utils";
 
 const CM_PER_MONTH = 1.2;
