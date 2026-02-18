@@ -15,28 +15,19 @@ export default function BrushingCardFlat({ dob, name }: { dob: Date; name: strin
   const daysAlive = Math.floor((now - dob.getTime()) / MS_PER_DAY);
   const totalBlinks = daysAlive * blinksPerDay;
 
-  const styles = {
-    narrative: "text-xl sm:text-2xl leading-relaxed mb-12 font-medium text-(--text-primary)",
-    narrativeSm: "text-2xl sm:text-3xl font-medium mb-12 text-(--text-primary)",
-    body: "text-lg leading-loose mb-8 text-(--text-secondary)",
-    stat: "font-bold font-(--font-stat) text-(--text-primary)",
-  };
-
   return (
     <Slide id="4b-flat">
-      <p className={styles.narrative}>
-        If {name} spends <InlineStepper value={minutes} min={0} max={10} step={0.5} unit=" min" onChange={setMinutes} /> brushing teeth each
-        morning and night &mdash; so <span className={styles.stat}>{minutes * 2} minutes</span> each day &mdash; that's over{" "}
-        <span className={styles.stat}>{(brushStrokes / 1e6).toFixed(1)} million brush strokes*</span>
-        so far!
-      </p>
-      <p className={styles.body}>
-        Think that's a lot? {name}'s eyes have blinked about {(totalBlinks / 1e6).toFixed(1)} million times. Getting the reps in!
-      </p>
-      <p className={styles.body}>
-        * assuming: <InlineStepper value={strokesPerMin} min={100} max={300} step={10} onChange={setStrokesPerMin} /> brush strokes per
-        minute
-      </p>
+      <main>
+        <p>
+          If {name} spends <InlineStepper value={minutes} min={0} max={10} step={0.5} unit=" min" onChange={setMinutes} /> brushing teeth each
+          morning and night &mdash; so <strong>{minutes * 2} minutes</strong> each day &mdash; that's over{" "}
+          <strong>{(brushStrokes / 1e6).toFixed(1)} million brush strokes*</strong> so far!
+        </p>
+      </main>
+      <footer>
+        <p>Think that's a lot? {name}'s eyes have blinked about {(totalBlinks / 1e6).toFixed(1)} million times. Getting the reps in!</p>
+        <p>* assuming: <InlineStepper value={strokesPerMin} min={100} max={300} step={10} onChange={setStrokesPerMin} /> brush strokes per minute</p>
+      </footer>
     </Slide>
   );
 }

@@ -39,6 +39,25 @@ button[aria-label="increase"]::after {
   inset: -12px;
 }
 
+/* Slide semantic typography */
+.slide main p {
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
+  line-height: 1.6;
+  margin-bottom: 3rem;
+  color: var(--text-primary);
+}
+.slide footer p {
+  font-size: 1.125rem;
+  line-height: 2;
+  margin-bottom: 2rem;
+  color: var(--text-secondary);
+}
+.slide strong {
+  font-family: var(--font-stat);
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
 @keyframes stepper-pop-up {
   0% { transform: scale(1); }
   40% { transform: scale(1.08); }

@@ -31,20 +31,26 @@ export default function YogurtPhoto({ dob, name, shiny }: { dob: Date; name: str
       objectPosition="center 30%"
       intro={`${name} has eaten ...`}
       value={display.toLocaleString()}
-      unit={<><InlinePills
-        options={[
-          { value: "kg" as const, label: "kilograms" },
-          { value: "lbs" as const, label: "pounds" },
-        ]}
-        value={unit}
-        onChange={setUnit}
-      /> of yogurt</>}
+      unit={
+        <>
+          <InlinePills
+            options={[
+              { value: "kg" as const, label: "kilograms" },
+              { value: "lbs" as const, label: "pounds" },
+            ]}
+            value={unit}
+            onChange={setUnit}
+          />{" "}
+          of yogurt
+        </>
+      }
       headline={hippoHeadline(yogurtKg)}
-      body={<>
-        Assuming {name} eats{" "}
-        <InlineSlider value={gramsPerDay} min={10} max={150} step={10} onChange={setGramsPerDay} />{" "}
-        grams of yogurt every day, since age <InlineStepper value={startAge} min={1} max={7} step={1} onChange={setStartAge} />
-      </>}
+      body={
+        <>
+          Assuming {name} eats <InlineSlider value={gramsPerDay} min={10} max={150} step={10} onChange={setGramsPerDay} /> grams of yogurt
+          every day, since age <InlineStepper value={startAge} min={1} max={7} step={1} onChange={setStartAge} />
+        </>
+      }
     />
   );
 }
