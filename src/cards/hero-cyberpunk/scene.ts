@@ -337,7 +337,7 @@ export function initV11(container: HTMLElement, name: string, dob: Date) {
 
       for (let i = 0; i < meshes.length; i++) {
         const mat = meshes[i].material as THREE.MeshPhysicalMaterial;
-        mat.emissiveIntensity = 0.38 + 0.12 * Math.sin(elapsed * 1.5 + phases[i]);
+        mat.emissiveIntensity = 0.75 + 0.15 * Math.sin(elapsed * 1.5 + phases[i]);
       }
     }
 
@@ -473,7 +473,7 @@ export function initV11(container: HTMLElement, name: string, dob: Date) {
           const hex = SHINY.hex[colorIndices[i]];
           mat.color.setHex(hex);
           mat.emissive.setHex(hex);
-          mat.emissiveIntensity = 0.38;
+          mat.emissiveIntensity = 0.75;
           mat.roughness = 0.2;
           mat.metalness = 0.6;
           mat.clearcoat = 0.5;

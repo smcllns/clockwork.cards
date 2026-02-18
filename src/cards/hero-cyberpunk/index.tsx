@@ -59,7 +59,7 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
         className="absolute inset-0 pointer-events-none"
         style={{
           background: shiny
-            ? "radial-gradient(ellipse 80% 85% at 50% 42%, rgba(0,0,12,0.65) 0%, rgba(0,0,12,0.45) 55%, rgba(0,0,12,0.15) 100%)"
+            ? "radial-gradient(ellipse 85% 80% at 50% 52%, rgba(0,0,12,0.80) 0%, rgba(0,0,12,0.55) 55%, rgba(0,0,12,0.15) 100%)"
             : "radial-gradient(ellipse 70% 75% at 50% 40%, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.15) 55%, rgba(0,0,0,0) 100%)",
         }}
       />
