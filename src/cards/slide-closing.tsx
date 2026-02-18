@@ -8,9 +8,9 @@ import { expandBase, describeBase, ordinalSuffix } from "./binary";
 const BASE10 = "#22c55e";
 const BASE2 = "#a855f7";
 
-export default function ClosingCard({ dob, name }: { dob: string; name: string }) {
+export default function ClosingCard({ dob, name }: { dob: Date; name: string }) {
   const now = useNow();
-  const age = Math.floor(getAge(new Date(dob), now));
+  const age = Math.floor(getAge(dob, now));
   const binary = age.toString(2);
 
   return (

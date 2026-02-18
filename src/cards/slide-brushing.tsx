@@ -4,16 +4,15 @@ import { InlineStepper } from "../components/controls";
 import { useNow } from "../components/useNow";
 import { daysSinceAge } from "../utils";
 
-export default function BrushingCard({ dob, name }: { dob: string; name: string }) {
+export default function BrushingCard({ dob, name }: { dob: Date; name: string }) {
   const [minutes, setMinutes] = useState(2);
   const [startAge, setStartAge] = useState(3);
   const [strokesPerMin, setStrokesPerMin] = useState(170);
   const [blinksPerDay, setBlinksPerDay] = useState(15_000);
   const now = useNow();
-  const dobDate = new Date(dob);
-  const minutesTotal = daysSinceAge(dobDate, startAge, now) * minutes * 2;
+  const minutesTotal = daysSinceAge(dob, startAge, now) * minutes * 2;
   const brushStrokes = minutesTotal * strokesPerMin;
-  const daysAlive = Math.floor((now - dobDate.getTime()) / 86_400_000);
+  const daysAlive = Math.floor((now - dob.getTime()) / 86_400_000);
   const totalBlinks = daysAlive * blinksPerDay;
 
   return (

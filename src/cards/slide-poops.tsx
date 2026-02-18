@@ -4,12 +4,11 @@ import { InlineStepper } from "../components/controls";
 import { useNow } from "../components/useNow";
 import { getAge } from "../utils";
 
-export default function PoopsCard({ dob }: { dob: string }) {
+export default function PoopsCard({ dob }: { dob: Date }) {
   const [perDay, setPerDay] = useState(1.5);
   const now = useNow();
-  const dobDate = new Date(dob);
-  const daysAlive = Math.floor((now - dobDate.getTime()) / 86_400_000);
-  const age = getAge(dobDate, now, 2);
+  const daysAlive = Math.floor((now - dob.getTime()) / 86_400_000);
+  const age = getAge(dob, now, 2);
 
   return (
     <Slide id="4e">

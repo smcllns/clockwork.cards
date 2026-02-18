@@ -6,10 +6,10 @@ import { PhotoSlide } from "../components/photo-slide";
 import imgLight from "../assets/photo-water.png";
 import imgShiny from "../assets/photo-water-shiny.png";
 
-export default function WaterPhoto({ dob, name, shiny }: { dob: string; name: string; shiny: boolean }) {
+export default function WaterPhoto({ dob, name, shiny }: { dob: Date; name: string; shiny: boolean }) {
   const [glassesPerDay, setGlassesPerDay] = useState(6);
   const now = useNow();
-  const daysAlive = Math.floor((now - new Date(dob).getTime()) / 86_400_000);
+  const daysAlive = Math.floor((now - dob.getTime()) / 86_400_000);
   const litersPerDay = (glassesPerDay * GLASS_ML) / 1000;
   const waterLiters = daysAlive * litersPerDay;
   const waterPoolPercent = (waterLiters / OLYMPIC_POOL_LITERS) * 100;

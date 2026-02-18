@@ -1,4 +1,4 @@
-/* Tailwind loaded via <link href="tailwindcss"> in index.html */
+@reference "tailwindcss";
 
 html {
   overflow-x: hidden;

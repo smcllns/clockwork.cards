@@ -9,15 +9,15 @@ import imgShiny from "../assets/photo-time-shiny.png";
 const TIME_UNITS = ["years", "months", "weeks", "days", "hours", "minutes", "seconds"] as const;
 type TimeUnit = typeof TIME_UNITS[number];
 
-export default function TimePhoto({ dob, name, shiny }: { dob: string; name: string; shiny: boolean }) {
+export default function TimePhoto({ dob, name, shiny }: { dob: Date; name: string; shiny: boolean }) {
   const [timeUnit, setTimeUnit] = useState<TimeUnit>("seconds");
   const now = useNow();
 
-  const msAlive = now - new Date(dob).getTime();
+  const msAlive = now - dob.getTime();
   const daysAlive = msAlive / 86_400_000;
 
   const values: Record<TimeUnit, number> = {
-    years: getAge(new Date(dob), now),
+    years: getAge(dob, now),
     months: Math.floor(daysAlive / (365.25 / 12)),
     weeks: Math.floor(daysAlive / 7),
     days: Math.floor(daysAlive),

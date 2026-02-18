@@ -6,10 +6,10 @@ import { getAge } from "../utils";
 
 const CM_PER_MONTH = 1.2;
 
-export default function HairCard({ dob, name }: { dob: string; name: string }) {
+export default function HairCard({ dob, name }: { dob: Date; name: string }) {
   const [cmPerMonth, setCmPerMonth] = useState(CM_PER_MONTH);
   const now = useNow();
-  const age = getAge(new Date(dob), now);
+  const age = getAge(dob, now);
   const months = age * 12;
   const totalCm = months * cmPerMonth;
   const totalM = totalCm / 100;

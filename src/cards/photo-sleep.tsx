@@ -5,10 +5,10 @@ import { PhotoSlide } from "../components/photo-slide";
 import imgLight from "../assets/photo-sleep.png";
 import imgShiny from "../assets/photo-sleep-shiny.png";
 
-export default function SleepPhoto({ dob, name, shiny }: { dob: string; name: string; shiny: boolean }) {
+export default function SleepPhoto({ dob, name, shiny }: { dob: Date; name: string; shiny: boolean }) {
   const [hoursPerNight, setHoursPerNight] = useState(10);
   const now = useNow();
-  const daysAlive = Math.floor((now - new Date(dob).getTime()) / 86_400_000);
+  const daysAlive = Math.floor((now - dob.getTime()) / 86_400_000);
   const sleepHours = daysAlive * hoursPerNight;
   const sleepYears = sleepHours / (24 * 365.25);
 

@@ -4,10 +4,10 @@ import { InlineStepper } from "../components/controls";
 import { useNow } from "../components/useNow";
 
 
-export default function SleepTile({ dob, name }: { dob: string; name: string }) {
+export default function SleepTile({ dob, name }: { dob: Date; name: string }) {
   const [hoursPerNight, setHoursPerNight] = useState(10);
   const now = useNow();
-  const daysAlive = Math.floor((now - new Date(dob).getTime()) / 86_400_000);
+  const daysAlive = Math.floor((now - dob.getTime()) / 86_400_000);
   const sleepHours = daysAlive * hoursPerNight;
   const sleepYears = sleepHours / (24 * 365.25);
 

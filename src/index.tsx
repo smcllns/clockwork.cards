@@ -11,9 +11,9 @@ import TimePhoto from "./cards/photo-time";
 import SpacePhoto from "./cards/photo-space";
 import StepsCard from "./cards/slide-steps";
 import BrushingCard from "./cards/slide-brushing";
+import BrushingCardFlat from "./cards/slide-brushing-flat";
 import PoopsCard from "./cards/slide-poops";
 import SleepPhoto from "./cards/photo-sleep";
-import SleepPhotoAlt from "./cards/photo-sleep-alt";
 import WaterPhoto from "./cards/photo-water";
 import PoopsPhoto from "./cards/photo-poops";
 import { TileContainer } from "./components/tile";
@@ -28,7 +28,8 @@ import Footer from "./components/footer";
 const params = new URLSearchParams(window.location.search);
 const rawName = params.get("name") ?? process.env.DEFAULT_NAME ?? "Oscar";
 const name = rawName.charAt(0).toUpperCase() + rawName.slice(1);
-const dob = params.get("dob") ?? process.env.DEFAULT_DOB ?? "2017-02-20";
+const dob = new Date(params.get("dob") ?? process.env.DEFAULT_DOB ?? "2017-02-20");
+const pronouns = (params.get("pronouns") ?? process.env.DEFAULT_SEX ?? "m") as "m" | "f";
 
 function App() {
   const [shiny, setShiny] = useState(false);
@@ -47,7 +48,7 @@ function App() {
         <TimePhoto dob={dob} name={name} shiny={shiny} />
         <TimeTableCard dob={dob} name={name} />
         <SpacePhoto dob={dob} name={name} shiny={shiny} />
-        <StepsCard dob={dob} name={name} />
+        <StepsCard dob={dob} name={name} pronouns={pronouns} />
         <YogurtPhoto dob={dob} name={name} shiny={shiny} />
         <TileContainer id="5" title={`${name}'s brain & body`}>
           <HeartbeatsTile dob={dob} name={name} />
@@ -56,8 +57,7 @@ function App() {
           <LungsTile dob={dob} name={name} />
         </TileContainer>
         <SleepPhoto dob={dob} name={name} shiny={shiny} />
-        <SleepPhotoAlt dob={dob} name={name} shiny={shiny} />
-        <BrushingCard dob={dob} name={name} />
+        <BrushingCardFlat dob={dob} name={name} />
         <WaterPhoto dob={dob} name={name} shiny={shiny} />
         <HairCard dob={dob} name={name} />
         <PoopsPhoto dob={dob} shiny={shiny} />

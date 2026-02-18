@@ -2,14 +2,14 @@ import { Slide, Headline } from "../components/slide";
 import { useNow } from "../components/useNow";
 import { getAge } from "../utils";
 
-export default function TimeTableCard({ dob, name }: { dob: string; name: string }) {
+export default function TimeTableCard({ dob, name }: { dob: Date; name: string }) {
   const now = useNow();
 
-  const msAlive = now - new Date(dob).getTime();
+  const msAlive = now - dob.getTime();
   const daysAlive = msAlive / 86_400_000;
 
   const t = {
-    yearsAlive: getAge(new Date(dob), now),
+    yearsAlive: getAge(dob, now),
     monthsAlive: Math.floor(daysAlive / (365.25 / 12)),
     weeksAlive: Math.floor(daysAlive / 7),
     daysAlive: Math.floor(daysAlive),

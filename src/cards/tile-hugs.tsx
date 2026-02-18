@@ -4,10 +4,10 @@ import { InlineStepper } from "../components/controls";
 import { useNow } from "../components/useNow";
 
 
-export default function HugsTile({ dob, name }: { dob: string; name: string }) {
+export default function HugsTile({ dob, name }: { dob: Date; name: string }) {
   const [hugsPerDay, setHugsPerDay] = useState(2);
   const now = useNow();
-  const daysAlive = Math.floor((now - new Date(dob).getTime()) / 86_400_000);
+  const daysAlive = Math.floor((now - dob.getTime()) / 86_400_000);
   const totalHugs = daysAlive * hugsPerDay;
 
   return (

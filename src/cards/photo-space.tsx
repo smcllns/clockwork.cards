@@ -7,14 +7,14 @@ import { PhotoSlide } from "../components/photo-slide";
 import imgLight from "../assets/photo-space.png";
 import imgShiny from "../assets/photo-space-shiny.png";
 
-export default function SpacePhoto({ dob, name, shiny }: { dob: string; name: string; shiny: boolean }) {
+export default function SpacePhoto({ dob, name, shiny }: { dob: Date; name: string; shiny: boolean }) {
   const [unit, setUnit] = useState<"miles" | "km">("miles");
   const now = useNow();
 
-  const hoursAlive = (now - new Date(dob).getTime()) / 3_600_000;
+  const hoursAlive = (now - dob.getTime()) / 3_600_000;
   const milesInSpace = hoursAlive * EARTH_ORBITAL_MPH;
   const lightSpeedHours = milesInSpace / LIGHT_SPEED_MPH;
-  const lapsAroundSun = getAge(new Date(dob), now);
+  const lapsAroundSun = getAge(dob, now);
 
   const k = unit === "km" ? KM_PER_MILE : 1;
   const unitLabel = unit === "km" ? "kph" : "mph";

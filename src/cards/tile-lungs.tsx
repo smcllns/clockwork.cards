@@ -4,10 +4,10 @@ import { InlineStepper } from "../components/controls";
 import { useNow } from "../components/useNow";
 import { HARD_PLAY_LITERS_PER_MIN } from "../constants";
 
-export default function LungsTile({ dob, name }: { dob: string; name: string }) {
+export default function LungsTile({ dob, name }: { dob: Date; name: string }) {
   const [hoursPerDay, setHoursPerDay] = useState(1);
   const now = useNow();
-  const daysAlive = Math.floor((now - new Date(dob).getTime()) / 86_400_000);
+  const daysAlive = Math.floor((now - dob.getTime()) / 86_400_000);
   const lungExtraLiters = daysAlive * hoursPerDay * 60 * HARD_PLAY_LITERS_PER_MIN;
 
   return (

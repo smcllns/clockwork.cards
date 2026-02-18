@@ -2,9 +2,9 @@ import { Tile } from "../components/tile";
 import { useNow } from "../components/useNow";
 import { AVG_CHILD_BPM } from "../constants";
 
-export default function HeartbeatsTile({ dob, name }: { dob: string; name: string }) {
+export default function HeartbeatsTile({ dob, name }: { dob: Date; name: string }) {
   const now = useNow();
-  const minutesAlive = (now - new Date(dob).getTime()) / 60_000;
+  const minutesAlive = (now - dob.getTime()) / 60_000;
   const totalHeartbeats = minutesAlive * AVG_CHILD_BPM;
   const heartbeatsPerDay = AVG_CHILD_BPM * 60 * 24;
 

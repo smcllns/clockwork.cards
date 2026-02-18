@@ -4,10 +4,10 @@ import { InlineStepper } from "../components/controls";
 import { useNow } from "../components/useNow";
 import { OLYMPIC_POOL_LITERS, GLASS_ML } from "../constants";
 
-export default function WaterTile({ dob, name }: { dob: string; name: string }) {
+export default function WaterTile({ dob, name }: { dob: Date; name: string }) {
   const [glassesPerDay, setGlassesPerDay] = useState(6);
   const now = useNow();
-  const daysAlive = Math.floor((now - new Date(dob).getTime()) / 86_400_000);
+  const daysAlive = Math.floor((now - dob.getTime()) / 86_400_000);
   const litersPerDay = (glassesPerDay * GLASS_ML) / 1000;
   const waterLiters = daysAlive * litersPerDay;
   const waterPoolPercent = (waterLiters / OLYMPIC_POOL_LITERS) * 100;

@@ -5,6 +5,10 @@ export function daysSinceAge(dob: Date, age: number, now: number): number {
   return Math.max(0, (now - start.getTime()) / 86_400_000);
 }
 
+export const his = (p: "m" | "f") => p === "m" ? "his" : "her";
+export const he  = (p: "m" | "f") => p === "m" ? "he"  : "she";
+export const him = (p: "m" | "f") => p === "m" ? "him" : "her";
+
 // Precise fractional years alive (e.g. 8.992), accounting for calendar year lengths
 export function getAge(dob: Date, now: number, decimals?: number): number {
   const nowDate = new Date(now);

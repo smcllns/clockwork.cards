@@ -5,14 +5,14 @@ import { useNow } from "../components/useNow";
 import { KM_PER_MILE, EARTH_ORBITAL_MPH, LIGHT_SPEED_MPH } from "../constants";
 import { getAge } from "../utils";
 
-export default function SpaceCard({ dob, name }: { dob: string; name: string }) {
+export default function SpaceCard({ dob, name }: { dob: Date; name: string }) {
   const [unit, setUnit] = useState<"miles" | "km">("miles");
   const now = useNow();
 
-  const hoursAlive = (now - new Date(dob).getTime()) / 3_600_000;
+  const hoursAlive = (now - dob.getTime()) / 3_600_000;
   const milesInSpace = hoursAlive * EARTH_ORBITAL_MPH;
   const lightSpeedHours = milesInSpace / LIGHT_SPEED_MPH;
-  const lapsAroundSun = getAge(new Date(dob), now);
+  const lapsAroundSun = getAge(dob, now);
 
   const k = unit === "km" ? KM_PER_MILE : 1;
   const unitLabel = unit === "km" ? "kph" : "mph";

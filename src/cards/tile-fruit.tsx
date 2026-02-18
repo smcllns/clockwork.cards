@@ -4,10 +4,10 @@ import { InlineStepper } from "../components/controls";
 import { useNow } from "../components/useNow";
 
 
-export default function FruitTile({ dob, name }: { dob: string; name: string }) {
+export default function FruitTile({ dob, name }: { dob: Date; name: string }) {
   const [servingsPerDay, setServingsPerDay] = useState(3);
   const now = useNow();
-  const daysAlive = Math.floor((now - new Date(dob).getTime()) / 86_400_000);
+  const daysAlive = Math.floor((now - dob.getTime()) / 86_400_000);
   const fruitServings = daysAlive * servingsPerDay;
 
   return (

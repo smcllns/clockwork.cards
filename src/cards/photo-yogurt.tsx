@@ -13,13 +13,13 @@ function hippoHeadline(yogurtKg: number): string {
   return `That's about ${ratio.toFixed(1)}× the weight of a baby hippo.`;
 }
 
-export default function YogurtPhoto({ dob, name, shiny }: { dob: string; name: string; shiny: boolean }) {
+export default function YogurtPhoto({ dob, name, shiny }: { dob: Date; name: string; shiny: boolean }) {
   const [gramsPerDay, setGramsPerDay] = useState(50);
   const [startAge, setStartAge] = useState(4);
   const [unit, setUnit] = useState<"kg" | "lbs">("kg");
   const now = useNow();
 
-  const yogurtKg = (daysSinceAge(new Date(dob), startAge, now) * gramsPerDay) / 1000;
+  const yogurtKg = (daysSinceAge(dob, startAge, now) * gramsPerDay) / 1000;
   const display = unit === "lbs" ? Math.floor(yogurtKg * 2.205) : Math.floor(yogurtKg);
 
   return (
