@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { createRoot } from "react-dom/client";
-import { useNow } from "../components/useNow";
-import Nav from "../components/nav";
-import Footer from "../components/footer";
+import { useNow } from "../src/components/useNow";
+import Nav from "../src/components/nav";
+import Footer from "../src/components/footer";
 import {
   useTimeMetrics, useSpaceMetrics, useStepsMetrics, useYogurtMetrics,
   useHeartMetrics, useFruitMetrics, useHugsMetrics, useLungsMetrics,

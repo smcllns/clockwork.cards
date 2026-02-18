@@ -1,8 +1,8 @@
 import type { useYogurtMetrics } from "../hooks";
-import { PhotoSlide } from "../../components/photo-slide";
-import { InlinePills, InlineSlider, InlineStepper } from "../../components/controls";
-import imgLight from "../../assets/photo-yogurt.png";
-import imgShiny from "../../assets/photo-yogurt-shiny.png";
+import { PhotoSlide } from "../../src/components/photo-slide";
+import { InlinePills, InlineSlider, InlineStepper } from "../../src/components/controls";
+import imgLight from "../../src/assets/photo-yogurt.png";
+import imgShiny from "../../src/assets/photo-yogurt-shiny.png";
 
 type Props = { name: string; shiny: boolean; yogurt: ReturnType<typeof useYogurtMetrics> };
 

@@ -1,4 +1,4 @@
-import HeroCyberpunk from "../../cards/hero-cyberpunk";
+import HeroCyberpunk from "../../src/cards/hero-cyberpunk";
 
 type Props = { name: string; dob: Date; shiny: boolean };
 
