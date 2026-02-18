@@ -1,6 +1,6 @@
 import type { useBrushingMetrics } from "../hooks";
-import { Slide } from "../page/slide";
-import { InlineStepper } from "../page/controls";
+import { Slide } from "../components/page/slide";
+import { InlineStepper } from "../components/page/controls";
 import { styles } from "./styles";
 
 type Props = { name: string; brushing: ReturnType<typeof useBrushingMetrics> };

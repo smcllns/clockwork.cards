@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { InlineSlider, InlineStepper, InlinePills } from "../page/controls";
+import { InlineSlider, InlineStepper, InlinePills } from "./page/controls";
 import { useNow } from "../lib/useNow";
 import { daysSinceAge } from "../lib/utils";
 import { PhotoSlide } from "./photo-slide";

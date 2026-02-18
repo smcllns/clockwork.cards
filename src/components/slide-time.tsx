@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Slide, KeyMetric, Headline, Unit } from "../page/slide";
-import { InlineDropdown } from "../page/controls";
+import { Slide, KeyMetric, Headline, Unit } from "./page/slide";
+import { InlineDropdown } from "./page/controls";
 import { useNow } from "../lib/useNow";
 import { getAge } from "../lib/utils";
 

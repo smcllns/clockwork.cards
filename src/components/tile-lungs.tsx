@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Tile } from "../page/tile";
-import { InlineStepper } from "../page/controls";
+import { Tile } from "./page/tile";
+import { InlineStepper } from "./page/controls";
 import { useNow } from "../lib/useNow";
 import { HARD_PLAY_LITERS_PER_MIN } from "../lib/constants";
 

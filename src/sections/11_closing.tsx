@@ -1,7 +1,7 @@
 import type { useClosingMetrics } from "../hooks";
-import { Slide, Headline } from "../page/slide";
-import { FlipCard } from "../page/flip-card";
-import { css } from "../page/section";
+import { Slide, Headline } from "../components/page/slide";
+import { FlipCard } from "../components/page/flip-card";
+import { css } from "../components/page/section";
 import { expandBase, describeBase, ordinalSuffix } from "../components/binary";
 import { styles } from "./styles";
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { InlineStepper } from "../page/controls";
+import { InlineStepper } from "./page/controls";
 import { useNow } from "../lib/useNow";
 import { OLYMPIC_POOL_LITERS, GLASS_ML } from "../lib/constants";
 import { PhotoSlide } from "./photo-slide";

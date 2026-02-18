@@ -1,6 +1,6 @@
 import type { useStepsMetrics } from "../hooks";
-import { Slide, KeyMetric, Headline, Unit } from "../page/slide";
-import { InlineStepper, InlineSlider } from "../page/controls";
+import { Slide, KeyMetric, Headline, Unit } from "../components/page/slide";
+import { InlineStepper, InlineSlider } from "../components/page/controls";
 import { his, he } from "../lib/utils";
 import { styles } from "./styles";
 

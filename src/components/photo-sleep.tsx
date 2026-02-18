@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { InlineStepper } from "../page/controls";
+import { InlineStepper } from "./page/controls";
 import { useNow } from "../lib/useNow";
 import { PhotoSlide } from "./photo-slide";
 import imgLight from "../assets/photo-sleep.png";

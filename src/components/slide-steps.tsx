@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Slide, Narrative, N, KeyMetric, Headline, Unit } from "../page/slide";
-import { InlineStepper, InlineSlider } from "../page/controls";
+import { Slide, Narrative, N, KeyMetric, Headline, Unit } from "./page/slide";
+import { InlineStepper, InlineSlider } from "./page/controls";
 import { useNow } from "../lib/useNow";
 import { getAge, daysSinceAge, his, he } from "../lib/utils";
 

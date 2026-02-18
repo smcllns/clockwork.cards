@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Tile } from "../page/tile";
-import { InlineStepper } from "../page/controls";
+import { Tile } from "./page/tile";
+import { InlineStepper } from "./page/controls";
 import { useNow } from "../lib/useNow";
 import { OLYMPIC_POOL_LITERS, GLASS_ML } from "../lib/constants";
 

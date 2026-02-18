@@ -1,6 +1,6 @@
 import type { usePoopsMetrics } from "../hooks";
 import { PhotoSlide } from "../components/photo-slide";
-import { InlineStepper } from "../page/controls";
+import { InlineStepper } from "../components/page/controls";
 import imgLight from "../assets/photo-poops.png";
 import imgShiny from "../assets/photo-poops-shiny.png";
 

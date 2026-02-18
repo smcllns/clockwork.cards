@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Slide, KeyMetric, Unit, Headline, Body } from "../page/slide";
-import { InlineSlider, InlineStepper, InlinePills } from "../page/controls";
+import { Slide, KeyMetric, Unit, Headline, Body } from "./page/slide";
+import { InlineSlider, InlineStepper, InlinePills } from "./page/controls";
 import { useNow } from "../lib/useNow";
 import { daysSinceAge } from "../lib/utils";
 
