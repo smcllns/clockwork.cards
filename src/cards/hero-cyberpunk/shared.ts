@@ -189,7 +189,7 @@ export function createBalls(
       clearcoatRoughness: 0.3,
       ...materialOverrides,
     });
-    const jitter = ball.scale > 0.5 ? 0.95 + Math.random() * 0.1 : 1;
+    const jitter = ball.scale > 0.5 ? 0.9 + Math.random() * 0.2 : 1;
     const mesh = new THREE.Mesh(sphereGeo, mat);
     mesh.scale.setScalar(ball.scale * jitter);
     mesh.position.set(ball.x, ball.y, 0);
