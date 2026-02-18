@@ -8,8 +8,8 @@
     "model": "gemini-3-pro-image-preview",
     "cost_usd": 0.240,
     "generation": "multimodal-transform",
-    "reference": "photo-time.png",
-    "prompt": "Transform this exact scene into a cyberpunk parallel universe. Keep the boy, his pose, his position, the goal on the right, the stadium composition — everything identical. Change only: the sky goes deep purple-black, stadium lights become neon cyan and magenta bokeh, the grass becomes a dark reflective surface with low neon fog, the goal outline glows neon cyan, the ball glows cyan with a neon trail, and electric teal neon light lines stream back through his blonde hair. Keep his expression exactly the same — focused, natural, in the zone. Same Pixar 3D claymation render style."
+    "reference": "photo-time-shiny-prev.png",
+    "prompt": "Add hot pink neon streaks through his hair alongside the existing teal ones — both teal AND hot pink hair lightning. Also add electric neon lightning bolt arcs around him: teal and hot pink electricity crackling from his kicking foot as it connects with the ball, and arcing around his body. More kinetic energy overall — like a superhero moment. Keep everything else identical: same pose, same expression, same stadium, same goal on the right."
   },
   "photo-space.png": {
     "model": "gemini-2.5-flash-image",
