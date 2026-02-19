@@ -1,9 +1,3 @@
-export const css = {
-  primary: { color: "var(--text-primary)" } as const,
-  secondary: { color: "var(--text-secondary)" } as const,
-  sectionHead: { color: "var(--text-secondary)", borderColor: "var(--border-color)" } as const,
-};
-
 type Props = { children: React.ReactNode; className?: string };
 
 export function IdTag({ id }: { id: string }) {

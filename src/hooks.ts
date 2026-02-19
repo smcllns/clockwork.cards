@@ -1,13 +1,19 @@
 import { useState } from "react";
 import { getAge, daysSinceAge } from "./lib/utils";
 import {
-  MS_PER_DAY, AVG_BLINKS_PER_DAY, AVG_CHILD_BPM,
-  HARD_PLAY_LITERS_PER_MIN, KM_PER_MILE, EARTH_ORBITAL_MPH,
-  LIGHT_SPEED_MPH, OLYMPIC_POOL_LITERS, GLASS_ML,
+  MS_PER_DAY,
+  AVG_BLINKS_PER_DAY,
+  AVG_CHILD_BPM,
+  HARD_PLAY_LITERS_PER_MIN,
+  KM_PER_MILE,
+  EARTH_ORBITAL_MPH,
+  LIGHT_SPEED_MPH,
+  OLYMPIC_POOL_LITERS,
+  GLASS_ML,
 } from "./lib/constants";
 
 const TIME_UNITS = ["years", "months", "weeks", "days", "hours", "minutes", "seconds"] as const;
-export type TimeUnit = typeof TIME_UNITS[number];
+export type TimeUnit = (typeof TIME_UNITS)[number];
 export { TIME_UNITS };
 
 export function useTimeMetrics(dob: Date, now: number) {
@@ -16,7 +22,10 @@ export function useTimeMetrics(dob: Date, now: number) {
     const stored = localStorage.getItem("birthHour");
     return stored !== null ? Number(stored) : 0;
   });
-  const setBirthHour = (h: number) => { localStorage.setItem("birthHour", String(h)); setBirthHourRaw(h); };
+  const setBirthHour = (h: number) => {
+    localStorage.setItem("birthHour", String(h));
+    setBirthHourRaw(h);
+  };
   const msAlive = now - (dob.getTime() + birthHour * 3_600_000);
   const daysAlive = msAlive / MS_PER_DAY;
   const values: Record<TimeUnit, number> = {
@@ -28,9 +37,7 @@ export function useTimeMetrics(dob: Date, now: number) {
     minutes: Math.floor(msAlive / 60_000),
     seconds: Math.floor(msAlive / 1000),
   };
-  const formattedValue = timeUnit === "years"
-    ? values.years.toFixed(3)
-    : values[timeUnit].toLocaleString();
+  const formattedValue = timeUnit === "years" ? values.years.toFixed(3) : values[timeUnit].toLocaleString();
   return { timeUnit, setTimeUnit, TIME_UNITS, values, formattedValue, daysAlive, msAlive, birthHour, setBirthHour };
 }
 
@@ -49,7 +56,7 @@ export function useSpaceMetrics(dob: Date, now: number) {
 
 export function useStepsMetrics(dob: Date, now: number) {
   const [stepsPerDay, setStepsPerDay] = useState(8_000);
-  const [startAge, setStartAge] = useState(3);
+  const [startAge, setStartAge] = useState(0);
   const totalSteps = daysSinceAge(dob, startAge, now) * stepsPerDay;
   const age = getAge(dob, now, 2);
   return { stepsPerDay, setStepsPerDay, startAge, setStartAge, totalSteps, age };
@@ -63,9 +70,11 @@ export function useYogurtMetrics(dob: Date, now: number) {
   const display = unit === "lbs" ? Math.floor(yogurtKg * 2.205) : Math.floor(yogurtKg);
   const ratio = yogurtKg / 40;
   const hippoHeadline =
-    ratio < 0.9 ? `That's about ${Math.round(ratio * 100)}% the weight of a baby hippo.` :
-    ratio < 1.15 ? "About the weight of a baby hippo." :
-    `That's about ${ratio.toFixed(1)}× the weight of a baby hippo.`;
+    ratio < 0.9
+      ? `That's about ${Math.round(ratio * 100)}% the weight of a baby hippo.`
+      : ratio < 1.15
+        ? "About the weight of a baby hippo."
+        : `That's about ${ratio.toFixed(1)}× the weight of a baby hippo.`;
   return { gramsPerDay, setGramsPerDay, startAge, setStartAge, unit, setUnit, yogurtKg, display, hippoHeadline };
 }
 

@@ -24,6 +24,13 @@ const chipBase: CSSProperties = {
   transition: "color 0.4s, background 0.4s, border-color 0.4s",
 };
 
+const statValue: CSSProperties = {
+  fontFamily: "var(--font-stat)",
+  fontWeight: 700,
+  color: "var(--text-accent)",
+  fontSize: "inherit",
+};
+
 const btnBase: CSSProperties = {
   display: "inline-flex",
   alignItems: "center",
@@ -57,15 +64,7 @@ export function InlineStepper({ value, min, max, step, unit, decimals = 0, onCha
         -
       </button>
       <span
-        style={{
-          fontFamily: "var(--font-stat)",
-          fontWeight: 700,
-          color: "var(--text-accent)",
-          padding: "0 2px",
-          minWidth: "28px",
-          textAlign: "center",
-          fontSize: "inherit",
-        }}
+        style={{ ...statValue, padding: "0 2px", minWidth: "28px", textAlign: "center" }}
       >
         {decimals > 0 ? value.toFixed(decimals) : value}{unit ?? ""}
       </span>
@@ -187,13 +186,7 @@ export function InlineSlider({ value, min, max, step, unit, decimals = 0, onChan
           cursor: "pointer",
         }}
       />
-      <span style={{
-        fontFamily: "var(--font-stat)",
-        fontWeight: 700,
-        color: "var(--text-accent)",
-        minWidth: "36px",
-        fontSize: "inherit",
-      }}>
+      <span style={{ ...statValue, minWidth: "36px" }}>
         {decimals > 0 ? value.toFixed(decimals) : value}{unit ?? ""}
       </span>
     </span>

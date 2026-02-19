@@ -141,17 +141,6 @@ function App() {
           <SpaceSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} space={space} />
           <StepsSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} steps={steps} />
           <YogurtSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} yogurt={yogurt} />
-          <TilesHealthSection
-            name={name}
-            dob={dob}
-            pronouns={pronouns}
-            shiny={shiny}
-            heart={heart}
-            fruit={fruit}
-            hugs={hugs}
-            lungs={lungs}
-          />
-          <SleepSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} sleep={sleep} />
           <BrushingSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} brushing={brushing} />
           <WaterSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} water={water} />
           <HairSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} hair={hair} />

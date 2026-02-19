@@ -1,4 +1,4 @@
-import { css, Section, IdTag } from "./section";
+import { Section, IdTag } from "./section";
 
 type Props = { children: React.ReactNode; className?: string };
 
@@ -7,8 +7,7 @@ export function TileContainer({ children, id, title, className }: Props & { id: 
     <Section id={id} bg="secondary" className={className}>
       <div className="w-full py-16">
         <h3
-          className="text-sm font-semibold uppercase tracking-[0.15em] mb-8 pb-3 border-b max-w-[900px] mx-auto"
-          style={css.sectionHead}
+          className="text-sm font-semibold uppercase tracking-[0.15em] mb-8 pb-3 border-b max-w-[900px] mx-auto text-(--text-secondary) border-(--border-color)"
         >
           {title}
         </h3>
@@ -47,16 +46,16 @@ export function Tile({ id, className, children, emoji, value, unit, headline, bo
             <div>
               <div className="flex items-baseline gap-2 flex-wrap">
                 <span
-                  className="font-bold"
-                  style={{ fontFamily: "var(--font-stat)", color: "var(--text-primary)", fontSize: "1.75rem", lineHeight: 1.1 }}
+                  className="font-bold text-(--text-primary) font-(--font-stat)"
+                  style={{ fontSize: "1.75rem", lineHeight: 1.1 }}
                   data-stat
                 >{value}</span>
-                <span className="text-sm" style={css.secondary}>{unit}</span>
+                <span className="text-sm text-(--text-secondary)">{unit}</span>
               </div>
-              <p className="text-sm font-semibold mt-1" style={css.primary}>{headline}</p>
+              <p className="text-sm font-semibold mt-1 text-(--text-primary)">{headline}</p>
             </div>
           </div>
-          <p className="text-sm leading-relaxed" style={{ ...css.secondary, paddingLeft: "44px" }}>{body}</p>
+          <p className="text-sm leading-relaxed text-(--text-secondary)" style={{ paddingLeft: "44px" }}>{body}</p>
         </>
       )}
     </div>
