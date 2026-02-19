@@ -20,19 +20,21 @@ export function PhotoSlide({ id, imgLight, imgShiny, shiny, gradient, objectPosi
   return (
     <div
       className="relative snap-section flex flex-col justify-end overflow-hidden"
-      style={{ minHeight: "100dvh" }}
+      style={{ minHeight: "100svh" }}
     >
       <img
         src={imgLight}
         alt=""
         className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
         style={{ ...imgStyle, opacity: shiny ? 0 : 1 }}
+        loading="lazy"
       />
       <img
         src={imgShiny}
         alt=""
         className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
         style={{ ...imgStyle, opacity: shiny ? 1 : 0 }}
+        loading="lazy"
       />
       <div
         className="absolute inset-0"

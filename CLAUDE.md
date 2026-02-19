@@ -66,6 +66,7 @@ src/
 ## Architecture Notes
 - `index.tsx` owns only `shiny` state. Each card is self-contained and owns its own state.
 - HeroCyberpunk owns chaos state internally — it's specific to cyberpunk theme.
+- **Chaos must never persist across reloads.** `useState(false)` only — never init from `localStorage`, `sessionStorage`, or URL params. Reload is the only escape hatch. A unit test guards this.
 - All cards do their own math inline — no shared compute functions. `constants.ts` has physical/biological constants, `utils.ts` has age calculation helpers.
 - Three layout patterns: KeyMetric cards (slide-time, slide-space, slide-yogurt), Narrative cards (slide-steps, slide-brushing, slide-poops), and Tile grids (tile-*).
 - No barrel files. Import directly: `from "../components/slide"`, `from "../components/controls"`.

@@ -233,33 +233,35 @@ export function setupGrabHandlers(
   const raycaster = new THREE.Raycaster();
   const pointer = new THREE.Vector2();
   const hitPoint = new THREE.Vector3();
-
-  function screenToWorld(mx: number, my: number) {
-    pointer.set((mx / size.w) * 2 - 1, -(my / size.h) * 2 + 1);
-    raycaster.setFromCamera(pointer, camera);
-    raycaster.ray.intersectPlane(plane, hitPoint);
-    return { x: hitPoint.x, y: hitPoint.y };
-  }
+  const _ballPos = new THREE.Vector3();
 
   function startGrab(mx: number, my: number): boolean {
-    const wp = screenToWorld(mx, my);
+    pointer.set((mx / size.w) * 2 - 1, -(my / size.h) * 2 + 1);
+    raycaster.setFromCamera(pointer, camera);
     grabbed.length = 0;
     for (const body of bodies) {
       const pos = body.translation();
-      const dx = pos.x - wp.x, dy = pos.y - wp.y;
-      if (dx * dx + dy * dy < 9) {
+      _ballPos.set(pos.x, pos.y, pos.z);
+      // Ray-sphere test: works at any Z depth, unlike the old 2D XY check at z=0
+      if (raycaster.ray.distanceToPoint(_ballPos) < 2) {
         body.wakeUp();
         grabbed.push(body);
       }
     }
-    if (grabbed.length) { target.x = wp.x; target.y = wp.y; }
+    if (grabbed.length) {
+      raycaster.ray.intersectPlane(plane, hitPoint);
+      target.x = hitPoint.x;
+      target.y = hitPoint.y;
+    }
     return grabbed.length > 0;
   }
 
   function moveGrab(mx: number, my: number) {
-    const wp = screenToWorld(mx, my);
-    target.x = wp.x;
-    target.y = wp.y;
+    pointer.set((mx / size.w) * 2 - 1, -(my / size.h) * 2 + 1);
+    raycaster.setFromCamera(pointer, camera);
+    raycaster.ray.intersectPlane(plane, hitPoint);
+    target.x = hitPoint.x;
+    target.y = hitPoint.y;
   }
 
   function endGrab() {

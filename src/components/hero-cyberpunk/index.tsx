@@ -11,6 +11,7 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
   const containerRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<VariationHandle | null>(null);
   const [ready, setReady] = useState(false);
+  // Chaos MUST NOT persist across reloads — reload is the only escape hatch. Never init from localStorage/sessionStorage/URL.
   const [chaos, setChaos] = useState(false);
 
   const mode: HeroMode = chaos ? (shiny ? "broken" : "broken-off") : shiny ? "on" : "off";
@@ -47,13 +48,23 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
     }
   }, [mode, ready]);
 
-  const bgSrc = shiny ? forestShiny : forestLight;
-
   return (
     <div className="h-[100svh] relative" style={{ flexShrink: 0 }}>
-      {/* Background image — stops at nav top, object-position:bottom keeps cliff ground at canvas bottom */}
+      {/* Background image — both variants always rendered; opacity switches instantly on shiny toggle */}
       <div className="absolute top-0 left-0 right-0 overflow-hidden" style={{ bottom: "var(--nav-height, 48px)" }}>
-        <img src={bgSrc} className="w-full h-full object-cover object-bottom" alt="" style={{ pointerEvents: "none" }} />
+        <img
+          src={forestLight}
+          className="absolute inset-0 w-full h-full object-cover object-bottom transition-opacity duration-700"
+          alt=""
+          style={{ opacity: shiny ? 0 : 1, pointerEvents: "none" }}
+          fetchPriority="high"
+        />
+        <img
+          src={forestShiny}
+          className="absolute inset-0 w-full h-full object-cover object-bottom transition-opacity duration-700"
+          alt=""
+          style={{ opacity: shiny ? 1 : 0, pointerEvents: "none" }}
+        />
       </div>
 
       {/* Subtle vignette — shiny sky is naturally dark, light needs gentle center dim for text contrast */}
@@ -91,7 +102,9 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
               textTransform: "uppercase" as const,
               color: chaos ? "#57534e" : "#c084fc",
             }}
-          >🚫 Do not touch</span>
+          >
+            🚫 Do <em>NOT</em> press this button!
+          </span>
           <button
             onClick={!chaos ? () => setChaos(true) : undefined}
             className={`relative flex-shrink-0 ${!chaos ? "cursor-pointer" : "cursor-default"}`}
@@ -100,9 +113,7 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
               height: 20,
               borderRadius: 10,
               backgroundColor: chaos ? "#292524" : "rgba(88,28,135,0.7)",
-              boxShadow: chaos
-                ? "inset 0 1px 3px rgba(0,0,0,0.4)"
-                : "inset 0 1px 3px rgba(0,0,0,0.3), 0 0 6px rgba(168,85,247,0.3)",
+              boxShadow: chaos ? "inset 0 1px 3px rgba(0,0,0,0.4)" : "inset 0 1px 3px rgba(0,0,0,0.3), 0 0 6px rgba(168,85,247,0.3)",
               border: chaos ? "1px solid #44403c" : "1px solid #a855f7",
             }}
           >
