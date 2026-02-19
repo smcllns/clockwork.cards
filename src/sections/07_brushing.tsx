@@ -1,9 +1,10 @@
 import type { useBrushingMetrics } from "../hooks";
+import type { SectionProps } from "./types";
 import { Slide } from "../components/page/slide";
 import { InlineStepper } from "../components/page/controls";
 import { styles } from "./styles";
 
-type Props = { name: string; brushing: ReturnType<typeof useBrushingMetrics> };
+type Props = SectionProps & { brushing: ReturnType<typeof useBrushingMetrics> };
 
 export function BrushingSection({ name, brushing }: Props) {
   return (

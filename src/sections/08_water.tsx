@@ -1,10 +1,11 @@
 import type { useWaterMetrics } from "../hooks";
+import type { SectionProps } from "./types";
 import { PhotoSlide } from "../components/content/photo-slide";
 import { InlineStepper } from "../components/page/controls";
 import imgLight from "../assets/photo-water.png";
 import imgShiny from "../assets/photo-water-shiny.png";
 
-type Props = { name: string; shiny: boolean; water: ReturnType<typeof useWaterMetrics> };
+type Props = SectionProps & { water: ReturnType<typeof useWaterMetrics> };
 
 export function WaterSection({ name, shiny, water }: Props) {
   return (

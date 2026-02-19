@@ -1,14 +1,8 @@
 import type { useHeartMetrics, useFruitMetrics, useHugsMetrics, useLungsMetrics } from "../hooks";
+import type { SectionProps } from "./types";
 import { TileContainer, Tile } from "../components/page/tile";
 import { InlineStepper } from "../components/page/controls";
-
-type Props = {
-  name: string;
-  heart: ReturnType<typeof useHeartMetrics>;
-  fruit: ReturnType<typeof useFruitMetrics>;
-  hugs: ReturnType<typeof useHugsMetrics>;
-  lungs: ReturnType<typeof useLungsMetrics>;
-};
+type Props = SectionProps & { heart: ReturnType<typeof useHeartMetrics>; fruit: ReturnType<typeof useFruitMetrics>; hugs: ReturnType<typeof useHugsMetrics>; lungs: ReturnType<typeof useLungsMetrics> };
 
 export function TilesHealthSection({ name, heart, fruit, hugs, lungs }: Props) {
   return (

@@ -1,10 +1,11 @@
 import type { useYogurtMetrics } from "../hooks";
+import type { SectionProps } from "./types";
 import { PhotoSlide } from "../components/content/photo-slide";
 import { InlinePills, InlineSlider, InlineStepper } from "../components/page/controls";
 import imgLight from "../assets/photo-yogurt.png";
 import imgShiny from "../assets/photo-yogurt-shiny.png";
 
-type Props = { name: string; shiny: boolean; yogurt: ReturnType<typeof useYogurtMetrics> };
+type Props = SectionProps & { yogurt: ReturnType<typeof useYogurtMetrics> };
 
 export function YogurtSection({ name, shiny, yogurt }: Props) {
   return (

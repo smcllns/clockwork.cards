@@ -1,10 +1,11 @@
 import type { usePoopsMetrics } from "../hooks";
+import type { SectionProps } from "./types";
 import { PhotoSlide } from "../components/content/photo-slide";
 import { InlineStepper } from "../components/page/controls";
 import imgLight from "../assets/photo-poops.png";
 import imgShiny from "../assets/photo-poops-shiny.png";
 
-type Props = { shiny: boolean; poops: ReturnType<typeof usePoopsMetrics> };
+type Props = SectionProps & { poops: ReturnType<typeof usePoopsMetrics> };
 
 export function PoopsSection({ shiny, poops }: Props) {
   return (

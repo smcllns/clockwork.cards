@@ -1,9 +1,10 @@
 import type { useHairMetrics } from "../hooks";
+import type { SectionProps } from "./types";
 import { Slide } from "../components/page/slide";
 import { InlineStepper } from "../components/page/controls";
 import { styles } from "./styles";
 
-type Props = { name: string; hair: ReturnType<typeof useHairMetrics> };
+type Props = SectionProps & { hair: ReturnType<typeof useHairMetrics> };
 
 export function HairSection({ name, hair }: Props) {
   return (

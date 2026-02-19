@@ -1,6 +1,7 @@
 import HeroCyberpunk from "../components/hero-cyberpunk";
+import type { SectionProps } from "./types";
 
-type Props = { name: string; dob: Date; shiny: boolean };
+type Props = SectionProps;
 
 // The hero renders name + birthday text in the 3D scene.
 // dob drives the age shown — pass a different date here to override what's displayed.

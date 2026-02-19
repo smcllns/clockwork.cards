@@ -1,10 +1,11 @@
 import type { useStepsMetrics } from "../hooks";
+import type { SectionProps } from "./types";
 import { Slide, KeyMetric, Headline, Unit } from "../components/page/slide";
 import { InlineStepper, InlineSlider } from "../components/page/controls";
 import { his, he } from "../lib/utils";
 import { styles } from "./styles";
 
-type Props = { name: string; pronouns: "m" | "f"; steps: ReturnType<typeof useStepsMetrics> };
+type Props = SectionProps & { steps: ReturnType<typeof useStepsMetrics> };
 
 export function StepsSection({ name, pronouns, steps }: Props) {
   return (
