@@ -1,20 +1,20 @@
-import type { useClosingMetrics } from "../hooks";
 import type { SectionProps } from "./types";
 import { Slide, Headline } from "../components/page/slide";
 import { FlipCard } from "../components/page/flip-card";
 import { css } from "../components/page/section";
 import { expandBase, describeBase } from "../components/content/binary";
+import { getAge } from "../lib/utils";
 import { styles } from "./styles";
-
-type Props = SectionProps & { closing: ReturnType<typeof useClosingMetrics> };
 
 const BASE10 = "#22c55e";
 const BASE2 = "#a855f7";
 
-export function BinarySection({ closing }: Props) {
+export function BinarySection({ dob }: SectionProps) {
+  const age = Math.floor(getAge(dob, Date.now()));
+  const binary = age.toString(2);
   return (
     <Slide id="11">
-      <Headline lg>{closing.age} is {closing.binary} in binary.</Headline>
+      <Headline lg>{age} is {binary} in binary.</Headline>
       <p className="text-lg mb-6" style={css.secondary}>"Binary" just means base 2.</p>
 
       <FlipCard
@@ -26,7 +26,7 @@ export function BinarySection({ closing }: Props) {
           <ul className="text-sm leading-relaxed space-y-1.5 list-disc list-inside" style={css.primary}>
             <li>In base 10, there are ten numbers (0–9)</li>
             <li>Each additional digit means another power of ten: 10 → 100 → 1000</li>
-            <li>Think of "{closing.age}" as meaning: {describeBase(closing.age, 10, 3)}</li>
+            <li>Think of "{age}" as meaning: {describeBase(age, 10, 3)}</li>
           </ul>
         </>}
         back={<>
@@ -35,26 +35,26 @@ export function BinarySection({ closing }: Props) {
           <ul className="text-sm leading-relaxed space-y-1.5 list-disc list-inside" style={css.primary}>
             <li>In base 2, there are only two numbers (0 and 1)</li>
             <li>Each additional digit means another power of two: 2 → 4 → 8 → 16</li>
-            <li>In base 2, "{closing.binary}" means: {describeBase(closing.age, 2)}</li>
+            <li>In base 2, "{binary}" means: {describeBase(age, 2)}</li>
           </ul>
         </>}
       />
 
       <div className="mt-6">
         <p className="text-lg font-semibold mb-4" style={css.primary}>
-          And {closing.age} in base₁₀ and {closing.binary} in base₂ are actually the same!
+          And {age} in base₁₀ and {binary} in base₂ are actually the same!
         </p>
         <div className="space-y-3 mb-6">
           <div className="text-sm" style={{ color: BASE10, fontFamily: "var(--font-stat)", fontVariantNumeric: "tabular-nums" }}>
-            {expandBase(closing.age, 10, 3).map((line, i) => <p key={i}>{line}</p>)}
+            {expandBase(age, 10, 3).map((line, i) => <p key={i}>{line}</p>)}
           </div>
           <div className="text-sm" style={{ color: BASE2, fontFamily: "var(--font-stat)", fontVariantNumeric: "tabular-nums" }}>
-            {expandBase(closing.age, 2).map((line, i) => <p key={i}>{line}</p>)}
+            {expandBase(age, 2).map((line, i) => <p key={i}>{line}</p>)}
           </div>
         </div>
         <p className={styles.body}>
           It's like how "nine", "neuf", "nueve", and "九" all mean the same thing
-          in different languages. {closing.age} and {closing.binary} are the same number in different bases.
+          in different languages. {age} and {binary} are the same number in different bases.
         </p>
       </div>
     </Slide>

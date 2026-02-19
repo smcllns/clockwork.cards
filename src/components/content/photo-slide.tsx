@@ -42,7 +42,7 @@ export function PhotoSlide({ id, imgLight, imgShiny, shiny, gradient, objectPosi
       />
       <div className="absolute top-14 right-6 z-10"><IdTag id={id} /></div>
 
-      <div className="relative z-10 px-6 pb-16 pt-8 max-w-2xl mx-auto w-full">
+      <div className="relative z-10 px-6 pt-8 max-w-2xl mx-auto w-full" style={{ paddingBottom: "calc(var(--nav-height, 48px) + 24px)" }}>
         {children ?? (
           <>
             {data.intro && <p className="text-xl font-medium mb-2 text-white/70">{data.intro}</p>}

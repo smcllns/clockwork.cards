@@ -140,9 +140,3 @@ export function useHairMetrics(dob: Date, now: number) {
   const totalM = (age * 12 * cmPerMonth) / 100;
   return { cmPerMonth, setCmPerMonth, totalM };
 }
-
-export function useClosingMetrics(dob: Date, now: number) {
-  const age = Math.floor(getAge(dob, now));
-  const binary = age.toString(2);
-  return { age, binary };
-}

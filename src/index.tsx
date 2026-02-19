@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import useEmblaCarousel from "embla-carousel-react";
 import { useNow } from "./lib/useNow";
 import Nav from "./components/page/nav";
+import Upsell from "./components/page/upsell";
 import {
   useTimeMetrics,
   useSpaceMetrics,
@@ -18,7 +19,6 @@ import {
   useWaterMetrics,
   usePoopsMetrics,
   useHairMetrics,
-  useClosingMetrics,
 } from "./hooks";
 import { HeroSection } from "./sections/00_hero";
 import { TimeSection } from "./sections/01_time";
@@ -44,6 +44,7 @@ const pronouns = (params.get("pronouns") ?? process.env.DEFAULT_SEX ?? "m") as "
 
 function App() {
   const [shiny, setShiny] = useState(false);
+  const [isLastSlide, setIsLastSlide] = useState(false);
   const now = useNow();
   const [emblaRef, emblaApi] = useEmblaCarousel({
     axis: "y",
@@ -96,6 +97,9 @@ function App() {
       }
     };
 
+    const onSelect = () => setIsLastSlide(emblaApi.selectedScrollSnap() === emblaApi.scrollSnapList().length - 1);
+    emblaApi.on("select", onSelect);
+
     const el = emblaApi.rootNode();
     el.addEventListener("wheel", onWheel, { passive: false });
     window.addEventListener("keydown", onKeyDown);
@@ -119,7 +123,6 @@ function App() {
   const water = useWaterMetrics(dob, now);
   const poops = usePoopsMetrics(dob, now);
   const hair = useHairMetrics(dob, now);
-  const closing = useClosingMetrics(dob, now);
 
   function toggleShiny() {
     const next = !shiny;
@@ -129,7 +132,7 @@ function App() {
 
   return (
     <div>
-      <Nav name={name} shiny={shiny} onToggleShiny={toggleShiny} />
+      {isLastSlide ? <Upsell shiny={shiny} /> : <Nav name={name} shiny={shiny} onToggleShiny={toggleShiny} />}
       {/* svh (not dvh): Embla scrolls via CSS transform, never native scroll, so Safari's address bar never collapses */}
       <div ref={emblaRef} style={{ height: "100svh", overflow: "hidden" }}>
         <div style={{ display: "flex", flexDirection: "column", height: "100svh" }}>
@@ -138,21 +141,31 @@ function App() {
           <SpaceSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} space={space} />
           <StepsSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} steps={steps} />
           <YogurtSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} yogurt={yogurt} />
-          <TilesHealthSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} heart={heart} fruit={fruit} hugs={hugs} lungs={lungs} />
+          <TilesHealthSection
+            name={name}
+            dob={dob}
+            pronouns={pronouns}
+            shiny={shiny}
+            heart={heart}
+            fruit={fruit}
+            hugs={hugs}
+            lungs={lungs}
+          />
           <SleepSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} sleep={sleep} />
           <BrushingSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} brushing={brushing} />
           <WaterSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} water={water} />
           <HairSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} hair={hair} />
           <PoopsSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} poops={poops} />
-          <BinarySection name={name} dob={dob} pronouns={pronouns} shiny={shiny} closing={closing} />
-          <ClosingSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} closing={closing} />
+          <BinarySection name={name} dob={dob} pronouns={pronouns} shiny={shiny} />
+          <ClosingSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} />
         </div>
       </div>
     </div>
   );
 }
 
-preload().then(() => createRoot(document.getElementById("root")!).render(<App />));
+const root = createRoot(document.getElementById("root")!);
+preload().then(() => root.render(<App />));
 
 if (import.meta.hot) {
   import.meta.hot.accept();

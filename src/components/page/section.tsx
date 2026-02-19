@@ -23,7 +23,7 @@ export function Section({ children, id, bg = "primary", className }: Props & { i
       className={`flex items-center justify-center px-6 relative ${className ?? ""}`}
       // overflow-y: auto lets content scroll within a slide if it exceeds 100svh (e.g. small screen, large font)
       // Wheel scroll will still advance slides rather than scrolling within — acceptable for an edge case
-      style={{ height: "100svh", flexShrink: 0, overflowY: "auto", background: bg === "secondary" ? "var(--bg-secondary)" : "var(--bg-primary)" }}
+      style={{ height: "100svh", flexShrink: 0, overflowY: "auto", paddingBottom: "var(--nav-height, 48px)", background: bg === "secondary" ? "var(--bg-secondary)" : "var(--bg-primary)" }}
     >
       <div className="absolute top-14 right-6"><IdTag id={id} /></div>
       {children}
