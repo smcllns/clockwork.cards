@@ -133,19 +133,19 @@ function App() {
       {/* svh (not dvh): Embla scrolls via CSS transform, never native scroll, so Safari's address bar never collapses */}
       <div ref={emblaRef} style={{ height: "100svh", overflow: "hidden" }}>
         <div style={{ display: "flex", flexDirection: "column", height: "100svh" }}>
-          <HeroSection name={name} dob={dob} shiny={shiny} />
+          <HeroSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} />
           <TimeSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} time={time} />
-          <SpaceSection name={name} pronouns={pronouns} shiny={shiny} space={space} />
-          <StepsSection name={name} pronouns={pronouns} steps={steps} />
-          <YogurtSection name={name} shiny={shiny} yogurt={yogurt} />
-          <TilesHealthSection name={name} heart={heart} fruit={fruit} hugs={hugs} lungs={lungs} />
-          <SleepSection name={name} shiny={shiny} sleep={sleep} />
-          <BrushingSection name={name} brushing={brushing} />
-          <WaterSection name={name} shiny={shiny} water={water} />
-          <HairSection name={name} hair={hair} />
-          <PoopsSection shiny={shiny} poops={poops} />
-          <BinarySection closing={closing} />
-          <ClosingSection name={name} closing={closing} />
+          <SpaceSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} space={space} />
+          <StepsSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} steps={steps} />
+          <YogurtSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} yogurt={yogurt} />
+          <TilesHealthSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} heart={heart} fruit={fruit} hugs={hugs} lungs={lungs} />
+          <SleepSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} sleep={sleep} />
+          <BrushingSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} brushing={brushing} />
+          <WaterSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} water={water} />
+          <HairSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} hair={hair} />
+          <PoopsSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} poops={poops} />
+          <BinarySection name={name} dob={dob} pronouns={pronouns} shiny={shiny} closing={closing} />
+          <ClosingSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} closing={closing} />
         </div>
       </div>
     </div>

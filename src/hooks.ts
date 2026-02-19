@@ -12,7 +12,12 @@ export { TIME_UNITS };
 
 export function useTimeMetrics(dob: Date, now: number) {
   const [timeUnit, setTimeUnit] = useState<TimeUnit>("seconds");
-  const msAlive = now - dob.getTime();
+  const [birthHour, setBirthHourRaw] = useState(() => {
+    const stored = localStorage.getItem("birthHour");
+    return stored !== null ? Number(stored) : 0;
+  });
+  const setBirthHour = (h: number) => { localStorage.setItem("birthHour", String(h)); setBirthHourRaw(h); };
+  const msAlive = now - (dob.getTime() + birthHour * 3_600_000);
   const daysAlive = msAlive / MS_PER_DAY;
   const values: Record<TimeUnit, number> = {
     years: getAge(dob, now),
@@ -26,7 +31,7 @@ export function useTimeMetrics(dob: Date, now: number) {
   const formattedValue = timeUnit === "years"
     ? values.years.toFixed(3)
     : values[timeUnit].toLocaleString();
-  return { timeUnit, setTimeUnit, TIME_UNITS, values, formattedValue, daysAlive, msAlive };
+  return { timeUnit, setTimeUnit, TIME_UNITS, values, formattedValue, daysAlive, msAlive, birthHour, setBirthHour };
 }
 
 export function useSpaceMetrics(dob: Date, now: number) {

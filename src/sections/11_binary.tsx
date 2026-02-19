@@ -1,18 +1,19 @@
 import type { useClosingMetrics } from "../hooks";
+import type { SectionProps } from "./types";
 import { Slide, Headline } from "../components/page/slide";
 import { FlipCard } from "../components/page/flip-card";
 import { css } from "../components/page/section";
-import { expandBase, describeBase, ordinalSuffix } from "../components/content/binary";
+import { expandBase, describeBase } from "../components/content/binary";
 import { styles } from "./styles";
 
-type Props = { name: string; closing: ReturnType<typeof useClosingMetrics> };
+type Props = SectionProps & { closing: ReturnType<typeof useClosingMetrics> };
 
 const BASE10 = "#22c55e";
 const BASE2 = "#a855f7";
 
-export function ClosingSection({ name, closing }: Props) {
+export function BinarySection({ closing }: Props) {
   return (
-    <Slide id="7">
+    <Slide id="11">
       <Headline lg>{closing.age} is {closing.binary} in binary.</Headline>
       <p className="text-lg mb-6" style={css.secondary}>"Binary" just means base 2.</p>
 
@@ -54,14 +55,6 @@ export function ClosingSection({ name, closing }: Props) {
         <p className={styles.body}>
           It's like how "nine", "neuf", "nueve", and "九" all mean the same thing
           in different languages. {closing.age} and {closing.binary} are the same number in different bases.
-        </p>
-      </div>
-
-      <div className="mt-10 text-center">
-        <p className="text-4xl mb-4">❤️</p>
-        <p className="text-2xl sm:text-3xl font-semibold leading-snug" style={css.primary}>
-          We love you, we love your mind,<br />
-          happy {closing.binary}{ordinalSuffix(closing.binary)} birthday {name}.
         </p>
       </div>
     </Slide>
