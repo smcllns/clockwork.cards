@@ -1,4 +1,6 @@
 :root {
+  /* py-3 (24px) + text-sm line height (20px) + border (1px) = 45px; set slightly above to prevent jump */
+  --nav-height: 48px;
   --bg-primary: #ffffff;
   --bg-secondary: #f9fafb;
   --bg-card: #ffffff;

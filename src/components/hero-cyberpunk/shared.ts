@@ -69,7 +69,7 @@ export function layoutBalls(specs: LineSpec[]): { balls: Ball[]; maxW: number; t
 
 export function getBirthdaySpecs(name: string, dob: Date): LineSpec[] {
   const age = Math.floor((Date.now() - dob.getTime()) / (365.25 * 24 * 60 * 60 * 1000));
-  const dateLine = `${MONTHS[dob.getUTCMonth()]} ${dob.getUTCDate()} ${dob.getUTCFullYear()}`;
+  const dateLine = `${MONTHS[dob.getMonth()]} ${dob.getDate()} ${dob.getFullYear()}`;
   return [
     { text: String(age), scale: 2.5 },
     { text: "HAPPY", scale: 1.4 },
