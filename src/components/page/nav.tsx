@@ -9,7 +9,9 @@ function Sparkle({ color, size = 10 }: { color: string; size?: number }) {
 export default function Nav({ name, shiny, onToggleShiny }: { name: string; shiny: boolean; onToggleShiny: () => void }) {
   return (
     <nav
-      ref={(el) => { if (el) document.documentElement.style.setProperty("--nav-height", el.offsetHeight + "px"); }}
+      ref={(el) => {
+        if (el) document.documentElement.style.setProperty("--nav-height", el.offsetHeight + "px");
+      }}
       className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3"
       style={{
         backgroundColor: shiny ? "rgba(10,10,15,0.85)" : "rgba(255,255,255,0.85)",
@@ -27,9 +29,14 @@ export default function Nav({ name, shiny, onToggleShiny }: { name: string; shin
         }}
       >
         <svg
-          width="16" height="16" viewBox="0 0 24 24"
-          fill="none" stroke="currentColor" strokeWidth="2"
-          strokeLinecap="round" strokeLinejoin="round"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
           style={{ opacity: 0.7 }}
         >
           <path d="M5 22h14" />
@@ -61,7 +68,9 @@ export default function Nav({ name, shiny, onToggleShiny }: { name: string; shin
             color: shiny ? "#f59e0b" : "#92700a",
             transition: "color 0.3s",
           }}
-        >Cyberpunk</span>
+        >
+          Cyberpunk
+        </span>
         <div
           className="relative overflow-hidden transition-all duration-300"
           style={{
@@ -69,9 +78,7 @@ export default function Nav({ name, shiny, onToggleShiny }: { name: string; shin
             height: 24,
             borderRadius: 12,
             backgroundColor: shiny ? "#f59e0b" : "#d4c9a8",
-            boxShadow: shiny
-              ? "0 0 10px rgba(245,158,11,0.5), inset 0 1px 2px rgba(255,255,255,0.2)"
-              : "inset 0 1px 2px rgba(0,0,0,0.15)",
+            boxShadow: shiny ? "0 0 10px rgba(245,158,11,0.5), inset 0 1px 2px rgba(255,255,255,0.2)" : "inset 0 1px 2px rgba(0,0,0,0.15)",
             border: shiny ? "1px solid #d97706" : "1px solid #b8a878",
             transition: "all 0.3s",
           }}
@@ -83,9 +90,7 @@ export default function Nav({ name, shiny, onToggleShiny }: { name: string; shin
               height: 16,
               left: shiny ? 24 : 3,
               backgroundColor: shiny ? "#fff" : "#fff",
-              boxShadow: shiny
-                ? "0 1px 3px rgba(0,0,0,0.2), 0 0 4px rgba(245,158,11,0.3)"
-                : "0 1px 2px rgba(0,0,0,0.15)",
+              boxShadow: shiny ? "0 1px 3px rgba(0,0,0,0.2), 0 0 4px rgba(245,158,11,0.3)" : "0 1px 2px rgba(0,0,0,0.15)",
             }}
           />
         </div>
