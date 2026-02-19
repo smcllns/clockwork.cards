@@ -32,7 +32,7 @@ export async function preload() {
 
   // Wait for the browser to paint the initial 0% bar before we start updating it.
   // Without this, width jumps from un-painted 0% to the first value with no transition.
-  await new Promise<void>(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  await new Promise<void>(r => requestAnimationFrame(() => requestAnimationFrame(() => r())));
 
   // Show a small initial tick so the bar is visibly alive before real data arrives
   bar.style.width = "4%";
