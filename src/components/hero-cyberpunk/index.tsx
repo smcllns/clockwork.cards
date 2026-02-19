@@ -91,22 +91,41 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
             backdropFilter: "blur(8px)",
             border: chaos ? "1px solid #44403c" : "1px solid rgba(168,85,247,0.55)",
             boxShadow: chaos ? "0 2px 8px rgba(0,0,0,0.3)" : undefined,
+            cursor: !chaos ? "pointer" : "default",
+            color: chaos ? "#57534e" : "#c084fc",
           }}
+          onClick={!chaos ? () => setChaos(true) : undefined}
         >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            className="lucide lucide-triangle-alert-icon lucide-triangle-alert"
+          >
+            <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" />
+            <path d="M12 9v4" />
+            <path d="M12 17h.01" />
+          </svg>
           <span
             style={{
               fontFamily: "'Space Mono', monospace",
-              fontSize: "0.55rem",
+              fontSize: "0.7rem",
               fontWeight: 700,
               letterSpacing: "0.08em",
               textTransform: "uppercase" as const,
-              color: chaos ? "#57534e" : "#c084fc",
+              maxWidth: "8rem",
+              textAlign: "center",
             }}
           >
-            🚫 Do <em>NOT</em> press this button!
+            Do <em>NOT</em> press this button!
           </span>
           <button
-            onClick={!chaos ? () => setChaos(true) : undefined}
             className={`relative flex-shrink-0 ${!chaos ? "cursor-pointer" : "cursor-default"}`}
             style={{
               width: 36,
