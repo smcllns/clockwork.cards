@@ -9,11 +9,12 @@ function Sparkle({ color, size = 10 }: { color: string; size?: number }) {
 export default function Nav({ name, shiny, onToggleShiny }: { name: string; shiny: boolean; onToggleShiny: () => void }) {
   return (
     <nav
-      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3"
+      ref={(el) => { if (el) document.documentElement.style.setProperty("--nav-height", el.offsetHeight + "px"); }}
+      className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3"
       style={{
         backgroundColor: shiny ? "rgba(10,10,15,0.85)" : "rgba(255,255,255,0.85)",
         backdropFilter: "blur(12px)",
-        borderBottom: shiny ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.06)",
+        borderTop: shiny ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.06)",
         transition: "background-color 0.5s, border-color 0.5s",
       }}
     >

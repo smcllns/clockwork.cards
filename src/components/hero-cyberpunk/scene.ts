@@ -168,9 +168,9 @@ export function initV11(container: HTMLElement, name: string, dob: Date) {
     RAPIER.ColliderDesc.cuboid(half, half, 1).setRestitution(0.5).setFriction(0.2),
     frontWall,
   );
-  // Raised floor so balls don't clip bottom viewport edge
+  const floorWorldY = -visH / 2 + 4;
   const raisedFloor = world.createRigidBody(
-    RAPIER.RigidBodyDesc.fixed().setTranslation(0, -visH / 2 + 4, 0)
+    RAPIER.RigidBodyDesc.fixed().setTranslation(0, floorWorldY, 0)
   );
   world.createCollider(
     RAPIER.ColliderDesc.cuboid(half, 1, half).setRestitution(0.6).setFriction(0.2),
@@ -236,7 +236,7 @@ export function initV11(container: HTMLElement, name: string, dob: Date) {
   const releaseDelays = new Float32Array(meshes.length);
   const released = new Uint8Array(meshes.length);
   const hitGround = new Uint8Array(meshes.length);
-  const floorY = -visH / 2 + 4 + 1.5;
+  const floorY = floorWorldY + 1.5;
 
   let visible = true;
   const observer = new IntersectionObserver(([entry]) => {

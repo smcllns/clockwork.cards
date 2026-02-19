@@ -51,8 +51,10 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
 
   return (
     <div className="h-[100svh] relative" style={{ flexShrink: 0 }}>
-      {/* Background image — img+object-cover is more reliable than CSS background-size on mobile */}
-      <img src={bgSrc} className="absolute inset-0 w-full h-full object-cover" alt="" style={{ pointerEvents: "none" }} />
+      {/* Background image — stops at nav top, object-position:bottom keeps cliff ground at canvas bottom */}
+      <div className="absolute top-0 left-0 right-0 overflow-hidden" style={{ bottom: "var(--nav-height, 48px)" }}>
+        <img src={bgSrc} className="w-full h-full object-cover object-bottom" alt="" style={{ pointerEvents: "none" }} />
+      </div>
 
       {/* Subtle vignette — shiny sky is naturally dark, light needs gentle center dim for text contrast */}
       <div
@@ -64,11 +66,11 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
         }}
       />
 
-      {/* Three.js canvas mounts here */}
-      <section ref={containerRef} className="absolute inset-0 overflow-hidden" />
+      {/* Three.js canvas — stops at nav top so balls settle on visible cliff, not behind nav */}
+      <section ref={containerRef} className="absolute top-0 left-0 right-0 overflow-hidden" style={{ bottom: "var(--nav-height, 48px)" }} />
 
       <div
-        className="absolute bottom-4 left-4 z-10"
+        className="absolute top-4 right-4 z-10"
         style={{ opacity: shiny ? 1 : 0, pointerEvents: shiny ? "auto" : "none", transition: "opacity 0.5s" }}
       >
         <div

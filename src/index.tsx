@@ -31,22 +31,42 @@ const pronouns = (params.get("pronouns") ?? process.env.DEFAULT_SEX ?? "m") as "
 function App() {
   const [shiny, setShiny] = useState(false);
   const now = useNow();
-  const [emblaRef, emblaApi] = useEmblaCarousel({ axis: "y", watchResize: true, dragFree: false });
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    axis: "y", watchResize: true, dragFree: false,
+    // Don't intercept mouse drags on the Three.js canvas — let ball interaction work.
+    // Touch drags are always passed through so mobile swiping still works on all slides.
+    watchDrag: (_api, evt) => !(evt instanceof MouseEvent && evt.target instanceof HTMLCanvasElement),
+  });
 
   useEffect(() => {
     if (!emblaApi) return;
-    let cooldown = false;
+    let locked = false;
+    let quietTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const unlock = () => { locked = false; quietTimer = null; };
+
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
-      if (cooldown) return;
-      cooldown = true;
+      const abs = Math.abs(e.deltaY);
+
+      if (locked) {
+        // Trackpad inertia decays to near-zero — unlock as soon as it dies
+        if (abs < 5) unlock();
+        // Mouse wheel (no decay): reset quiet timer, unlock 200ms after events stop
+        else { if (quietTimer) clearTimeout(quietTimer); quietTimer = setTimeout(unlock, 200); }
+        return;
+      }
+
+      // Hysteresis: require abs >= 15 to start a scroll (avoids re-triggering on residual inertia after unlock)
+      if (abs < 15) return;
+      locked = true;
       if (e.deltaY > 0) emblaApi.scrollNext();
       else emblaApi.scrollPrev();
-      setTimeout(() => { cooldown = false; }, 800);
     };
+
     const el = emblaApi.rootNode();
     el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel);
+    return () => { el.removeEventListener("wheel", onWheel); if (quietTimer) clearTimeout(quietTimer); };
   }, [emblaApi]);
 
   const time    = useTimeMetrics(dob, now);
