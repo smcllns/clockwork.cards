@@ -73,8 +73,9 @@ function App() {
   return (
     <div>
       <Nav name={name} shiny={shiny} onToggleShiny={toggleShiny} />
-      <div ref={emblaRef} style={{ height: "100dvh", overflow: "hidden" }}>
-        <div style={{ display: "flex", flexDirection: "column", height: "100dvh" }}>
+      {/* svh (not dvh): Embla scrolls via CSS transform, never native scroll, so Safari's address bar never collapses */}
+      <div ref={emblaRef} style={{ height: "100svh", overflow: "hidden" }}>
+        <div style={{ display: "flex", flexDirection: "column", height: "100svh" }}>
           <HeroSection         name={name}     dob={dob} shiny={shiny} />
           <TimeSection         name={name}     shiny={shiny} time={time} />
           <SpaceSection        name={name}     shiny={shiny} space={space} />
