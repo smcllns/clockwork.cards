@@ -20,8 +20,8 @@ export function IdTag({ id }: { id: string }) {
 export function Section({ children, id, bg = "primary", className }: Props & { id: string; bg?: "primary" | "secondary" }) {
   return (
     <div
-      className={`flex items-center justify-center px-6 relative snap-section ${className ?? ""}`}
-      style={{ minHeight: "100dvh", background: bg === "secondary" ? "var(--bg-secondary)" : "var(--bg-primary)" }}
+      className={`flex items-center justify-center px-6 relative ${className ?? ""}`}
+      style={{ height: "100dvh", flexShrink: 0, background: bg === "secondary" ? "var(--bg-secondary)" : "var(--bg-primary)" }}
     >
       <div className="absolute top-14 right-6"><IdTag id={id} /></div>
       {children}

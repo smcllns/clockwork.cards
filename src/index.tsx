@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
+import useEmblaCarousel from "embla-carousel-react";
 import { useNow } from "./lib/useNow";
 import Nav from "./components/page/nav";
-import Footer from "./components/page/footer";
 import {
   useTimeMetrics, useSpaceMetrics, useStepsMetrics, useYogurtMetrics,
   useHeartMetrics, useFruitMetrics, useHugsMetrics, useLungsMetrics,
@@ -31,6 +31,23 @@ const pronouns = (params.get("pronouns") ?? process.env.DEFAULT_SEX ?? "m") as "
 function App() {
   const [shiny, setShiny] = useState(false);
   const now = useNow();
+  const [emblaRef, emblaApi] = useEmblaCarousel({ axis: "y", watchResize: true, dragFree: false });
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    let cooldown = false;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      if (cooldown) return;
+      cooldown = true;
+      if (e.deltaY > 0) emblaApi.scrollNext();
+      else emblaApi.scrollPrev();
+      setTimeout(() => { cooldown = false; }, 800);
+    };
+    const el = emblaApi.rootNode();
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [emblaApi]);
 
   const time    = useTimeMetrics(dob, now);
   const space   = useSpaceMetrics(dob, now);
@@ -56,21 +73,22 @@ function App() {
   return (
     <div>
       <Nav name={name} shiny={shiny} onToggleShiny={toggleShiny} />
-      <HeroSection name={name} dob={dob} shiny={shiny} />
-      <section style={{ background: "var(--bg-primary)" }}>
-        <TimeSection         name={name}     shiny={shiny} time={time} />
-        <SpaceSection        name={name}     shiny={shiny} space={space} />
-        <StepsSection        name={name}     pronouns={pronouns} steps={steps} />
-        <YogurtSection       name={name}     shiny={shiny} yogurt={yogurt} />
-        <TilesHealthSection  name={name}     heart={heart} fruit={fruit} hugs={hugs} lungs={lungs} />
-        <SleepSection        name={name}     shiny={shiny} sleep={sleep} />
-        <BrushingSection     name={name}     brushing={brushing} />
-        <WaterSection        name={name}     shiny={shiny} water={water} />
-        <HairSection         name={name}     hair={hair} />
-        <PoopsSection                        shiny={shiny} poops={poops} />
-        <ClosingSection      name={name}     closing={closing} />
-      </section>
-      <Footer />
+      <div ref={emblaRef} style={{ height: "100dvh", overflow: "hidden" }}>
+        <div style={{ display: "flex", flexDirection: "column", height: "100dvh" }}>
+          <HeroSection         name={name}     dob={dob} shiny={shiny} />
+          <TimeSection         name={name}     shiny={shiny} time={time} />
+          <SpaceSection        name={name}     shiny={shiny} space={space} />
+          <StepsSection        name={name}     pronouns={pronouns} steps={steps} />
+          <YogurtSection       name={name}     shiny={shiny} yogurt={yogurt} />
+          <TilesHealthSection  name={name}     heart={heart} fruit={fruit} hugs={hugs} lungs={lungs} />
+          <SleepSection        name={name}     shiny={shiny} sleep={sleep} />
+          <BrushingSection     name={name}     brushing={brushing} />
+          <WaterSection        name={name}     shiny={shiny} water={water} />
+          <HairSection         name={name}     hair={hair} />
+          <PoopsSection                        shiny={shiny} poops={poops} />
+          <ClosingSection      name={name}     closing={closing} />
+        </div>
+      </div>
     </div>
   );
 }

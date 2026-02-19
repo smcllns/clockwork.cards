@@ -50,7 +50,7 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
   const bgSrc = shiny ? forestShiny : forestLight;
 
   return (
-    <div className="h-[100dvh] relative snap-section">
+    <div className="h-[100dvh] relative" style={{ flexShrink: 0 }}>
       {/* Background image — img+object-cover is more reliable than CSS background-size on mobile */}
       <img src={bgSrc} className="absolute inset-0 w-full h-full object-cover" alt="" style={{ pointerEvents: "none" }} />
 
