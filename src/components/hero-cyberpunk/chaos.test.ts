@@ -5,8 +5,9 @@ import { describe, expect, it } from "bun:test";
 describe("chaos state", () => {
   it("is not initialized from localStorage or sessionStorage", async () => {
     const src = await Bun.file("src/components/hero-cyberpunk/index.tsx").text();
-    expect(src).not.toMatch(/localStorage[^;]*chaos/);
-    expect(src).not.toMatch(/sessionStorage[^;]*chaos/);
-    expect(src).not.toMatch(/searchParams[^;]*chaos/);
+    // Match actual storage access (getItem/setItem calls), not comments
+    expect(src).not.toMatch(/localStorage\.(?:get|set)Item[^;]*chaos/);
+    expect(src).not.toMatch(/sessionStorage\.(?:get|set)Item[^;]*chaos/);
+    expect(src).not.toMatch(/searchParams\.get[^;]*chaos/);
   });
 });

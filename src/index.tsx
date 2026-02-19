@@ -1,13 +1,24 @@
+import { preload } from "./preload";
 import { useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import useEmblaCarousel from "embla-carousel-react";
 import { useNow } from "./lib/useNow";
 import Nav from "./components/page/nav";
 import {
-  useTimeMetrics, useSpaceMetrics, useStepsMetrics, useYogurtMetrics,
-  useHeartMetrics, useFruitMetrics, useHugsMetrics, useLungsMetrics,
-  useSleepMetrics, useBrushingMetrics, useWaterMetrics, usePoopsMetrics,
-  useHairMetrics, useClosingMetrics,
+  useTimeMetrics,
+  useSpaceMetrics,
+  useStepsMetrics,
+  useYogurtMetrics,
+  useHeartMetrics,
+  useFruitMetrics,
+  useHugsMetrics,
+  useLungsMetrics,
+  useSleepMetrics,
+  useBrushingMetrics,
+  useWaterMetrics,
+  usePoopsMetrics,
+  useHairMetrics,
+  useClosingMetrics,
 } from "./hooks";
 import { HeroSection } from "./sections/00_hero";
 import { TimeSection } from "./sections/01_time";
@@ -20,19 +31,24 @@ import { BrushingSection } from "./sections/07_brushing";
 import { WaterSection } from "./sections/08_water";
 import { HairSection } from "./sections/09_hair";
 import { PoopsSection } from "./sections/10_poops";
-import { ClosingSection } from "./sections/11_closing";
+import { BinarySection } from "./sections/11_binary";
+import { ClosingSection } from "./sections/12_closing";
 
 const params = new URLSearchParams(window.location.search);
-const rawName = params.get("name") ?? process.env.DEFAULT_NAME ?? "Oscar";
+const rawName = params.get("name") ?? process.env.DEFAULT_NAME!;
 const name = rawName.charAt(0).toUpperCase() + rawName.slice(1);
-const dob = new Date(params.get("dob") ?? process.env.DEFAULT_DOB ?? "2017-02-20");
+const dobStr = params.get("dob") ?? process.env.DEFAULT_DOB;
+const [dobY, dobM, dobD] = dobStr!.split("-").map(Number);
+const dob = new Date(dobY, dobM - 1, dobD); // local midnight, not UTC
 const pronouns = (params.get("pronouns") ?? process.env.DEFAULT_SEX ?? "m") as "m" | "f";
 
 function App() {
   const [shiny, setShiny] = useState(false);
   const now = useNow();
   const [emblaRef, emblaApi] = useEmblaCarousel({
-    axis: "y", watchResize: true, dragFree: false,
+    axis: "y",
+    watchResize: true,
+    dragFree: false,
     // Don't intercept mouse drags on the Three.js canvas — let ball interaction work.
     // Touch drags are always passed through so mobile swiping still works on all slides.
     watchDrag: (_api, evt) => !(evt instanceof MouseEvent && evt.target instanceof HTMLCanvasElement),
@@ -43,7 +59,10 @@ function App() {
     let locked = false;
     let quietTimer: ReturnType<typeof setTimeout> | null = null;
 
-    const unlock = () => { locked = false; quietTimer = null; };
+    const unlock = () => {
+      locked = false;
+      quietTimer = null;
+    };
 
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
@@ -53,7 +72,10 @@ function App() {
         // Trackpad inertia decays to near-zero — unlock as soon as it dies
         if (abs < 5) unlock();
         // Mouse wheel (no decay): reset quiet timer, unlock 200ms after events stop
-        else { if (quietTimer) clearTimeout(quietTimer); quietTimer = setTimeout(unlock, 200); }
+        else {
+          if (quietTimer) clearTimeout(quietTimer);
+          quietTimer = setTimeout(unlock, 200);
+        }
         return;
       }
 
@@ -64,24 +86,39 @@ function App() {
       else emblaApi.scrollPrev();
     };
 
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        emblaApi.scrollNext();
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        emblaApi.scrollPrev();
+      }
+    };
+
     const el = emblaApi.rootNode();
     el.addEventListener("wheel", onWheel, { passive: false });
-    return () => { el.removeEventListener("wheel", onWheel); if (quietTimer) clearTimeout(quietTimer); };
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      el.removeEventListener("wheel", onWheel);
+      window.removeEventListener("keydown", onKeyDown);
+      if (quietTimer) clearTimeout(quietTimer);
+    };
   }, [emblaApi]);
 
-  const time    = useTimeMetrics(dob, now);
-  const space   = useSpaceMetrics(dob, now);
-  const steps   = useStepsMetrics(dob, now);
-  const yogurt  = useYogurtMetrics(dob, now);
-  const heart   = useHeartMetrics(dob, now);
-  const fruit   = useFruitMetrics(dob, now);
-  const hugs    = useHugsMetrics(dob, now);
-  const lungs   = useLungsMetrics(dob, now);
-  const sleep   = useSleepMetrics(dob, now);
+  const time = useTimeMetrics(dob, now);
+  const space = useSpaceMetrics(dob, now);
+  const steps = useStepsMetrics(dob, now);
+  const yogurt = useYogurtMetrics(dob, now);
+  const heart = useHeartMetrics(dob, now);
+  const fruit = useFruitMetrics(dob, now);
+  const hugs = useHugsMetrics(dob, now);
+  const lungs = useLungsMetrics(dob, now);
+  const sleep = useSleepMetrics(dob, now);
   const brushing = useBrushingMetrics(dob, now);
-  const water   = useWaterMetrics(dob, now);
-  const poops   = usePoopsMetrics(dob, now);
-  const hair    = useHairMetrics(dob, now);
+  const water = useWaterMetrics(dob, now);
+  const poops = usePoopsMetrics(dob, now);
+  const hair = useHairMetrics(dob, now);
   const closing = useClosingMetrics(dob, now);
 
   function toggleShiny() {
@@ -96,25 +133,26 @@ function App() {
       {/* svh (not dvh): Embla scrolls via CSS transform, never native scroll, so Safari's address bar never collapses */}
       <div ref={emblaRef} style={{ height: "100svh", overflow: "hidden" }}>
         <div style={{ display: "flex", flexDirection: "column", height: "100svh" }}>
-          <HeroSection         name={name}     dob={dob} shiny={shiny} />
-          <TimeSection         name={name}     shiny={shiny} time={time} />
-          <SpaceSection        name={name}     shiny={shiny} space={space} />
-          <StepsSection        name={name}     pronouns={pronouns} steps={steps} />
-          <YogurtSection       name={name}     shiny={shiny} yogurt={yogurt} />
-          <TilesHealthSection  name={name}     heart={heart} fruit={fruit} hugs={hugs} lungs={lungs} />
-          <SleepSection        name={name}     shiny={shiny} sleep={sleep} />
-          <BrushingSection     name={name}     brushing={brushing} />
-          <WaterSection        name={name}     shiny={shiny} water={water} />
-          <HairSection         name={name}     hair={hair} />
-          <PoopsSection                        shiny={shiny} poops={poops} />
-          <ClosingSection      name={name}     closing={closing} />
+          <HeroSection name={name} dob={dob} shiny={shiny} />
+          <TimeSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} time={time} />
+          <SpaceSection name={name} pronouns={pronouns} shiny={shiny} space={space} />
+          <StepsSection name={name} pronouns={pronouns} steps={steps} />
+          <YogurtSection name={name} shiny={shiny} yogurt={yogurt} />
+          <TilesHealthSection name={name} heart={heart} fruit={fruit} hugs={hugs} lungs={lungs} />
+          <SleepSection name={name} shiny={shiny} sleep={sleep} />
+          <BrushingSection name={name} brushing={brushing} />
+          <WaterSection name={name} shiny={shiny} water={water} />
+          <HairSection name={name} hair={hair} />
+          <PoopsSection shiny={shiny} poops={poops} />
+          <BinarySection closing={closing} />
+          <ClosingSection name={name} closing={closing} />
         </div>
       </div>
     </div>
   );
 }
 
-createRoot(document.getElementById("root")!).render(<App />);
+preload().then(() => createRoot(document.getElementById("root")!).render(<App />));
 
 if (import.meta.hot) {
   import.meta.hot.accept();

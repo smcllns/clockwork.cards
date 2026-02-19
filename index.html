@@ -13,6 +13,12 @@
   <script type="module" src="./src/index.tsx"></script>
 </head>
 <body>
+  <div id="loading-overlay" style="position:fixed;inset:0;background:#080810;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity 0.6s ease">
+    <div style="width:180px;height:2px;background:rgba(255,255,255,0.12);border-radius:2px;overflow:hidden">
+      <div id="loading-bar" style="height:100%;width:0%;background:rgba(255,255,255,0.75);border-radius:2px;transition:width 0.15s ease-out"></div>
+    </div>
+    <div id="loading-label" style="font-family:system-ui,sans-serif;font-size:12px;color:rgba(255,255,255,0.35);letter-spacing:0.04em;transition:opacity 0.4s ease">First load, please wait while we prepare</div>
+  </div>
   <div id="root"></div>
 </body>
 </html>
