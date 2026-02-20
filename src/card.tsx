@@ -1,8 +1,4 @@
-import { useState, useEffect } from "react";
-import useEmblaCarousel from "embla-carousel-react";
 import { useNow } from "./metrics";
-import Nav from "./components/page/nav";
-import Upsell from "./components/page/upsell";
 import {
   useAgeMetrics,
   useTimeMetrics,
@@ -38,76 +34,11 @@ type CardProps = {
   name: string;
   dob: Date;
   pronouns: "m" | "f";
+  shiny: boolean;
 };
 
-export function Card({ name, dob, pronouns }: CardProps) {
-  const [shiny, setShiny] = useState(false);
-  const [isLastSlide, setIsLastSlide] = useState(false);
+export function Card({ name, dob, pronouns, shiny }: CardProps) {
   const now = useNow();
-  const [emblaRef, emblaApi] = useEmblaCarousel({
-    axis: "y",
-    watchResize: true,
-    dragFree: false,
-    // Don't intercept mouse drags on the Three.js canvas — let ball interaction work.
-    // Touch drags are always passed through so mobile swiping still works on all slides.
-    watchDrag: (_api, evt) => !(evt instanceof MouseEvent && evt.target instanceof HTMLCanvasElement),
-  });
-
-  useEffect(() => {
-    if (!emblaApi) return;
-    let locked = false;
-    let quietTimer: ReturnType<typeof setTimeout> | null = null;
-
-    const unlock = () => {
-      locked = false;
-      quietTimer = null;
-    };
-
-    const onWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      const abs = Math.abs(e.deltaY);
-
-      if (locked) {
-        // Trackpad inertia decays to near-zero — unlock as soon as it dies
-        if (abs < 5) unlock();
-        // Mouse wheel (no decay): reset quiet timer, unlock 200ms after events stop
-        else {
-          if (quietTimer) clearTimeout(quietTimer);
-          quietTimer = setTimeout(unlock, 200);
-        }
-        return;
-      }
-
-      // Hysteresis: require abs >= 15 to start a scroll (avoids re-triggering on residual inertia after unlock)
-      if (abs < 15) return;
-      locked = true;
-      if (e.deltaY > 0) emblaApi.scrollNext();
-      else emblaApi.scrollPrev();
-    };
-
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        emblaApi.scrollNext();
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        emblaApi.scrollPrev();
-      }
-    };
-
-    const onSelect = () => setIsLastSlide(emblaApi.selectedScrollSnap() === emblaApi.scrollSnapList().length - 1);
-    emblaApi.on("select", onSelect);
-
-    const el = emblaApi.rootNode();
-    el.addEventListener("wheel", onWheel, { passive: false });
-    window.addEventListener("keydown", onKeyDown);
-    return () => {
-      el.removeEventListener("wheel", onWheel);
-      window.removeEventListener("keydown", onKeyDown);
-      if (quietTimer) clearTimeout(quietTimer);
-    };
-  }, [emblaApi]);
-
   const age = useAgeMetrics(dob, now);
   const time = useTimeMetrics(dob, now);
   const space = useSpaceMetrics(dob, now);
@@ -123,31 +54,22 @@ export function Card({ name, dob, pronouns }: CardProps) {
   const poops = usePoopsMetrics(dob, now);
   const hair = useHairMetrics(dob, now);
 
-  function toggleShiny() {
-    const next = !shiny;
-    setShiny(next);
-    document.documentElement.classList.toggle("shiny", next);
-  }
-
   return (
-    <div>
-      {isLastSlide ? <Upsell shiny={shiny} /> : <Nav name={name} shiny={shiny} onToggleShiny={toggleShiny} />}
-      {/* svh (not dvh): Embla scrolls via CSS transform, never native scroll, so Safari's address bar never collapses */}
-      <div ref={emblaRef} style={{ height: "100svh", overflow: "hidden" }}>
-        <div style={{ display: "flex", flexDirection: "column", height: "100svh" }}>
-          <HeroSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} />
-          <TimeSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} time={time} />
-          <TimeTableSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} time={time} />
-          <SpaceSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} space={space} />
-          <StepsSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} steps={steps} age={age.decimal2} />
-          <YogurtSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} yogurt={yogurt} />
-          <BrushingSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} brushing={brushing} />
-          <WaterSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} water={water} />
-          <BinarySection name={name} dob={dob} pronouns={pronouns} shiny={shiny} age={age.floor} />
-          <PoopsSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} poops={poops} age={age.decimal2} />
-          <ClosingSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} age={age.rounded} />
-        </div>
-      </div>
-    </div>
+    <>
+      <HeroSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} />
+      <TimeSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} time={time} />
+      <TimeTableSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} time={time} />
+      <SpaceSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} space={space} />
+      <StepsSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} steps={steps} age={age.decimal2} />
+      <YogurtSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} yogurt={yogurt} />
+      <TilesHealthSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} heart={heart} fruit={fruit} hugs={hugs} lungs={lungs} />
+      <SleepSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} sleep={sleep} />
+      <BrushingSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} brushing={brushing} />
+      <WaterSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} water={water} />
+      <HairSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} hair={hair} />
+      <PoopsSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} poops={poops} age={age.decimal2} />
+      <BinarySection name={name} dob={dob} pronouns={pronouns} shiny={shiny} age={age.floor} />
+      <ClosingSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} age={age.rounded} />
+    </>
   );
 }
