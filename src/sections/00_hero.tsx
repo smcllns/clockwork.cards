@@ -1,4 +1,4 @@
-import HeroCyberpunk from "../components/hero-cyberpunk";
+import HeroCyberpunk from "../components/hero/cyberpunk";
 import type { SectionProps } from "./types";
 
 type Props = SectionProps;

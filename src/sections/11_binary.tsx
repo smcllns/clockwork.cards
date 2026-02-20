@@ -1,6 +1,6 @@
 import type { SectionProps } from "./types";
-import { TextSlide } from "../components/slide/text-slide";
-import { Stat, Subtitle } from "../components/text";
+import { TextSlide } from "../components/page/text-slide";
+import { Stat, Subtitle } from "../components/page/text";
 import { FlipCard } from "../components/page/flip-card";
 import { expandBase, describeBase } from "../binary";
 import { styles } from "./styles";

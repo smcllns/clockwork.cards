@@ -1,7 +1,7 @@
 import type { useStepsMetrics } from "../metrics";
 import type { SectionProps } from "./types";
-import { TextSlide } from "../components/slide/text-slide";
-import { Stat, Intro, Subtitle } from "../components/text";
+import { TextSlide } from "../components/page/text-slide";
+import { Stat, Intro, Subtitle } from "../components/page/text";
 import { InlineStepper, InlineSlider } from "../components/page/controls";
 import { his, he } from "../metrics";
 import { styles } from "./styles";

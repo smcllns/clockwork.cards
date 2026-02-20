@@ -1,7 +1,7 @@
 import type { useTimeMetrics } from "../metrics";
 import type { SectionProps } from "./types";
-import { TextSlide } from "../components/slide/text-slide";
-import { Intro } from "../components/text";
+import { TextSlide } from "../components/page/text-slide";
+import { Intro } from "../components/page/text";
 import { InlineDropdown } from "../components/page/controls";
 import { styles } from "./styles";
 

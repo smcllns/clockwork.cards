@@ -1,4 +1,4 @@
-import { Section, IdTag } from "../page/section";
+import { Section, IdTag } from "./section";
 
 type Props = { children: React.ReactNode; className?: string };
 

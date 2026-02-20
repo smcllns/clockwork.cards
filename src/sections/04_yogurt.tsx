@@ -1,7 +1,7 @@
 import type { useYogurtMetrics } from "../metrics";
 import type { SectionProps } from "./types";
-import { PhotoSlide } from "../components/slide/photo-slide";
-import { Intro, Stat, Subtitle, Lede, Body } from "../components/text";
+import { PhotoSlide } from "../components/page/photo-slide";
+import { Intro, Stat, Subtitle, Lede, Body } from "../components/page/text";
 import { InlinePills, InlineSlider, InlineStepper } from "../components/page/controls";
 import imgLight from "../assets/photo-yogurt.png";
 import imgShiny from "../assets/photo-yogurt-shiny.png";

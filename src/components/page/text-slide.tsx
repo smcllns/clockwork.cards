@@ -1,4 +1,4 @@
-import { Section } from "../page/section";
+import { Section } from "./section";
 
 type Props = { children: React.ReactNode; className?: string };
 

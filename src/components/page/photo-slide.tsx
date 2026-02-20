@@ -1,4 +1,4 @@
-import { IdTag } from "../page/section";
+import { IdTag } from "./section";
 
 type PhotoSlideProps = {
   id: string;

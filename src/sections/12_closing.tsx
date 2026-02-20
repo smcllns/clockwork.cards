@@ -1,5 +1,5 @@
 import type { SectionProps } from "./types";
-import { TextSlide } from "../components/slide/text-slide";
+import { TextSlide } from "../components/page/text-slide";
 import { ordinalSuffix } from "../binary";
 
 export function ClosingSection({ name, age }: SectionProps & { age: number }) {

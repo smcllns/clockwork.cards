@@ -1,6 +1,6 @@
 import type { useBrushingMetrics } from "../metrics";
 import type { SectionProps } from "./types";
-import { TextSlide } from "../components/slide/text-slide";
+import { TextSlide } from "../components/page/text-slide";
 import { InlineStepper } from "../components/page/controls";
 import { styles } from "./styles";
 

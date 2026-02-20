@@ -1,7 +1,7 @@
 import type { usePoopsMetrics } from "../metrics";
 import type { SectionProps } from "./types";
-import { PhotoSlide } from "../components/slide/photo-slide";
-import { Stat, Lede, Body } from "../components/text";
+import { PhotoSlide } from "../components/page/photo-slide";
+import { Stat, Lede, Body } from "../components/page/text";
 import { InlineStepper } from "../components/page/controls";
 import imgLight from "../assets/photo-poops.png";
 import imgShiny from "../assets/photo-poops-shiny.png";

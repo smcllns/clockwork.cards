@@ -1,7 +1,7 @@
 import type { useTimeMetrics } from "../metrics";
 import type { SectionProps } from "./types";
-import { PhotoSlide } from "../components/slide/photo-slide";
-import { Intro, Stat, Subtitle } from "../components/text";
+import { PhotoSlide } from "../components/page/photo-slide";
+import { Intro, Stat, Subtitle } from "../components/page/text";
 import { InlineDropdown } from "../components/page/controls";
 import { TIME_UNITS } from "../metrics";
 import imgLight from "../assets/photo-time.png";

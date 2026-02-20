@@ -173,13 +173,14 @@ export function useBrushingMetrics(dob: Date, now: number) {
 }
 
 export function useWaterMetrics(dob: Date, now: number) {
-  const [glassesPerDay, setGlassesPerDay] = useState(6);
+  const [mlPerDay, setMlPerDay] = useState(1000);
+  const [unit, setUnit] = useState<"liters" | "cups">("liters");
   const daysAlive = Math.floor((now - dob.getTime()) / MS_PER_DAY);
-  const litersPerDay = (glassesPerDay * GLASS_ML) / 1000;
-  const waterLiters = daysAlive * litersPerDay;
+  const waterLiters = (daysAlive * mlPerDay) / 1000;
+  const display = unit === "cups" ? Math.floor((waterLiters * 1000) / 237) : Math.floor(waterLiters);
   const waterPoolPercent = (waterLiters / OLYMPIC_POOL_LITERS) * 100;
-  const poolYearsRemaining = (OLYMPIC_POOL_LITERS - waterLiters) / litersPerDay / 365.25;
-  return { glassesPerDay, setGlassesPerDay, waterLiters, waterPoolPercent, poolYearsRemaining };
+  const poolYearsRemaining = (OLYMPIC_POOL_LITERS - waterLiters) / (mlPerDay / 1000) / 365.25;
+  return { mlPerDay, setMlPerDay, unit, setUnit, display, waterLiters, waterPoolPercent, poolYearsRemaining };
 }
 
 export function usePoopsMetrics(dob: Date, now: number) {

@@ -8,6 +8,7 @@ interface StepperProps {
   step: number;
   unit?: string;
   decimals?: number; // auto-derived from step if omitted
+  displayValue?: string; // overrides the readout (use when showing a converted unit)
   onChange: (v: number) => void;
 }
 
@@ -50,7 +51,7 @@ const btnBase: CSSProperties = {
   transition: "background 0.15s",
 };
 
-export function InlineStepper({ value, min, max, step, unit, decimals, onChange }: StepperProps) {
+export function InlineStepper({ value, min, max, step, unit, decimals, displayValue, onChange }: StepperProps) {
   const d = decimals ?? (step.toString().split(".")[1] ?? "").length;
   const clamp = (v: number) => parseFloat(Math.min(max, Math.max(min, v)).toFixed(d));
   const bumpRef = useRef({ count: 0, dir: "up" as "up" | "down" });
@@ -67,7 +68,7 @@ export function InlineStepper({ value, min, max, step, unit, decimals, onChange 
       <span
         style={{ ...statValue, padding: "0 2px", minWidth: "28px", textAlign: "center" }}
       >
-        {value.toFixed(d)}{unit ?? ""}
+        {displayValue ?? (value.toFixed(d) + (unit ?? ""))}
       </span>
       <button
         style={{ ...btnBase, opacity: value >= max ? 0.3 : 1 }}
