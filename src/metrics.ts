@@ -174,7 +174,7 @@ export function useBrushingMetrics(dob: Date, now: number) {
 
 export function useWaterMetrics(dob: Date, now: number) {
   const [mlPerDay, setMlPerDay] = useState(1000);
-  const [unit, setUnit] = useState<"liters" | "cups">("liters");
+  const [unit, setUnit] = useState<"liters" | "cups">("cups");
   const daysAlive = Math.floor((now - dob.getTime()) / MS_PER_DAY);
   const waterLiters = (daysAlive * mlPerDay) / 1000;
   const display = unit === "cups" ? Math.floor((waterLiters * 1000) / 237) : Math.floor(waterLiters);
