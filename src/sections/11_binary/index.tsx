@@ -1,9 +1,9 @@
-import type { SectionProps } from "./types";
-import { TextSlide } from "../components/page/text-slide";
-import { Stat, Subtitle } from "../components/page/text";
-import { FlipCard } from "../components/page/flip-card";
-import { expandBase, describeBase } from "../binary";
-import { styles } from "./styles";
+import type { SectionProps } from "../types";
+import { TextSlide } from "../../components/page/text-slide";
+import { Stat, Subtitle } from "../../components/page/text";
+import { FlipCard } from "../../components/page/flip-card";
+import { expandBase, describeBase } from "./binary";
+import { styles } from "../styles";
 
 const BASE10 = "#22c55e";
 const BASE2 = "#a855f7";

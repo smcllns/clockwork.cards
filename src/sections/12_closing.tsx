@@ -1,6 +1,6 @@
 import type { SectionProps } from "./types";
 import { TextSlide } from "../components/page/text-slide";
-import { ordinalSuffix } from "../binary";
+import { ordinalSuffix } from "./11_binary/binary";
 
 export function ClosingSection({ name, age }: SectionProps & { age: number }) {
   const nearestBirthdayAge = age;
