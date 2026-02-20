@@ -47,9 +47,9 @@ export function getAge(dob: Date, now: number, decimals?: number): number {
   return Math.round(precise * f) / f;
 }
 
-export const his = (p: "m" | "f") => p === "m" ? "his" : "her";
-export const he  = (p: "m" | "f") => p === "m" ? "he"  : "she";
-export const him = (p: "m" | "f") => p === "m" ? "him" : "her";
+export const his = (p: "m" | "f") => (p === "m" ? "his" : "her");
+export const he = (p: "m" | "f") => (p === "m" ? "he" : "she");
+export const him = (p: "m" | "f") => (p === "m" ? "him" : "her");
 
 export function useAgeMetrics(dob: Date, now: number) {
   const precise = getAge(dob, now);
@@ -121,7 +121,7 @@ export function useYogurtMetrics(dob: Date, now: number) {
       ? `That's about ${Math.round(ratio * 100)}% the weight of a baby hippo.`
       : ratio < 1.15
         ? "About the weight of a baby hippo."
-        : `That's about ${ratio.toFixed(1)}× the weight of a baby hippo.`;
+        : `That's about the weight of ${ratio.toFixed(1)} baby hippos!`;
   return { gramsPerDay, setGramsPerDay, startAge, setStartAge, unit, setUnit, yogurtKg, display, hippoHeadline };
 }
 

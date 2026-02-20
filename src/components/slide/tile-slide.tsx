@@ -1,8 +1,8 @@
-import { Section, IdTag } from "./section";
+import { Section, IdTag } from "../page/section";
 
 type Props = { children: React.ReactNode; className?: string };
 
-export function TileContainer({ children, id, title, className }: Props & { id: string; title: string }) {
+export function TileSlide({ children, id, title, className }: Props & { id: string; title: string }) {
   return (
     <Section id={id} bg="secondary" className={className}>
       <div className="w-full py-16">

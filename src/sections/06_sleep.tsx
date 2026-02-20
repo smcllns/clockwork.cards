@@ -1,7 +1,7 @@
 import type { useSleepMetrics } from "../metrics";
 import type { SectionProps } from "./types";
-import { PhotoSlide } from "../components/content/photo-slide";
-import { Intro, Stat, Subtitle, Lede, Body } from "../components/page/slide";
+import { PhotoSlide } from "../components/slide/photo-slide";
+import { Intro, Stat, Subtitle, Lede, Body } from "../components/text";
 import { InlineStepper } from "../components/page/controls";
 import imgLight from "../assets/photo-sleep.png";
 import imgShiny from "../assets/photo-sleep-shiny.png";

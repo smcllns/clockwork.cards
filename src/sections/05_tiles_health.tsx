@@ -1,12 +1,12 @@
 import type { useHeartMetrics, useFruitMetrics, useHugsMetrics, useLungsMetrics } from "../metrics";
 import type { SectionProps } from "./types";
-import { TileContainer, Tile } from "../components/page/tile";
+import { TileSlide, Tile } from "../components/slide/tile-slide";
 import { InlineStepper } from "../components/page/controls";
 type Props = SectionProps & { heart: ReturnType<typeof useHeartMetrics>; fruit: ReturnType<typeof useFruitMetrics>; hugs: ReturnType<typeof useHugsMetrics>; lungs: ReturnType<typeof useLungsMetrics> };
 
 export function TilesHealthSection({ name, heart, fruit, hugs, lungs }: Props) {
   return (
-    <TileContainer id="5" title={`${name}'s brain & body`}>
+    <TileSlide id="5" title={`${name}'s brain & body`}>
       <Tile id="5b" emoji="❤️"
         value={`${(heart.totalHeartbeats / 1e6).toFixed(1)} million`}
         unit="heartbeats"
@@ -37,6 +37,6 @@ export function TilesHealthSection({ name, heart, fruit, hugs, lungs }: Props) {
           <InlineStepper value={lungs.hoursPerDay} min={1} max={4} step={1} unit=" hr" onChange={lungs.setHoursPerDay} />{" "}
           of hard play per day, that's a serious workout.</>}
       />
-    </TileContainer>
+    </TileSlide>
   );
 }

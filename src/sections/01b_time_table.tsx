@@ -1,6 +1,7 @@
 import type { useTimeMetrics } from "../metrics";
 import type { SectionProps } from "./types";
-import { Slide, Intro } from "../components/page/slide";
+import { TextSlide } from "../components/slide/text-slide";
+import { Intro } from "../components/text";
 import { InlineDropdown } from "../components/page/controls";
 import { styles } from "./styles";
 
@@ -13,7 +14,7 @@ type Props = SectionProps & { time: ReturnType<typeof useTimeMetrics> };
 
 export function TimeTableSection({ name, dob, pronouns, time }: Props) {
   return (
-    <Slide id="1b">
+    <TextSlide id="1b">
       <Intro>{name} is precisely ...</Intro>
       <table style={{ width: "100%", borderCollapse: "collapse" }}>
         <tbody>
@@ -54,6 +55,6 @@ export function TimeTableSection({ name, dob, pronouns, time }: Props) {
         <InlineDropdown options={BIRTH_HOUR_OPTIONS} value={String(time.birthHour)} onChange={(v) => time.setBirthHour(Number(v))} /> back
         in {dob.getFullYear()})
       </p>
-    </Slide>
+    </TextSlide>
   );
 }

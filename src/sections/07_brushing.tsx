@@ -1,6 +1,6 @@
 import type { useBrushingMetrics } from "../metrics";
 import type { SectionProps } from "./types";
-import { Slide } from "../components/page/slide";
+import { TextSlide } from "../components/slide/text-slide";
 import { InlineStepper } from "../components/page/controls";
 import { styles } from "./styles";
 
@@ -8,7 +8,7 @@ type Props = SectionProps & { brushing: ReturnType<typeof useBrushingMetrics> };
 
 export function BrushingSection({ name, brushing }: Props) {
   return (
-    <Slide id="4b">
+    <TextSlide id="4b">
       <p className={styles.body}>
         If {name} spends <InlineStepper value={brushing.minutes} min={0} max={10} step={0.5} unit=" min" onChange={brushing.setMinutes} /> brushing
         teeth each morning and night — so <span className={styles.stat}>{brushing.minutes * 2} minutes</span> each day — that's over{" "}
@@ -20,6 +20,6 @@ export function BrushingSection({ name, brushing }: Props) {
       <p className={styles.footnote}>
         * assuming: <InlineStepper value={brushing.strokesPerMin} min={100} max={300} step={10} onChange={brushing.setStrokesPerMin} /> brush strokes per minute
       </p>
-    </Slide>
+    </TextSlide>
   );
 }
