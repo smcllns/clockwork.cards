@@ -91,7 +91,7 @@ function App() {
       {isLastSlide ? <Upsell shiny={shiny} /> : <Nav name={name} shiny={shiny} onToggleShiny={toggleShiny} />}
       {/* dvh: equals full screen in standalone PWA; svh excluded status bar height causing a gap at the bottom = status bar height */}
       <div ref={emblaRef} style={{ height: "100dvh", overflow: "hidden" }}>
-        <div style={{ display: "flex", flexDirection: "column", height: "calc(100dvh + env(safe-area-inset-bottom))" }}>
+        <div style={{ display: "flex", flexDirection: "column", height: "100dvh" }}>
           <Card name={name} dob={dob} pronouns={pronouns} shiny={shiny} />
         </div>
       </div>
