@@ -141,13 +141,10 @@ export function Card({ name, dob, pronouns }: CardProps) {
           <SpaceSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} space={space} />
           <StepsSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} steps={steps} age={age.decimal2} />
           <YogurtSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} yogurt={yogurt} />
-          <TilesHealthSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} heart={heart} fruit={fruit} hugs={hugs} lungs={lungs} />
-          <SleepSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} sleep={sleep} />
           <BrushingSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} brushing={brushing} />
           <WaterSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} water={water} />
-          <HairSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} hair={hair} />
-          <PoopsSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} poops={poops} age={age.decimal2} />
           <BinarySection name={name} dob={dob} pronouns={pronouns} shiny={shiny} age={age.floor} />
+          <PoopsSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} poops={poops} age={age.decimal2} />
           <ClosingSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} age={age.rounded} />
         </div>
       </div>

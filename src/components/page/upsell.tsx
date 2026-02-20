@@ -11,13 +11,11 @@ export default function Upsell({ shiny }: { shiny: boolean }) {
         fontFamily: "'Space Grotesk', system-ui, sans-serif",
       }}
     >
-      <span>Know a kid who'd love their own clockwork card?</span>
-      <a
-        href="https://clockwork.cards"
-        style={{ color: "var(--text-accent)", fontWeight: 600 }}
-      >
-        clockwork.cards →
-      </a>
+      <p>
+        <a href="https://clockwork.cards/buy" style={{ color: "var(--text-accent)", fontWeight: 600 }}>
+          Personalize your own clockwork card for $2.99 &rarr;
+        </a>
+      </p>
     </div>
   );
 }
