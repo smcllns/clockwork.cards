@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import RAPIER from "@dimforge/rapier3d-compat";
 import { initV11 } from "./scene";
-import forestLight from "../../assets/hero-bg-forest-light.png";
-import forestShiny from "../../assets/hero-bg-forest-shiny.png";
+import forestLight from "../../../assets/hero-bg-forest-light.png";
+import forestShiny from "../../../assets/hero-bg-forest-shiny.png";
 
 type HeroMode = import("./shared").HeroMode;
 type VariationHandle = { setMode: (m: HeroMode) => void; setBg: (l: string, s: string) => void; dispose: () => void };
