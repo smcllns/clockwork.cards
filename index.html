@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>⏳ Oscar | Clockwork Cards</title>
+    <title>Clockwork Cards</title>
     <meta name="theme-color" content="#080810" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="⏳ Oscar" />
+    <meta name="apple-mobile-web-app-title" content="Clockwork Cards" />
     <link rel="icon" href="/src/icons/clockwork-icon.svg" />
     <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon-precomposed" href="/src/icons/clockwork-ios.png" />
@@ -22,15 +22,21 @@
     <link rel="stylesheet" href="./src/styles/theme.css" />
     <link rel="stylesheet" href="./src/styles/index.css" />
     <script type="module" src="./src/index.tsx"></script>
-    <!-- <script>
+    <script>
       (function () {
-        var name = new URLSearchParams(location.search).get("name");
-        if (name) name = "Oscar";
-        document.title = "⏳ " + name + " | Clockwork Cards";
-        // iOS home screen name (apple-mobile-web-app-title overrides manifest on iOS)
-        document.querySelector('meta[name="apple-mobile-web-app-title"]').content = name;
+        var segment = location.pathname.replace(/^\//, "").split("/")[0];
+        var qpName = new URLSearchParams(location.search).get("name");
+        let name = qpName || segment;
+        if (name) {
+          name = name.charAt(0).toUpperCase() + name.slice(1);
+          document.title = name + " | Clockwork Cards";
+          document.querySelector('meta[name="apple-mobile-web-app-title"]').content = name;
+        } else {
+          document.title = "Clockwork Cards";
+          document.querySelector('meta[name="apple-mobile-web-app-title"]').content = "Clockwork Cards";
+        }
       })();
-    </script> -->
+    </script>
   </head>
   <body>
     <div
