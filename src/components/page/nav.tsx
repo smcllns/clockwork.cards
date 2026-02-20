@@ -12,8 +12,9 @@ export default function Nav({ name, shiny, onToggleShiny }: { name: string; shin
       ref={(el) => {
         if (el) document.documentElement.style.setProperty("--nav-height", el.offsetHeight + "px");
       }}
-      className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between px-6 py-3"
+      className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-between px-6 pt-3"
       style={{
+        paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))",
         backgroundColor: shiny ? "rgba(10,10,15,0.85)" : "rgba(255,255,255,0.85)",
         backdropFilter: "blur(12px)",
         borderTop: shiny ? "1px solid rgba(255,255,255,0.06)" : "1px solid rgba(0,0,0,0.06)",
