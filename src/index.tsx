@@ -14,7 +14,7 @@ const [dobY, dobM, dobD] = dobStr!.split("-").map(Number);
 const dob = new Date(dobY, dobM - 1, dobD); // local midnight, not UTC
 const pronouns = (params.get("pronouns") ?? process.env.DEFAULT_SEX ?? "m") as "m" | "f";
 
-function Shell() {
+function App() {
   const [shiny, setShiny] = useState(false);
   const [isLastSlide, setIsLastSlide] = useState(false);
   const [emblaRef, emblaApi] = useEmblaCarousel({
@@ -101,7 +101,7 @@ function Shell() {
 }
 
 const root = createRoot(document.getElementById("root")!);
-preload().then(() => root.render(<Shell />));
+preload().then(() => root.render(<App />));
 
 if (import.meta.hot) {
   import.meta.hot.accept();
