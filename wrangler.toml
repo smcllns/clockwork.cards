@@ -1,3 +1,8 @@
 name = "clockwork-cards"
 pages_build_output_dir = "./dist"
 compatibility_date = "2025-01-01"
+
+[[kv_namespaces]]
+binding = "WAITLIST"
+id = "08489669a215491c8aaa42da73a69a87"
+preview_id = "de87dd91dc304f6698acf474c3eaf972"
