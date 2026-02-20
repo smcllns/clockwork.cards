@@ -1,4 +1,5 @@
 import type { useSpaceMetrics } from "../metrics";
+import { he, him } from "../metrics";
 import type { SectionProps } from "./types";
 import { PhotoSlide } from "../components/page/photo-slide";
 import { Intro, Stat, Subtitle, Lede, Body } from "../components/page/text";
@@ -29,10 +30,10 @@ export function SpaceSection({ name, pronouns, shiny, space }: Props) {
         through space
       </Subtitle>
       <Lede>
-        {pronouns === "m" ? "He" : "She"}'s not just a kid, {pronouns === "m" ? "he" : "she"}'s an interstellar traveler!
+        {he(pronouns).charAt(0).toUpperCase() + he(pronouns).slice(1)}'s not just a kid, {he(pronouns)}'s an interstellar traveler!
       </Lede>
       <Body>
-        But lets be real, light would still whoop {pronouns === "m" ? "him" : "her"} in a race &mdash; at{" "}
+        But lets be real, light would still whoop {him(pronouns)} in a race &mdash; at{" "}
         {space.lightSpeed.toLocaleString()} {space.unitLabel} a beam of light would do that in {space.lightSpeedHours.toFixed(1)} hours, not{" "}
         {Math.round(space.lapsAroundSun)} years!
       </Body>

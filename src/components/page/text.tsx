@@ -32,11 +32,3 @@ export function Lede({ children, className }: Props) {
 export function Body({ children, className }: Props) {
   return <p className={`text-xl leading-loose text-(--text-secondary) ${className ?? ""}`}>{children}</p>;
 }
-
-export function N({ children, className }: Props) {
-  return (
-    <span className={`font-bold font-(--font-stat) text-(--text-primary) ${className ?? ""}`} data-stat>
-      {children}
-    </span>
-  );
-}

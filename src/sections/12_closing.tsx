@@ -1,6 +1,7 @@
 import type { SectionProps } from "./types";
 import { TextSlide } from "../components/page/text-slide";
 import { ordinalSuffix } from "./11_binary/binary";
+import { styles } from "./styles";
 
 export function ClosingSection({ name, age }: SectionProps & { age: number }) {
   const nearestBirthdayAge = age;
@@ -8,7 +9,7 @@ export function ClosingSection({ name, age }: SectionProps & { age: number }) {
     <TextSlide id="12">
       <div className="mt-10 text-center">
         <p className="text-4xl mb-4">❤️</p>
-        <p className="text-2xl sm:text-3xl font-semibold leading-snug text-(--text-primary)">
+        <p className={styles.body}>
           We love you, we love your mind,
           <br />
           happy {nearestBirthdayAge}
