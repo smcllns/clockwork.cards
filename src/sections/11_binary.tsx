@@ -1,6 +1,6 @@
 import type { SectionProps } from "./types";
 import { TextSlide } from "../components/slide/text-slide";
-import { Stat } from "../components/text";
+import { Stat, Subtitle } from "../components/text";
 import { FlipCard } from "../components/page/flip-card";
 import { expandBase, describeBase } from "../binary";
 import { styles } from "./styles";
@@ -12,9 +12,10 @@ export function BinarySection({ age }: SectionProps & { age: number }) {
   const binary = age.toString(2);
   return (
     <TextSlide id="11">
-      <Stat>
-        {age} is {binary} in binary.
-      </Stat>
+      <Stat>Did you know?</Stat>
+      <Subtitle>
+        In binary, {age} is {binary}
+      </Subtitle>
       <p className="text-lg mb-6 text-(--text-secondary)">"Binary" just means base 2.</p>
 
       <FlipCard
