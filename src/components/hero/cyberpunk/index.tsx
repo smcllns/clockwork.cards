@@ -49,7 +49,7 @@ export default function HeroCyberpunk({ name, dob, shiny }: { name: string; dob:
   }, [mode, ready]);
 
   return (
-    <div className="h-[100svh] relative" style={{ flexShrink: 0 }}>
+    <div className="h-[100dvh] relative" style={{ flexShrink: 0 }}>
       {/* Background image — both variants always rendered; opacity switches instantly on shiny toggle */}
       <div className="absolute top-0 left-0 right-0 overflow-hidden" style={{ bottom: "var(--nav-height, 48px)" }}>
         <img

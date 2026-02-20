@@ -89,9 +89,9 @@ function App() {
   return (
     <div>
       {isLastSlide ? <Upsell shiny={shiny} /> : <Nav name={name} shiny={shiny} onToggleShiny={toggleShiny} />}
-      {/* svh (not dvh): Embla scrolls via CSS transform, never native scroll, so Safari's address bar never collapses */}
-      <div ref={emblaRef} style={{ height: "100svh", overflow: "hidden" }}>
-        <div style={{ display: "flex", flexDirection: "column", height: "100svh" }}>
+      {/* dvh: equals full screen in standalone PWA; svh excluded status bar height causing a gap at the bottom = status bar height */}
+      <div ref={emblaRef} style={{ height: "100dvh", overflow: "hidden" }}>
+        <div style={{ display: "flex", flexDirection: "column", height: "calc(100dvh + env(safe-area-inset-bottom))" }}>
           <Card name={name} dob={dob} pronouns={pronouns} shiny={shiny} />
         </div>
       </div>

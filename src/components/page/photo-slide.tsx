@@ -18,7 +18,7 @@ export function PhotoSlide({ id, imgLight, imgShiny, shiny, gradient, objectPosi
   return (
     <div
       className="relative snap-section flex flex-col justify-end overflow-hidden"
-      style={{ minHeight: "100svh" }}
+      style={{ minHeight: "100dvh" }}
     >
       <img
         src={imgLight}
