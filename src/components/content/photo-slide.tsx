@@ -7,14 +7,12 @@ type PhotoSlideProps = {
   shiny: boolean;
   gradient?: string;
   objectPosition?: string;
-} & (
-  | { intro?: string; value: string; subtitle?: React.ReactNode; lede?: React.ReactNode; body?: React.ReactNode; children?: never }
-  | { intro?: never; value?: never; subtitle?: never; lede?: never; body?: never; children: React.ReactNode }
-);
+  children: React.ReactNode;
+};
 
 const DEFAULT_GRADIENT = "linear-gradient(to bottom, transparent 25%, rgba(0,0,0,0.65) 65%, rgba(0,0,0,0.9) 100%)";
 
-export function PhotoSlide({ id, imgLight, imgShiny, shiny, gradient, objectPosition, children, ...data }: PhotoSlideProps) {
+export function PhotoSlide({ id, imgLight, imgShiny, shiny, gradient, objectPosition, children }: PhotoSlideProps) {
   const imgStyle = objectPosition ? { objectPosition } : undefined;
 
   return (
@@ -42,24 +40,12 @@ export function PhotoSlide({ id, imgLight, imgShiny, shiny, gradient, objectPosi
       />
       <div className="absolute top-14 right-6 z-10"><IdTag id={id} /></div>
 
-      <div className="relative z-10 px-6 pt-8 max-w-2xl mx-auto w-full" style={{ paddingBottom: "calc(var(--nav-height, 48px) + 24px)" }}>
-        {children ?? (
-          <>
-            {data.intro && <p className="text-xl font-medium mb-2 text-white/70">{data.intro}</p>}
-            <div className="mb-2">
-              <span
-                className="font-bold leading-none text-white"
-                style={{ fontFamily: "var(--font-stat)", fontSize: "clamp(4rem, 12vw, 6rem)" }}
-                data-stat
-              >
-                {data.value}
-              </span>
-            </div>
-            {data.subtitle && <p className="text-2xl font-medium mb-8 text-white/70">{data.subtitle}</p>}
-            {data.lede && <p className="text-2xl font-semibold mb-6 text-white">{data.lede}</p>}
-            {data.body && <p className="text-xl leading-loose text-white/60">{data.body}</p>}
-          </>
-        )}
+      <div
+        data-photo
+        className="relative z-10 px-6 pt-8 max-w-2xl mx-auto w-full"
+        style={{ paddingBottom: "calc(var(--nav-height, 48px) + 24px)" }}
+      >
+        {children}
       </div>
     </div>
   );

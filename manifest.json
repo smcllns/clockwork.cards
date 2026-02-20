@@ -9,9 +9,14 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/icon.svg",
+      "src": "/src/icons/clockwork-icon.svg",
       "sizes": "any",
-      "type": "image/svg+xml",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/src/icons/clockwork-ios.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]
