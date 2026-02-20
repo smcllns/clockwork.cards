@@ -1,41 +1,72 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Clockwork Cards</title>
-  <meta name="theme-color" content="#080810">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Oscar">
-  <link rel="icon" href="/src/icons/clockwork-icon.svg">
-  <link rel="manifest" href="/manifest.json">
-  <link rel="apple-touch-icon-precomposed" href="/src/icons/clockwork-ios.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="tailwindcss" />
-  <link rel="stylesheet" href="./src/styles/theme.css" />
-  <link rel="stylesheet" href="./src/styles/index.css" />
-  <script type="module" src="./src/index.tsx"></script>
-  <script>
-    (function () {
-      var name = new URLSearchParams(location.search).get("name");
-      if (!name) return;
-      document.title = name + "\u2019s Card";
-      // iOS home screen name (apple-mobile-web-app-title overrides manifest on iOS)
-      document.querySelector('meta[name="apple-mobile-web-app-title"]').content = name;
-    })();
-  </script>
-</head>
-<body>
-  <div id="loading-overlay" style="position:fixed;inset:0;background:#080810;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;transition:opacity 0.6s ease">
-    <div style="width:180px;height:2px;background:rgba(255,255,255,0.12);border-radius:2px;overflow:hidden">
-      <div id="loading-bar" style="height:100%;width:0%;background:rgba(255,255,255,0.75);border-radius:2px;transition:width 0.15s ease-out"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>⏳ Oscar | Clockwork Cards</title>
+    <meta name="theme-color" content="#080810" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="⏳ Oscar" />
+    <link rel="icon" href="/src/icons/clockwork-icon.svg" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon-precomposed" href="/src/icons/clockwork-ios.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="tailwindcss" />
+    <link rel="stylesheet" href="./src/styles/theme.css" />
+    <link rel="stylesheet" href="./src/styles/index.css" />
+    <script type="module" src="./src/index.tsx"></script>
+    <!-- <script>
+      (function () {
+        var name = new URLSearchParams(location.search).get("name");
+        if (name) name = "Oscar";
+        document.title = "⏳ " + name + " | Clockwork Cards";
+        // iOS home screen name (apple-mobile-web-app-title overrides manifest on iOS)
+        document.querySelector('meta[name="apple-mobile-web-app-title"]').content = name;
+      })();
+    </script> -->
+  </head>
+  <body>
+    <div
+      id="loading-overlay"
+      style="
+        position: fixed;
+        inset: 0;
+        background: #080810;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        transition: opacity 0.6s ease;
+      "
+    >
+      <div style="width: 180px; height: 2px; background: rgba(255, 255, 255, 0.12); border-radius: 2px; overflow: hidden">
+        <div
+          id="loading-bar"
+          style="height: 100%; width: 0%; background: rgba(255, 255, 255, 0.75); border-radius: 2px; transition: width 0.15s ease-out"
+        ></div>
+      </div>
+      <div
+        id="loading-label"
+        style="
+          font-family: system-ui, sans-serif;
+          font-size: 12px;
+          color: rgba(255, 255, 255, 0.35);
+          letter-spacing: 0.04em;
+          transition: opacity 0.4s ease;
+        "
+      >
+        First load, please wait while we prepare awesomeness
+      </div>
     </div>
-    <div id="loading-label" style="font-family:system-ui,sans-serif;font-size:12px;color:rgba(255,255,255,0.35);letter-spacing:0.04em;transition:opacity 0.4s ease">First load, please wait while we prepare</div>
-  </div>
-  <div id="root"></div>
-</body>
+    <div id="root"></div>
+  </body>
 </html>
