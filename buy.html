@@ -18,13 +18,21 @@
 
       body {
         min-height: 100dvh;
-        background: #f5f0e8;
+        background: url("src/assets/buy-bg-mobile.png") center center / cover no-repeat;
         display: flex;
         align-items: center;
         justify-content: center;
         padding: 24px;
         font-family: "Space Grotesk", system-ui, sans-serif;
         color: #2d2318;
+      }
+
+      @media (min-width: 641px) {
+        body { background-image: url("src/assets/buy-bg-tablet.png"); }
+      }
+
+      @media (min-width: 1025px) {
+        body { background-image: url("src/assets/buy-bg.png"); }
       }
 
       .envelope {
