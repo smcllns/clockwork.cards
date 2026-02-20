@@ -1,5 +1,5 @@
 import type { SectionProps } from "./types";
-import { Slide, Headline } from "../components/page/slide";
+import { Slide, Stat } from "../components/page/slide";
 import { FlipCard } from "../components/page/flip-card";
 import { expandBase, describeBase } from "../components/content/binary";
 import { styles } from "./styles";
@@ -11,7 +11,7 @@ export function BinarySection({ age }: SectionProps & { age: number }) {
   const binary = age.toString(2);
   return (
     <Slide id="11">
-      <Headline lg>{age} is {binary} in binary.</Headline>
+      <Stat lg>{age} is {binary} in binary.</Stat>
       <p className="text-lg mb-6 text-(--text-secondary)">"Binary" just means base 2.</p>
 
       <FlipCard
@@ -49,7 +49,7 @@ export function BinarySection({ age }: SectionProps & { age: number }) {
             {expandBase(age, 2).map((line, i) => <p key={i}>{line}</p>)}
           </div>
         </div>
-        <p className={styles.body}>
+        <p className={styles.footnote}>
           It's like how "nine", "neuf", "nueve", and "九" all mean the same thing
           in different languages. {age} and {binary} are the same number in different bases.
         </p>

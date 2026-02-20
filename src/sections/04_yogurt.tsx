@@ -13,11 +13,11 @@ export function YogurtSection({ name, shiny, yogurt }: Props) {
       objectPosition="center 30%"
       intro={`${name} has eaten ...`}
       value={yogurt.display.toLocaleString()}
-      unit={<><InlinePills
+      subtitle={<><InlinePills
         options={[{ value: "kg" as const, label: "kilograms" }, { value: "lbs" as const, label: "pounds" }]}
         value={yogurt.unit} onChange={yogurt.setUnit}
       /> of yogurt</>}
-      headline={yogurt.hippoHeadline}
+      lede={yogurt.hippoHeadline}
       body={<>Assuming {name} eats <InlineSlider value={yogurt.gramsPerDay} min={10} max={150} step={10} onChange={yogurt.setGramsPerDay} /> grams of yogurt every day, since age <InlineStepper value={yogurt.startAge} min={1} max={7} step={1} onChange={yogurt.setStartAge} /></>}
     />
   );

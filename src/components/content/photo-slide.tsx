@@ -8,8 +8,8 @@ type PhotoSlideProps = {
   gradient?: string;
   objectPosition?: string;
 } & (
-  | { intro?: string; value: string; unit?: React.ReactNode; headline?: React.ReactNode; body?: React.ReactNode; children?: never }
-  | { intro?: never; value?: never; unit?: never; headline?: never; body?: never; children: React.ReactNode }
+  | { intro?: string; value: string; subtitle?: React.ReactNode; lede?: React.ReactNode; body?: React.ReactNode; children?: never }
+  | { intro?: never; value?: never; subtitle?: never; lede?: never; body?: never; children: React.ReactNode }
 );
 
 const DEFAULT_GRADIENT = "linear-gradient(to bottom, transparent 25%, rgba(0,0,0,0.65) 65%, rgba(0,0,0,0.9) 100%)";
@@ -55,8 +55,8 @@ export function PhotoSlide({ id, imgLight, imgShiny, shiny, gradient, objectPosi
                 {data.value}
               </span>
             </div>
-            {data.unit && <p className="text-2xl font-medium mb-8 text-white/70">{data.unit}</p>}
-            {data.headline && <p className="text-2xl font-semibold mb-6 text-white">{data.headline}</p>}
+            {data.subtitle && <p className="text-2xl font-medium mb-8 text-white/70">{data.subtitle}</p>}
+            {data.lede && <p className="text-2xl font-semibold mb-6 text-white">{data.lede}</p>}
             {data.body && <p className="text-xl leading-loose text-white/60">{data.body}</p>}
           </>
         )}

@@ -10,7 +10,10 @@ export function Slide({ children, alt, id, className }: Props & { alt?: boolean;
   );
 }
 
-export function KeyMetric({ children, className }: Props) {
+export function Stat({ children, lg, className }: Props & { lg?: boolean }) {
+  if (lg) {
+    return <p className={`text-4xl sm:text-5xl font-light mb-6 text-(--text-primary) ${className ?? ""}`}>{children}</p>;
+  }
   return (
     <div className={`mb-1 ${className ?? ""}`}>
       <span
@@ -24,13 +27,12 @@ export function KeyMetric({ children, className }: Props) {
   );
 }
 
-export function Unit({ children, className }: Props) {
-  return <p className={`text-lg font-medium mb-6 text-(--text-secondary) ${className ?? ""}`}>{children}</p>;
+export function Intro({ children, className }: Props) {
+  return <p className={`text-xl font-semibold mb-6 text-(--text-primary) ${className ?? ""}`}>{children}</p>;
 }
 
-export function Headline({ children, lg, className }: Props & { lg?: boolean }) {
-  const base = lg ? "text-4xl sm:text-5xl font-light mb-6" : "text-xl font-semibold mb-6";
-  return <p className={`${base} text-(--text-primary) ${className ?? ""}`}>{children}</p>;
+export function Subtitle({ children, className }: Props) {
+  return <p className={`text-lg font-medium mb-6 text-(--text-secondary) ${className ?? ""}`}>{children}</p>;
 }
 
 export function N({ children, className }: Props) {

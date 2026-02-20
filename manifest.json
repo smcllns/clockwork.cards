@@ -1,0 +1,18 @@
+{
+  "name": "Clockwork Cards",
+  "short_name": "Clockwork",
+  "description": "Live stats about your time on Earth — for kids who love numbers.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#080810",
+  "theme_color": "#080810",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

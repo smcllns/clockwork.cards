@@ -16,7 +16,7 @@ export function SpaceSection({ name, pronouns, shiny, space }: Props) {
       shiny={shiny}
       intro={`In ${Math.round(space.lapsAroundSun)} laps around the sun, ${name} has flown ...`}
       value={`${((space.milesInSpace * space.k) / 1e9).toFixed(1)} billion ${space.unit}`}
-      unit={
+      subtitle={
         <>
           <InlinePills
             options={[
@@ -29,7 +29,7 @@ export function SpaceSection({ name, pronouns, shiny, space }: Props) {
           through space
         </>
       }
-      headline={`${pronouns === "m" ? "He" : "She"}'s not just a kid, ${pronouns === "m" ? "he" : "she"}'s an interstellar traveler!`}
+      lede={`${pronouns === "m" ? "He" : "She"}'s not just a kid, ${pronouns === "m" ? "he" : "she"}'s an interstellar traveler!`}
       body={
         <>
           But lets be real, light would still whoop {pronouns === "m" ? "him" : "her"} in a race &mdash;at{" "}

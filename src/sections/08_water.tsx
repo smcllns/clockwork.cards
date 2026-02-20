@@ -13,8 +13,8 @@ export function WaterSection({ name, shiny, water }: Props) {
       objectPosition="center 30%"
       intro={`${name} has drunk ...`}
       value={Math.floor(water.waterLiters).toLocaleString()}
-      unit="liters of water"
-      headline={`That's ${water.waterPoolPercent.toFixed(1)}% of an Olympic swimming pool.`}
+      subtitle="liters of water"
+      lede={`That's ${water.waterPoolPercent.toFixed(1)}% of an Olympic swimming pool.`}
       body={<>An Olympic pool holds 2.5 million liters. At{" "}
         <InlineStepper value={water.glassesPerDay} min={2} max={12} step={1} onChange={water.setGlassesPerDay} />{" "}
         glasses a day, it would take {name} about {Math.floor(water.poolYearsRemaining).toLocaleString()} more years to drink the rest.</>}

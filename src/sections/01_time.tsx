@@ -17,7 +17,7 @@ export function TimeSection({ name, shiny, time }: Props) {
       shiny={shiny}
       intro={`${name} is ...`}
       value={time.formattedValue}
-      unit={
+      subtitle={
         <>
           <InlineDropdown options={TIME_UNITS} value={time.timeUnit} onChange={time.setTimeUnit} /> old, right now
         </>
