@@ -13,7 +13,7 @@ export default function Upsell({ shiny }: { shiny: boolean }) {
     >
       <p>
         <a href="/buy" style={{ color: "var(--text-accent)", fontWeight: 600 }}>
-          Make your own Clockwork Card &rarr;
+          Get your own Clockwork Card for $2.99 &rarr;
         </a>
       </p>
     </div>
