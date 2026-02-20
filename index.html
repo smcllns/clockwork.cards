@@ -24,22 +24,8 @@
       var name = new URLSearchParams(location.search).get("name");
       if (!name) return;
       document.title = name + "\u2019s Card";
+      // iOS home screen name (apple-mobile-web-app-title overrides manifest on iOS)
       document.querySelector('meta[name="apple-mobile-web-app-title"]').content = name;
-      var m = {
-        name: name + "\u2019s Card",
-        short_name: name,
-        start_url: location.pathname + location.search,
-        display: "standalone",
-        background_color: "#080810",
-        theme_color: "#080810",
-        orientation: "portrait",
-        icons: [
-          { src: "/src/icons/clockwork-icon.svg", sizes: "any", type: "image/svg+xml" },
-          { src: "/src/icons/clockwork-ios.png", sizes: "1024x1024", type: "image/png", purpose: "any maskable" }
-        ]
-      };
-      var blob = new Blob([JSON.stringify(m)], { type: "application/manifest+json" });
-      document.querySelector('link[rel="manifest"]').href = URL.createObjectURL(blob);
     })();
   </script>
 </head>
