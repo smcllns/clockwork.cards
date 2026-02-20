@@ -68,7 +68,7 @@ export function Card({ name, dob, pronouns, shiny }: CardProps) {
       <WaterSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} water={water} />
       <HairSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} hair={hair} />
       <PoopsSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} poops={poops} age={age.decimal2} />
-      <BinarySection name={name} dob={dob} pronouns={pronouns} shiny={shiny} age={age.floor} />
+      <BinarySection name={name} dob={dob} pronouns={pronouns} shiny={shiny} age={age.rounded} />
       <ClosingSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} age={age.rounded} />
     </>
   );

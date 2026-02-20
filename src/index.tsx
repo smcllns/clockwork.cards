@@ -7,12 +7,11 @@ import Upsell from "./components/page/upsell";
 import { Card } from "./card";
 
 const params = new URLSearchParams(window.location.search);
-const rawName = params.get("name") ?? process.env.DEFAULT_NAME!;
+const rawName = params.get("name") ?? "Oscar";
 const name = rawName.charAt(0).toUpperCase() + rawName.slice(1);
-const dobStr = params.get("dob") ?? process.env.DEFAULT_DOB;
-const [dobY, dobM, dobD] = dobStr!.split("-").map(Number);
+const [dobY, dobM, dobD] = (params.get("dob") ?? "2017-02-20").split("-").map(Number);
 const dob = new Date(dobY, dobM - 1, dobD); // local midnight, not UTC
-const pronouns = (params.get("pronouns") ?? process.env.DEFAULT_SEX ?? "m") as "m" | "f";
+const pronouns = (params.get("pronouns") ?? "m") as "m" | "f";
 
 function App() {
   const [shiny, setShiny] = useState(false);
