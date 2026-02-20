@@ -110,7 +110,7 @@ export function useStepsMetrics(dob: Date, now: number) {
 }
 
 export function useYogurtMetrics(dob: Date, now: number) {
-  const [gramsPerDay, setGramsPerDay] = useState(50);
+  const [gramsPerDay, setGramsPerDay] = useState(170);
   const [startAge, setStartAge] = useState(4);
   const [unit, setUnit] = useState<"kg" | "lbs">("kg");
   const yogurtKg = (daysSinceAge(dob, startAge, now) * gramsPerDay) / 1000;

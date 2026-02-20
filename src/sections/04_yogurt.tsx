@@ -27,7 +27,15 @@ export function YogurtSection({ name, shiny, yogurt }: Props) {
       </Subtitle>
       <Lede>{yogurt.hippoHeadline}</Lede>
       <Body>
-        Assuming {name} eats <InlineSlider value={yogurt.gramsPerDay} min={10} max={150} step={10} onChange={yogurt.setGramsPerDay} /> grams
+        Assuming {name} eats{" "}
+        <InlineSlider
+          value={yogurt.gramsPerDay}
+          min={10}
+          max={340}
+          step={10}
+          onChange={yogurt.setGramsPerDay}
+          displayValue={yogurt.unit === "lbs" ? `${Math.round(yogurt.gramsPerDay / 28.35)}oz` : `${yogurt.gramsPerDay}g`}
+        />{" "}
         of yogurt every night before bed!
       </Body>
     </PhotoSlide>

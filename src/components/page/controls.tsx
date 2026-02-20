@@ -166,10 +166,11 @@ interface SliderProps {
   step: number;
   unit?: string;
   decimals?: number; // auto-derived from step if omitted
+  displayValue?: string; // overrides the readout (use when showing a converted unit)
   onChange: (v: number) => void;
 }
 
-export function InlineSlider({ value, min, max, step, unit, decimals, onChange }: SliderProps) {
+export function InlineSlider({ value, min, max, step, unit, decimals, displayValue, onChange }: SliderProps) {
   const d = decimals ?? (step.toString().split(".")[1] ?? "").length;
   return (
     <span style={{ ...chipBase, gap: "6px", padding: "2px 8px" }}>
@@ -189,7 +190,7 @@ export function InlineSlider({ value, min, max, step, unit, decimals, onChange }
         }}
       />
       <span style={{ ...statValue, minWidth: "36px" }}>
-        {value.toFixed(d)}{unit ?? ""}
+        {displayValue ?? (value.toFixed(d) + (unit ?? ""))}
       </span>
     </span>
   );
