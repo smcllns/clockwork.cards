@@ -7,7 +7,7 @@ interface StepperProps {
   max: number;
   step: number;
   unit?: string;
-  decimals?: number;
+  decimals?: number; // auto-derived from step if omitted
   onChange: (v: number) => void;
 }
 
@@ -50,8 +50,9 @@ const btnBase: CSSProperties = {
   transition: "background 0.15s",
 };
 
-export function InlineStepper({ value, min, max, step, unit, decimals = 0, onChange }: StepperProps) {
-  const clamp = (v: number) => Math.min(max, Math.max(min, Math.round(v / step) * step));
+export function InlineStepper({ value, min, max, step, unit, decimals, onChange }: StepperProps) {
+  const d = decimals ?? (step.toString().split(".")[1] ?? "").length;
+  const clamp = (v: number) => parseFloat(Math.min(max, Math.max(min, v)).toFixed(d));
   const bumpRef = useRef({ count: 0, dir: "up" as "up" | "down" });
   const bump = (v: number, dir: "up" | "down") => { bumpRef.current = { count: bumpRef.current.count + 1, dir }; onChange(v); };
   return (
@@ -66,7 +67,7 @@ export function InlineStepper({ value, min, max, step, unit, decimals = 0, onCha
       <span
         style={{ ...statValue, padding: "0 2px", minWidth: "28px", textAlign: "center" }}
       >
-        {decimals > 0 ? value.toFixed(decimals) : value}{unit ?? ""}
+        {value.toFixed(d)}{unit ?? ""}
       </span>
       <button
         style={{ ...btnBase, opacity: value >= max ? 0.3 : 1 }}
@@ -164,11 +165,12 @@ interface SliderProps {
   max: number;
   step: number;
   unit?: string;
-  decimals?: number;
+  decimals?: number; // auto-derived from step if omitted
   onChange: (v: number) => void;
 }
 
-export function InlineSlider({ value, min, max, step, unit, decimals = 0, onChange }: SliderProps) {
+export function InlineSlider({ value, min, max, step, unit, decimals, onChange }: SliderProps) {
+  const d = decimals ?? (step.toString().split(".")[1] ?? "").length;
   return (
     <span style={{ ...chipBase, gap: "6px", padding: "2px 8px" }}>
       <input
@@ -187,7 +189,7 @@ export function InlineSlider({ value, min, max, step, unit, decimals = 0, onChan
         }}
       />
       <span style={{ ...statValue, minWidth: "36px" }}>
-        {decimals > 0 ? value.toFixed(decimals) : value}{unit ?? ""}
+        {value.toFixed(d)}{unit ?? ""}
       </span>
     </span>
   );

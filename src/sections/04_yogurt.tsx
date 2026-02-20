@@ -12,7 +12,9 @@ export function YogurtSection({ name, shiny, yogurt }: Props) {
   return (
     <PhotoSlide id="3" imgLight={imgLight} imgShiny={imgShiny} shiny={shiny} objectPosition="center 30%">
       <Intro className="mb-2">{name} has eaten ...</Intro>
-      <Stat>{yogurt.display.toLocaleString()}</Stat>
+      <Stat>
+        {yogurt.display.toLocaleString()} {yogurt.unit} of yogurt
+      </Stat>
       <Subtitle className="mb-8">
         <InlinePills
           options={[
@@ -21,13 +23,12 @@ export function YogurtSection({ name, shiny, yogurt }: Props) {
           ]}
           value={yogurt.unit}
           onChange={yogurt.setUnit}
-        />{" "}
-        of yogurt
+        />
       </Subtitle>
       <Lede>{yogurt.hippoHeadline}</Lede>
       <Body>
         Assuming {name} eats <InlineSlider value={yogurt.gramsPerDay} min={10} max={150} step={10} onChange={yogurt.setGramsPerDay} /> grams
-        of yogurt every day
+        of yogurt every night before bed!
       </Body>
     </PhotoSlide>
   );

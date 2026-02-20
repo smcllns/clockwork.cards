@@ -13,7 +13,7 @@ export function StepsSection({ name, dob, pronouns, steps, age }: Props) {
     <TextSlide id="4a">
       <Intro>{name} has walked ...</Intro>
       <Stat>{(steps.totalSteps / 1e6).toFixed(1)} million steps</Stat>
-      <Subtitle>so far in {his(pronouns)} {age} years</Subtitle>
+      <Subtitle>so far</Subtitle>
       <p className={`${styles.body} pt-8`}>
         That is, assuming {he(pronouns)} walks{" "}
         <InlineSlider value={steps.stepsPerDay} min={2000} max={15000} step={1000} onChange={steps.setStepsPerDay} /> steps a day!
