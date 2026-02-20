@@ -1,234 +1,271 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Clockwork Cards — Join the Waitlist</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      min-height: 100dvh;
-      background: #f5f0e8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      font-family: 'Space Grotesk', system-ui, sans-serif;
-      color: #2d2318;
-    }
-
-    .envelope {
-      background: #faf8f3;
-      border: 1px solid #e0d5c5;
-      border-radius: 4px;
-      max-width: 480px;
-      width: 100%;
-      padding: 48px 40px 40px;
-      box-shadow: 0 2px 8px rgba(45,35,24,0.08), 0 0 0 1px rgba(45,35,24,0.04);
-      position: relative;
-    }
-
-    /* Envelope flap triangle at top */
-    .envelope::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 0;
-      border-left: 240px solid transparent;
-      border-right: 240px solid transparent;
-      border-top: 56px solid #ede7d9;
-    }
-
-    .wordmark {
-      font-size: 13px;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #7a6a54;
-      margin-bottom: 32px;
-    }
-
-    h1 {
-      font-size: clamp(1.5rem, 5vw, 2rem);
-      font-weight: 700;
-      line-height: 1.2;
-      margin-bottom: 12px;
-      color: #2d2318;
-    }
-
-    .subtitle {
-      font-size: 1rem;
-      line-height: 1.6;
-      color: #7a6a54;
-      margin-bottom: 32px;
-    }
-
-    .badge {
-      display: inline-block;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #c8622a;
-      background: rgba(200, 98, 42, 0.1);
-      border: 1px solid rgba(200, 98, 42, 0.2);
-      border-radius: 100px;
-      padding: 3px 10px;
-      margin-bottom: 20px;
-    }
-
-    form { display: flex; flex-direction: column; gap: 12px; }
-
-    input[type="email"] {
-      width: 100%;
-      padding: 12px 14px;
-      font-family: inherit;
-      font-size: 1rem;
-      color: #2d2318;
-      background: #f5f0e8;
-      border: 1px solid #c8b99e;
-      border-radius: 4px;
-      outline: none;
-      transition: border-color 0.15s;
-    }
-    input[type="email"]::placeholder { color: #b0a090; }
-    input[type="email"]:focus { border-color: #7a6a54; }
-
-    button[type="submit"] {
-      width: 100%;
-      padding: 12px 14px;
-      font-family: inherit;
-      font-size: 1rem;
-      font-weight: 600;
-      color: #faf8f3;
-      background: #2d2318;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: background 0.15s, opacity 0.15s;
-    }
-    button[type="submit"]:hover { background: #3d3020; }
-    button[type="submit"]:disabled { opacity: 0.5; cursor: default; }
-
-    .error {
-      font-size: 0.875rem;
-      color: #c8622a;
-      display: none;
-    }
-    .error.visible { display: block; }
-
-    .success { display: none; }
-    .success.visible { display: block; }
-
-    .success-icon {
-      font-size: 2rem;
-      margin-bottom: 12px;
-    }
-
-    .success h2 {
-      font-size: 1.25rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .success p {
-      color: #7a6a54;
-      line-height: 1.6;
-    }
-
-    .footer-note {
-      margin-top: 28px;
-      font-size: 0.8125rem;
-      color: #b0a090;
-      text-align: center;
-    }
-
-    .footer-note a {
-      color: #7a6a54;
-      text-decoration: none;
-    }
-    .footer-note a:hover { text-decoration: underline; }
-  </style>
-</head>
-<body>
-  <div class="envelope">
-    <div class="wordmark">Clockwork Cards</div>
-    <div class="badge">Beta · Invite Only</div>
-    <h1>A card worth keeping.</h1>
-    <p class="subtitle">
-      Clockwork Cards is currently in beta and invite-only. We're making something
-      special — a living birthday card full of real facts about someone's life.
-      Join the waitlist and we'll let you know when we open up.
-    </p>
-
-    <div id="form-area">
-      <form id="waitlist-form">
-        <input
-          type="email"
-          id="email-input"
-          name="email"
-          placeholder="your@email.com"
-          autocomplete="email"
-          required
-        >
-        <p class="error" id="error-msg"></p>
-        <button type="submit" id="submit-btn">Join the Waitlist</button>
-      </form>
-    </div>
-
-    <div class="success" id="success-area">
-      <div class="success-icon">✉️</div>
-      <h2>You're on the list.</h2>
-      <p>We'll be in touch when Clockwork Cards opens up. Thanks for your interest!</p>
-    </div>
-
-    <p class="footer-note">
-      Already have a card? <a href="/">View Oscar's card</a>
-    </p>
-  </div>
-
-  <script>
-    const form = document.getElementById('waitlist-form');
-    const emailInput = document.getElementById('email-input');
-    const submitBtn = document.getElementById('submit-btn');
-    const errorMsg = document.getElementById('error-msg');
-    const formArea = document.getElementById('form-area');
-    const successArea = document.getElementById('success-area');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      errorMsg.classList.remove('visible');
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Sending\u2026';
-
-      try {
-        const res = await fetch('/api/waitlist', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: emailInput.value }),
-        });
-
-        if (res.ok) {
-          formArea.style.display = 'none';
-          successArea.classList.add('visible');
-        } else {
-          const data = await res.json();
-          errorMsg.textContent = data.error ?? 'Something went wrong. Try again.';
-          errorMsg.classList.add('visible');
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Join the Waitlist';
-        }
-      } catch {
-        errorMsg.textContent = 'Network error. Please try again.';
-        errorMsg.classList.add('visible');
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Join the Waitlist';
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clockwork Cards — Join the Waitlist</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
-    });
-  </script>
-</body>
+
+      body {
+        min-height: 100dvh;
+        background: #f5f0e8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+        font-family: "Space Grotesk", system-ui, sans-serif;
+        color: #2d2318;
+      }
+
+      .envelope {
+        background: #faf8f3;
+        border: 1px solid #e0d5c5;
+        border-radius: 4px;
+        max-width: 480px;
+        width: 100%;
+        padding: 48px 40px 40px;
+        box-shadow:
+          0 2px 8px rgba(45, 35, 24, 0.08),
+          0 0 0 1px rgba(45, 35, 24, 0.04);
+        position: relative;
+      }
+
+      /* Envelope flap triangle at top */
+      .envelope::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 0;
+        border-left: 240px solid transparent;
+        border-right: 240px solid transparent;
+        border-top: 56px solid #ede7d9;
+      }
+
+      .wordmark {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #7a6a54;
+        margin-bottom: 32px;
+      }
+
+      .wordmark a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      h1 {
+        font-size: clamp(1.5rem, 5vw, 2rem);
+        font-weight: 700;
+        line-height: 1.2;
+        margin-bottom: 12px;
+        color: #2d2318;
+      }
+
+      .subtitle {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: #7a6a54;
+        margin-bottom: 32px;
+      }
+
+      .badge {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #c8622a;
+        background: rgba(200, 98, 42, 0.1);
+        border: 1px solid rgba(200, 98, 42, 0.2);
+        border-radius: 100px;
+        padding: 3px 10px;
+        margin-bottom: 20px;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      input[type="email"] {
+        width: 100%;
+        padding: 12px 14px;
+        font-family: inherit;
+        font-size: 1rem;
+        color: #2d2318;
+        background: #f5f0e8;
+        border: 1px solid #c8b99e;
+        border-radius: 4px;
+        outline: none;
+        transition: border-color 0.15s;
+      }
+      input[type="email"]::placeholder {
+        color: #b0a090;
+      }
+      input[type="email"]:focus {
+        border-color: #7a6a54;
+      }
+
+      button[type="submit"] {
+        width: 100%;
+        padding: 12px 14px;
+        font-family: inherit;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #faf8f3;
+        background: #2d2318;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition:
+          background 0.15s,
+          opacity 0.15s;
+      }
+      button[type="submit"]:hover {
+        background: #3d3020;
+      }
+      button[type="submit"]:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+
+      .error {
+        font-size: 0.875rem;
+        color: #c8622a;
+        display: none;
+      }
+      .error.visible {
+        display: block;
+      }
+
+      .success {
+        display: none;
+      }
+      .success.visible {
+        display: block;
+      }
+
+      .success-icon {
+        font-size: 2rem;
+        margin-bottom: 12px;
+      }
+
+      .success h2 {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .success p {
+        color: #7a6a54;
+        line-height: 1.6;
+      }
+
+      .footer-note {
+        margin-top: 28px;
+        font-size: 0.8125rem;
+        color: #b0a090;
+        text-align: center;
+      }
+
+      .footer-note a {
+        color: #7a6a54;
+        text-decoration: none;
+      }
+      .footer-note a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="envelope">
+      <div class="wordmark">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 22h14" /><path d="M5 2h14" />
+          <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22" />
+          <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2" />
+        </svg>
+        <a href="/">Clockwork Cards</a>
+      </div>
+      <div class="badge">Beta · Invite Only</div>
+      <h1>A card worth keeping.</h1>
+      <p class="subtitle">We're making something special — a living birthday card full of real facts about someone's life.</p>
+      <p class="subtitle">
+        Especially fun for kids who enjoy math and numbers! Join the waitlist and we'll let you know when you can personalize your own.
+      </p>
+
+      <div id="form-area">
+        <form id="waitlist-form">
+          <input type="email" id="email-input" name="email" placeholder="your@email.com" autocomplete="email" required />
+          <p class="error" id="error-msg"></p>
+          <button type="submit" id="submit-btn">Join the Waitlist</button>
+        </form>
+      </div>
+
+      <div class="success" id="success-area">
+        <div class="success-icon">✉️</div>
+        <h2>You're on the list.</h2>
+        <p>We'll be in touch when Clockwork Cards opens up. Thanks for your interest!</p>
+        <p class="subtitle">Back to <a href="/">clockwork.cards</a></p>
+      </div>
+    </div>
+
+    <script>
+      const form = document.getElementById("waitlist-form");
+      const emailInput = document.getElementById("email-input");
+      const submitBtn = document.getElementById("submit-btn");
+      const errorMsg = document.getElementById("error-msg");
+      const formArea = document.getElementById("form-area");
+      const successArea = document.getElementById("success-area");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        errorMsg.classList.remove("visible");
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Sending\u2026";
+
+        try {
+          const res = await fetch("/api/waitlist", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: emailInput.value }),
+          });
+
+          if (res.ok) {
+            formArea.style.display = "none";
+            successArea.classList.add("visible");
+          } else {
+            const data = await res.json();
+            errorMsg.textContent = data.error ?? "Something went wrong. Try again.";
+            errorMsg.classList.add("visible");
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Join the Waitlist";
+          }
+        } catch {
+          errorMsg.textContent = "Network error. Please try again.";
+          errorMsg.classList.add("visible");
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Join the Waitlist";
+        }
+      });
+    </script>
+  </body>
 </html>
