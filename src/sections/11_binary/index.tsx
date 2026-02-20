@@ -15,7 +15,7 @@ export function BinarySection({ age }: SectionProps & { age: number }) {
       <Lede>
         In binary, {age} is {age.toString(2)}
       </Lede>
-      <Subtitle>&ldquo;Binary&rdquo; is another name for &ldquo;base 2&rdquo;. Computers use base 2. Humans usually use base 10.</Subtitle>
+      <Subtitle>"Binary" is another name for "base 2". Computers use base 2. Humans usually use base 10.</Subtitle>
 
       <FlipCard
         frontColor={BASE10}
@@ -33,7 +33,7 @@ export function BinarySection({ age }: SectionProps & { age: number }) {
               <li>Each new number means another power of ten: 10 → 100 → 1000</li>
             </ul>
             <p className="text-sm font-medium text-(--text-primary)">
-              You can think of &ldquo;{age}&rdquo; in base 10 as meaning: &ldquo;{describeBase(age, 10, 3)}&rdquo;
+              You can think of "{age}" in base 10 as meaning: "{describeBase(age, 10, 3)}"
             </p>
 
             {/* <div className="text-sm" style={{ color: BASE10, fontFamily: "var(--font-stat)", fontVariantNumeric: "tabular-nums" }}>
@@ -54,7 +54,7 @@ export function BinarySection({ age }: SectionProps & { age: number }) {
               <li>Each new number means another power of two: 2 → 4 → 8 → 16</li>
             </ul>
             <p className="text-sm font-medium text-(--text-primary)">
-              You can think of &ldquo;{age.toString(2)}&rdquo; in base 2 as meaning: &ldquo;{describeBase(age, 2)}&rdquo;
+              You can think of "{age.toString(2)}" in base 2 as meaning: "{describeBase(age, 2)}"
             </p>
             {/* <div className="space-y-3 mb-6">
               <div className="text-sm" style={{ color: BASE2, fontFamily: "var(--font-stat)", fontVariantNumeric: "tabular-nums" }}>
