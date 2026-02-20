@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Tile } from "../page/tile";
 import { InlineStepper } from "../page/controls";
-import { useNow } from "../../lib/useNow";
+import { useNow } from "../../metrics";
 
 
 export default function HugsTile({ dob, name }: { dob: Date; name: string }) {

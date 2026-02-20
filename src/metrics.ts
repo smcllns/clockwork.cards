@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { getAge, daysSinceAge } from "./lib/utils";
+import { useState, useEffect } from "react";
 import {
   MS_PER_DAY,
   AVG_BLINKS_PER_DAY,
@@ -10,7 +9,56 @@ import {
   LIGHT_SPEED_MPH,
   OLYMPIC_POOL_LITERS,
   GLASS_ML,
-} from "./lib/constants";
+} from "./constants";
+
+export function useNow(intervalMs = 1000) {
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), intervalMs);
+    return () => clearInterval(id);
+  }, [intervalMs]);
+  return now;
+}
+
+// Days elapsed since the child turned a given age
+export function daysSinceAge(dob: Date, age: number, now: number): number {
+  const start = new Date(dob);
+  start.setFullYear(start.getFullYear() + age);
+  return Math.max(0, (now - start.getTime()) / 86_400_000);
+}
+
+// Precise fractional years alive (e.g. 8.992), accounting for calendar year lengths
+export function getAge(dob: Date, now: number, decimals?: number): number {
+  const nowDate = new Date(now);
+  let age = nowDate.getFullYear() - dob.getFullYear();
+  const monthDiff = nowDate.getMonth() - dob.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && nowDate.getDate() < dob.getDate())) {
+    age--;
+  }
+  const lastBirthday = new Date(dob);
+  lastBirthday.setFullYear(dob.getFullYear() + age);
+  const nextBirthday = new Date(dob);
+  nextBirthday.setFullYear(dob.getFullYear() + age + 1);
+  const yearMs = nextBirthday.getTime() - lastBirthday.getTime();
+  const precise = age + (now - lastBirthday.getTime()) / yearMs;
+  if (decimals === undefined) return precise;
+  if (decimals === 0) return Math.floor(precise);
+  const f = 10 ** decimals;
+  return Math.round(precise * f) / f;
+}
+
+export const his = (p: "m" | "f") => p === "m" ? "his" : "her";
+export const he  = (p: "m" | "f") => p === "m" ? "he"  : "she";
+export const him = (p: "m" | "f") => p === "m" ? "him" : "her";
+
+export function useAgeMetrics(dob: Date, now: number) {
+  const precise = getAge(dob, now);
+  return {
+    floor: Math.floor(precise),
+    rounded: Math.round(precise),
+    decimal2: getAge(dob, now, 2),
+  };
+}
 
 const TIME_UNITS = ["years", "months", "weeks", "days", "hours", "minutes", "seconds"] as const;
 export type TimeUnit = (typeof TIME_UNITS)[number];
@@ -58,8 +106,7 @@ export function useStepsMetrics(dob: Date, now: number) {
   const [stepsPerDay, setStepsPerDay] = useState(8_000);
   const [startAge, setStartAge] = useState(0);
   const totalSteps = daysSinceAge(dob, startAge, now) * stepsPerDay;
-  const age = getAge(dob, now, 2);
-  return { stepsPerDay, setStepsPerDay, startAge, setStartAge, totalSteps, age };
+  return { stepsPerDay, setStepsPerDay, startAge, setStartAge, totalSteps };
 }
 
 export function useYogurtMetrics(dob: Date, now: number) {
@@ -139,8 +186,7 @@ export function usePoopsMetrics(dob: Date, now: number) {
   const [perDay, setPerDay] = useState(1.5);
   const daysAlive = Math.floor((now - dob.getTime()) / MS_PER_DAY);
   const totalPoops = Math.floor(daysAlive * perDay);
-  const age = getAge(dob, now, 2);
-  return { perDay, setPerDay, totalPoops, age };
+  return { perDay, setPerDay, totalPoops };
 }
 
 export function useHairMetrics(dob: Date, now: number) {

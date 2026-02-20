@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Tile } from "../page/tile";
 import { InlineStepper } from "../page/controls";
-import { useNow } from "../../lib/useNow";
-import { OLYMPIC_POOL_LITERS, GLASS_ML } from "../../lib/constants";
+import { useNow } from "../../metrics";
+import { OLYMPIC_POOL_LITERS, GLASS_ML } from "../../constants";
 
 export default function WaterTile({ dob, name }: { dob: Date; name: string }) {
   const [glassesPerDay, setGlassesPerDay] = useState(6);

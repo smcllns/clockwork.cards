@@ -1,6 +1,6 @@
 import { Tile } from "../page/tile";
-import { useNow } from "../../lib/useNow";
-import { AVG_CHILD_BPM } from "../../lib/constants";
+import { useNow } from "../../metrics";
+import { AVG_CHILD_BPM } from "../../constants";
 
 export default function HeartbeatsTile({ dob, name }: { dob: Date; name: string }) {
   const now = useNow();

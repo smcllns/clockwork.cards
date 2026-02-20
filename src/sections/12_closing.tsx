@@ -1,10 +1,9 @@
 import type { SectionProps } from "./types";
 import { Slide } from "../components/page/slide";
 import { ordinalSuffix } from "../components/content/binary";
-import { getAge } from "../lib/utils";
 
-export function ClosingSection({ name, dob }: SectionProps) {
-  const nearestBirthdayAge = Math.round(getAge(dob, Date.now()));
+export function ClosingSection({ name, age }: SectionProps & { age: number }) {
+  const nearestBirthdayAge = age;
   return (
     <Slide id="12">
       <div className="mt-10 text-center">

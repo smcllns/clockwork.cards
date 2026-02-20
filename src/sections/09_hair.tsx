@@ -1,4 +1,4 @@
-import type { useHairMetrics } from "../hooks";
+import type { useHairMetrics } from "../metrics";
 import type { SectionProps } from "./types";
 import { Slide } from "../components/page/slide";
 import { InlineStepper } from "../components/page/controls";

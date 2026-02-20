@@ -2,14 +2,12 @@ import type { SectionProps } from "./types";
 import { Slide, Headline } from "../components/page/slide";
 import { FlipCard } from "../components/page/flip-card";
 import { expandBase, describeBase } from "../components/content/binary";
-import { getAge } from "../lib/utils";
 import { styles } from "./styles";
 
 const BASE10 = "#22c55e";
 const BASE2 = "#a855f7";
 
-export function BinarySection({ dob }: SectionProps) {
-  const age = Math.floor(getAge(dob, Date.now()));
+export function BinarySection({ age }: SectionProps & { age: number }) {
   const binary = age.toString(2);
   return (
     <Slide id="11">

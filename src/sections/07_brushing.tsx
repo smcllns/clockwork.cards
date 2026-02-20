@@ -1,4 +1,4 @@
-import type { useBrushingMetrics } from "../hooks";
+import type { useBrushingMetrics } from "../metrics";
 import type { SectionProps } from "./types";
 import { Slide } from "../components/page/slide";
 import { InlineStepper } from "../components/page/controls";

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Tile } from "../page/tile";
 import { InlineStepper } from "../page/controls";
-import { useNow } from "../../lib/useNow";
-import { HARD_PLAY_LITERS_PER_MIN } from "../../lib/constants";
+import { useNow } from "../../metrics";
+import { HARD_PLAY_LITERS_PER_MIN } from "../../constants";
 
 export default function LungsTile({ dob, name }: { dob: Date; name: string }) {
   const [hoursPerDay, setHoursPerDay] = useState(1);

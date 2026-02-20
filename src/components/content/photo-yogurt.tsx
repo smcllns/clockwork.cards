@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { InlineSlider, InlineStepper, InlinePills } from "../page/controls";
-import { useNow } from "../../lib/useNow";
-import { daysSinceAge } from "../../lib/utils";
+import { useNow } from "../../metrics";
+import { daysSinceAge } from "../../metrics";
 import { PhotoSlide } from "./photo-slide";
 import imgLight from "../../assets/photo-yogurt.png";
 import imgShiny from "../../assets/photo-yogurt-shiny.png";

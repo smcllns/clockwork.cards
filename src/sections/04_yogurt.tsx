@@ -1,4 +1,4 @@
-import type { useYogurtMetrics } from "../hooks";
+import type { useYogurtMetrics } from "../metrics";
 import type { SectionProps } from "./types";
 import { PhotoSlide } from "../components/content/photo-slide";
 import { InlinePills, InlineSlider, InlineStepper } from "../components/page/controls";

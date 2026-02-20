@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { InlineStepper } from "../page/controls";
-import { useNow } from "../../lib/useNow";
-import { OLYMPIC_POOL_LITERS, GLASS_ML } from "../../lib/constants";
+import { useNow } from "../../metrics";
+import { OLYMPIC_POOL_LITERS, GLASS_ML } from "../../constants";
 import { PhotoSlide } from "./photo-slide";
 import imgLight from "../../assets/photo-water.png";
 import imgShiny from "../../assets/photo-water-shiny.png";

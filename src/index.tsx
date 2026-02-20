@@ -2,10 +2,11 @@ import { preload } from "./preload";
 import { useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import useEmblaCarousel from "embla-carousel-react";
-import { useNow } from "./lib/useNow";
+import { useNow } from "./metrics";
 import Nav from "./components/page/nav";
 import Upsell from "./components/page/upsell";
 import {
+  useAgeMetrics,
   useTimeMetrics,
   useSpaceMetrics,
   useStepsMetrics,
@@ -19,9 +20,10 @@ import {
   useWaterMetrics,
   usePoopsMetrics,
   useHairMetrics,
-} from "./hooks";
+} from "./metrics";
 import { HeroSection } from "./sections/00_hero";
 import { TimeSection } from "./sections/01_time";
+import { TimeTableSection } from "./sections/01b_time_table";
 import { SpaceSection } from "./sections/02_space";
 import { StepsSection } from "./sections/03_steps";
 import { YogurtSection } from "./sections/04_yogurt";
@@ -110,6 +112,7 @@ function App() {
     };
   }, [emblaApi]);
 
+  const age = useAgeMetrics(dob, now);
   const time = useTimeMetrics(dob, now);
   const space = useSpaceMetrics(dob, now);
   const steps = useStepsMetrics(dob, now);
@@ -138,15 +141,16 @@ function App() {
         <div style={{ display: "flex", flexDirection: "column", height: "100svh" }}>
           <HeroSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} />
           <TimeSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} time={time} />
+          <TimeTableSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} time={time} />
           <SpaceSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} space={space} />
-          <StepsSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} steps={steps} />
+          <StepsSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} steps={steps} age={age.decimal2} />
           <YogurtSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} yogurt={yogurt} />
           <BrushingSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} brushing={brushing} />
           <WaterSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} water={water} />
           <HairSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} hair={hair} />
-          <PoopsSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} poops={poops} />
-          <BinarySection name={name} dob={dob} pronouns={pronouns} shiny={shiny} />
-          <ClosingSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} />
+          <PoopsSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} poops={poops} age={age.decimal2} />
+          <BinarySection name={name} dob={dob} pronouns={pronouns} shiny={shiny} age={age.floor} />
+          <ClosingSection name={name} dob={dob} pronouns={pronouns} shiny={shiny} age={age.rounded} />
         </div>
       </div>
     </div>

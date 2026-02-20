@@ -1,4 +1,4 @@
-import type { useWaterMetrics } from "../hooks";
+import type { useWaterMetrics } from "../metrics";
 import type { SectionProps } from "./types";
 import { PhotoSlide } from "../components/content/photo-slide";
 import { InlineStepper } from "../components/page/controls";

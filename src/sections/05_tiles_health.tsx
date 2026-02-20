@@ -1,4 +1,4 @@
-import type { useHeartMetrics, useFruitMetrics, useHugsMetrics, useLungsMetrics } from "../hooks";
+import type { useHeartMetrics, useFruitMetrics, useHugsMetrics, useLungsMetrics } from "../metrics";
 import type { SectionProps } from "./types";
 import { TileContainer, Tile } from "../components/page/tile";
 import { InlineStepper } from "../components/page/controls";
